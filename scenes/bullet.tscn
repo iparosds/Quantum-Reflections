@@ -12,8 +12,8 @@ collision_mask = 2
 script = ExtResource("1_bel33")
 
 [node name="Projectile" type="Sprite2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(-2, 0)
-rotation = 0.501627
 texture = ExtResource("2_gbkqn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

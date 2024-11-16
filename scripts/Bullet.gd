@@ -5,7 +5,7 @@ const SPEED = 500
 const RANGE = 1000
 
 func _physics_process(delta):
-	var direction = Vector2.RIGHT.rotated(rotation)
+	var direction = Vector2.RIGHT.rotated(%Projectile.rotation)
 	position += direction * SPEED * delta
 	
 	travelled_distance += SPEED * delta

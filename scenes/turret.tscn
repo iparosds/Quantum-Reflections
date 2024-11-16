@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://drlku570m4xp1" path="res://assets/sprites/turret.png" id="2_jqimm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0x0pm"]
-radius = 671.811
+radius = 477.001
 
 [node name="Turret" type="Area2D"]
 collision_layer = 0
@@ -28,7 +28,7 @@ unique_name_in_owner = true
 position = Vector2(1, 0.015)
 
 [node name="ShootingInterval" type="Timer" parent="."]
-wait_time = 0.582
+wait_time = 0.3
 autostart = true
 
 [connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]

@@ -1,7 +1,7 @@
 # Todo
-- Fix bug on ShootingPosition
 - Fix asteroid collision
 - Implement ore
+- Implement additional turrets
 - Implement add turret
 - Implement portals
 - Implement black hole
@@ -10,4 +10,5 @@
 - Define limited space
 - Improve movement
 - Replace sprit of turret
+- Asteroids are destroed when hiting the ship
 - 

@@ -9,9 +9,8 @@ func _physics_process(delta):
 
 func shoot():
 	var new_bullet = BULLET.instantiate()
-	print(%ShootingPoint.global_position)
-	new_bullet.global_position = %ShootingPoint.global_position
-	new_bullet.global_rotation = %ShootingPoint.global_rotation
+	new_bullet.position = %ShootingPoint.position
+	new_bullet.rotation = %ShootingPoint.rotation
 	%ShootingPoint.add_child(new_bullet)
 
 func _on_timer_timeout():

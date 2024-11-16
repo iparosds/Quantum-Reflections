@@ -1,6 +1,7 @@
 extends Node2D;
 
 const ASTEROID = preload("res://scenes/asteroid.tscn")
+var game_paused = false;
 
 func spawn_asteroid():
 	var new_asteroid = ASTEROID.instantiate()

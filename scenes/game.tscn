@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=6 format=3 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="Texture2D" uid="uid://dbomakkp7kcl7" path="res://assets/sprites/bg.png" id="3_aelue"]
+[ext_resource type="Script" path="res://scripts/Pause.gd" id="4_lrqhk"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
@@ -15,7 +16,6 @@ script = ExtResource("1_ca608")
 
 [node name="Player" parent="." instance=ExtResource("2_yxpby")]
 unique_name_in_owner = true
-position = Vector2(580, 324)
 
 [node name="Path2D" type="Path2D" parent="Player"]
 curve = SubResource("Curve2D_q82x3")
@@ -25,12 +25,40 @@ unique_name_in_owner = true
 position = Vector2(-722, -528)
 rotation = 0.0128933
 
+[node name="Camera2D2" type="Camera2D" parent="Player"]
+limit_smoothed = true
+position_smoothing_enabled = true
+
 [node name="Bg" type="Sprite2D" parent="."]
 position = Vector2(629, 342)
 texture = ExtResource("3_aelue")
 
 [node name="AsteroidInterval" type="Timer" parent="."]
-wait_time = 1.428
+wait_time = 0.2
 autostart = true
+
+[node name="Pause" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+script = ExtResource("4_lrqhk")
+
+[node name="ColorRect" type="ColorRect" parent="Pause"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.337255)
+
+[node name="Label" type="Label" parent="Pause/ColorRect"]
+layout_mode = 0
+offset_left = 744.0
+offset_top = 516.0
+offset_right = 1142.0
+offset_bottom = 599.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 60
+text = "Game Paused"
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
