@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=3 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_l1qqr"]
+[ext_resource type="Texture2D" uid="uid://cqvqrxuxky4ih" path="res://assets/sprites/logo copiar.png" id="2_y8hp7"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -12,6 +13,17 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l1qqr")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = -397.0
+offset_top = -436.0
+offset_right = 368.0
+offset_bottom = -145.0
+grow_vertical = 2
+texture = ExtResource("2_y8hp7")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 0
