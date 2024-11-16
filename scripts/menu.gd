@@ -1,7 +1,10 @@
+class_name Menu
 extends Control
 
+@onready var start_level = preload("res://scenes/game.tscn") as PackedScene
+
 func _on_new_game_pressed() -> void:
-	get_tree().change_scene_to_file("res://scenes/game.tscn")
+	get_tree().change_scene_to_packed(start_level)
 
 func _on_settings_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
