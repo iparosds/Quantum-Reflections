@@ -15,13 +15,15 @@ func _physics_process(delta):
 		accelelariting = false
 	if Input.is_action_just_pressed("move_up"):
 		accelelariting = true
-	if accelelariting == true && acceleration < 2000:
+	if accelelariting == true && acceleration < 1000:
 		acceleration += 1
 	if Input.is_action_just_released("move_down"):
 		stopping = false
 	if Input.is_action_just_pressed("move_down"):
 		stopping = true
 	if stopping == true && acceleration > 0:
+		acceleration -= 5
+	if stopping == false && accelelariting == false && acceleration > 0:
 		acceleration -= 1
 	if Input.is_action_just_pressed("move_right"):
 		rotating_right = true
