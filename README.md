@@ -1,0 +1,13 @@
+# Todo
+- Fix bug on ShootingPosition
+- Fix asteroid collision
+- Implement ore
+- Implement add turret
+- Implement portals
+- Implement black hole
+- Make ship rotate
+- Start screen
+- Define limited space
+- Improve movement
+- Replace sprit of turret
+- 

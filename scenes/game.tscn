@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://bepgb8gyvqqc1"]
+
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
+[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
+[ext_resource type="Texture2D" uid="uid://dbomakkp7kcl7" path="res://assets/sprites/bg.png" id="3_aelue"]
+
+[sub_resource type="Curve2D" id="Curve2D_q82x3"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -722, -528, 0, 0, 0, 0, 674, -510, 0, 0, 0, 0, 684, 412, 0, 0, 0, 0, -732, 420, 0, 0, 0, 0, -726, -498, 0, 0, 0, 0, -722, -528)
+}
+point_count = 6
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_ca608")
+
+[node name="Player" parent="." instance=ExtResource("2_yxpby")]
+unique_name_in_owner = true
+position = Vector2(580, 324)
+
+[node name="Path2D" type="Path2D" parent="Player"]
+curve = SubResource("Curve2D_q82x3")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
+unique_name_in_owner = true
+position = Vector2(-722, -528)
+rotation = 0.0128933
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(629, 342)
+texture = ExtResource("3_aelue")
+
+[node name="AsteroidInterval" type="Timer" parent="."]
+wait_time = 1.428
+autostart = true
+
+[connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]

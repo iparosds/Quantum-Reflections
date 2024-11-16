@@ -1,0 +1,61 @@
+[gd_scene load_steps=9 format=3 uid="uid://exvs04d5gcyx"]
+
+[ext_resource type="Texture2D" uid="uid://b7lv7hiaq1ntl" path="res://assets/sprites/nave.png" id="1_pitjh"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_xdt2u"]
+[ext_resource type="PackedScene" uid="uid://3vn8y1jlk7vp" path="res://scenes/turret.tscn" id="3_w8iht"]
+[ext_resource type="AudioStream" uid="uid://bxbastebv484j" path="res://assets/sounds/MUSIC.mp3" id="4_vtupa"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8n8ai"]
+radius = 5.0
+height = 28.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1k6gw"]
+radius = 7.0
+height = 32.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1q5i"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5x0j0"]
+bg_color = Color(0.0941176, 0.0431373, 0.6, 0.572549)
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 5
+script = ExtResource("1_xdt2u")
+
+[node name="Ship" type="Sprite2D" parent="."]
+texture = ExtResource("1_pitjh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_8n8ai")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Turret" parent="." instance=ExtResource("3_w8iht")]
+rotation = -0.00413576
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Turret"]
+stream = ExtResource("4_vtupa")
+autoplay = true
+
+[node name="HurtBox" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_1k6gw")
+debug_color = Color(0.80375, 0.323318, 0.67704, 0.42)
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+offset_left = -22.0
+offset_top = 21.0
+offset_right = 23.0
+offset_bottom = 25.0
+theme_override_styles/background = SubResource("StyleBoxFlat_x1q5i")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5x0j0")
+value = 100.0
+show_percentage = false

@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://3vn8y1jlk7vp"]
+
+[ext_resource type="Script" path="res://scripts/Turret.gd" id="1_6yqcy"]
+[ext_resource type="Texture2D" uid="uid://drlku570m4xp1" path="res://assets/sprites/turret.png" id="2_jqimm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0x0pm"]
+radius = 671.811
+
+[node name="Turret" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_6yqcy")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_0x0pm")
+
+[node name="TurretPivot" type="Marker2D" parent="."]
+rotation = -0.00174922
+
+[node name="Turret" type="Sprite2D" parent="TurretPivot"]
+position = Vector2(7, 1.83765e-05)
+rotation = 0.0144207
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_jqimm")
+
+[node name="ShootingPoint" type="Marker2D" parent="TurretPivot/Turret"]
+unique_name_in_owner = true
+position = Vector2(1, 0.015)
+
+[node name="ShootingInterval" type="Timer" parent="."]
+wait_time = 0.582
+autostart = true
+
+[connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]
