@@ -53,7 +53,7 @@ layout_mode = 2
 size_flags_stretch_ratio = 0.0
 theme = SubResource("Theme_uhqyi")
 
-[node name="New Game" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="New_Game" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = SubResource("Theme_uhqyi")
 text = "New Game"
@@ -83,7 +83,7 @@ layout_mode = 2
 theme = SubResource("Theme_uhqyi")
 text = "Quit"
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/New Game" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Rewards" to="." method="_on_rewards_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
