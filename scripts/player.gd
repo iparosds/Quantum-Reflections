@@ -14,6 +14,25 @@ var rotating_left = false;
 func is_player():
 	return true;
 
+func portal():
+	if %TurretN.current_bullet != 0:
+		%TurretN.current_bullet = randi_range(1,2)
+	if %TurretE.current_bullet != 0:
+		%TurretE.current_bullet = randi_range(1,2)
+	if %TurretS.current_bullet != 0:
+		%TurretS.current_bullet = randi_range(1,2)
+	if %TurretW.current_bullet != 0:
+		%TurretW.current_bullet = randi_range(1,2)
+	if %TurretNE.current_bullet != 0:
+		%TurretNE.current_bullet = randi_range(1,2)
+	if %TurretNW.current_bullet != 0:
+		%TurretNW.current_bullet = randi_range(1,2)
+	if %TurretSE.current_bullet != 0:
+		%TurretSE.current_bullet = randi_range(1,2)
+	if %TurretSW.current_bullet != 0:
+		%TurretSW.current_bullet = randi_range(1,2)
+	pass
+
 func add_turrets():
 	if game.get_score() > 1:
 		%TurretW.current_bullet = 2

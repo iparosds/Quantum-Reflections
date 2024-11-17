@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
-[ext_resource type="PackedScene" path="res://scenes/portal.tscn" id="5_80oj7"]
+[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 [ext_resource type="Script" path="res://scripts/world_limit.gd" id="7_0xqwm"]
-[ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="8_de88q"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
