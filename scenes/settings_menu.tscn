@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=10 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_5ttin"]
+[ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="2_14wrj"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="2_mrlip"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="3_v2gib"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
@@ -24,6 +25,11 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("1_7pq2e")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(377, 217)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("2_14wrj")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -48,10 +54,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -165.5
-offset_top = -162.0
-offset_right = 165.5
-offset_bottom = 162.0
+offset_left = -165.0
+offset_top = -163.0
+offset_right = 166.0
+offset_bottom = 161.0
 grow_horizontal = 2
 grow_vertical = 2
 
