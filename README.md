@@ -1,14 +1,6 @@
 # Todo
-- Fix asteroid collision
-- Implement ore
-- Implement additional turrets
-- Implement add turret
+- Implement selection of turrets
 - Implement portals
-- Implement black hole
-- Make ship rotate
-- Start screen
 - Define limited space
-- Improve movement
-- Replace sprit of turret
-- Asteroids are destroed when hiting the ship
-- 
+- Create UI
+
