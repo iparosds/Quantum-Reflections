@@ -1,22 +1,38 @@
-[gd_scene load_steps=4 format=3 uid="uid://cmse1wp3m74k0"]
+[gd_scene load_steps=6 format=3 uid="uid://cmse1wp3m74k0"]
 
 [ext_resource type="Script" path="res://scripts/Bullet.gd" id="1_bel33"]
-[ext_resource type="Texture2D" uid="uid://b3m52u6qpfgij" path="res://assets/sprites/projectile.png" id="2_gbkqn"]
+[ext_resource type="Texture2D" uid="uid://uqthv8wgom7p" path="res://assets/sprites/explosao02.png" id="2_ls55m"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_enmau"]
+atlas = ExtResource("2_ls55m")
+region = Rect2(0, 0, 14, 49)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jbvwe"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_enmau")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qfyl0"]
-radius = 4.0
+radius = 7.0
 
 [node name="Bullet" type="Area2D"]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_bel33")
 
-[node name="Projectile" type="Sprite2D" parent="."]
+[node name="Projectile" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(-2, 0)
-texture = ExtResource("2_gbkqn")
+position = Vector2(3, 1)
+sprite_frames = SubResource("SpriteFrames_jbvwe")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_qfyl0")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

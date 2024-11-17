@@ -15,6 +15,10 @@ run/main_scene="res://scenes/menu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Singleton="*res://scenes/singleton.tscn"
+
 [display]
 
 window/stretch/mode="viewport"
