@@ -24,6 +24,7 @@ func _on_settings_pressed() -> void:
 
 func _on_credits_pressed() -> void:
 	$select_sound.play()
+	get_tree().change_scene_to_file("res://scenes/creditos.tscn")
 
 func _on_quit_pressed() -> void:
 	$select_sound.play()
