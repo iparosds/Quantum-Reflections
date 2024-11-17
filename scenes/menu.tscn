@@ -1,20 +1,26 @@
-[gd_scene load_steps=4 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=10 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_l1qqr"]
 [ext_resource type="Texture2D" uid="uid://cqvqrxuxky4ih" path="res://assets/sprites/logo copiar.png" id="2_y8hp7"]
+[ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_7krxr"]
+[ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="3_8h3rd"]
+[ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="4_ath1i"]
+[ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="5_lao82"]
 
 [sub_resource type="Theme" id="Theme_uhqyi"]
-default_font_size = 40
+default_font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_nn863"]
+font_size = 12
+
+[sub_resource type="LabelSettings" id="LabelSettings_yxhpx"]
+font_size = 12
 
 [node name="Menu" type="Control"]
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_top = 171.0
-offset_bottom = 171.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 6
@@ -29,10 +35,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -688.0
-offset_top = -637.0
-offset_right = 702.0
-offset_bottom = -261.0
+offset_left = -389.0
+offset_top = -283.0
+offset_right = 387.0
+offset_bottom = -34.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_y8hp7")
@@ -42,6 +48,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -2.0
+offset_top = 157.0
+offset_right = -2.0
+offset_bottom = 157.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
@@ -50,38 +60,86 @@ theme = SubResource("Theme_uhqyi")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 theme = SubResource("Theme_uhqyi")
 
 [node name="New_Game" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../Settings")
 theme = SubResource("Theme_uhqyi")
 text = "New Game"
 
 [node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../New_Game")
+focus_neighbor_bottom = NodePath("../Rewards")
 theme = SubResource("Theme_uhqyi")
 text = "Settings"
 
 [node name="Rewards" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Settings")
+focus_neighbor_bottom = NodePath("../Credits")
 theme = SubResource("Theme_uhqyi")
 text = "Rewards"
 
 [node name="Credits" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Rewards")
+focus_neighbor_bottom = NodePath("../START!")
 theme = SubResource("Theme_uhqyi")
 text = "Credits"
 
 [node name="START!" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Credits")
+focus_neighbor_bottom = NodePath("../Quit")
 theme = SubResource("Theme_uhqyi")
 text = "START!"
 
 [node name="Quit" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../START!")
+focus_neighbor_bottom = NodePath("../New_Game")
 theme = SubResource("Theme_uhqyi")
 text = "Quit"
+
+[node name="menu_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_8h3rd")
+
+[node name="down_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_7krxr")
+
+[node name="up_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_ath1i")
+
+[node name="select_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_lao82")
+
+[node name="instructions" type="Label" parent="."]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 607.0
+offset_right = 262.0
+offset_bottom = 641.0
+text = "UP and DOWN keys to browse the menu"
+label_settings = SubResource("LabelSettings_nn863")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="instructions2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 969.0
+offset_top = 610.0
+offset_right = 1147.0
+offset_bottom = 644.0
+text = "ENTER to select"
+label_settings = SubResource("LabelSettings_yxhpx")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]

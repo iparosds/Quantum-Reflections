@@ -1,6 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=9 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
+[ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="2_h3f4r"]
+[ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="2_mrlip"]
+[ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="3_v2gib"]
+[ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
+[ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/MENU SOUND - BACK.wav" id="5_jp286"]
+
+[sub_resource type="Theme" id="Theme_x3hd2"]
+default_font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_5hkut"]
+font_size = 12
 
 [node name="Settings Menu" type="Control"]
 layout_mode = 3
@@ -9,27 +20,84 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource("1_7pq2e")
 
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 179.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 85
+text = "Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -67.0
+offset_right = 171.0
+offset_bottom = 257.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_x3hd2")
 
 [node name="Controls" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Volume")
 text = "Controls"
 
 [node name="Volume" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Controls")
+focus_neighbor_bottom = NodePath("../Back")
 text = "Volume"
 
 [node name="Back" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_neighbor_top = NodePath("../Volume")
+focus_neighbor_bottom = NodePath("../Controls")
 text = "Back"
+
+[node name="menu_music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_h3f4r")
+
+[node name="down_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_mrlip")
+
+[node name="up_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_v2gib")
+
+[node name="select_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_ny5do")
+
+[node name="back_sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_jp286")
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 616.0
+offset_right = 158.0
+offset_bottom = 639.0
+text = "ESC to go to main menu"
+label_settings = SubResource("LabelSettings_5hkut")
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Controls" to="." method="_on_controls_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Volume" to="." method="_on_volume_pressed"]
