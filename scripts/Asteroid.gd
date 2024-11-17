@@ -5,6 +5,7 @@ var moving = true
 var ore = false
 const SHIP_ATTRACTION = 100.0
 @onready var player = get_node("/root/Game/Player")
+@onready var game = get_node("/root/Game")
 
 func _ready():
 	var rand = round(randf_range(1,3))
@@ -18,7 +19,10 @@ func _ready():
 func _physics_process(delta):
 	var direction = global_position.direction_to(player.global_position)
 	if moving == true:
-		velocity = direction * SHIP_ATTRACTION
+		if game.quantum == false:
+			velocity = direction * SHIP_ATTRACTION
+		else:
+			velocity = -direction * SHIP_ATTRACTION
 		move_and_slide()
 
 func take_damage():

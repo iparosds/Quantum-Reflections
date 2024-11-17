@@ -2,6 +2,7 @@ extends Node2D;
 
 const ASTEROID = preload("res://scenes/asteroid.tscn")
 var game_paused = false;
+var quantum = false;
 var score = 0;
 @onready var score_label = $ScoreLabel
 
@@ -12,7 +13,19 @@ func spawn_asteroid():
 	var asteroids_group = get_tree().get_first_node_in_group("asteroids")
 	asteroids_group.add_child(new_asteroid)
 
+func reset_quantum():
+	if randi_range(0,20) == 0:
+		quantum = false;
+
+func _physics_process(delta):
+	if quantum == true:
+		RenderingServer.set_default_clear_color(Color.hex(0x2f213bff))
+	else:
+		RenderingServer.set_default_clear_color(Color.hex(0x7c7ea1ff))
+		
 func _on_timer_timeout():
+	if quantum == true:
+		reset_quantum()
 	spawn_asteroid()
 	if score > 2:
 		spawn_asteroid()

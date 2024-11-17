@@ -28,15 +28,15 @@ func _ready():
 func _physics_process(delta):
 	if game.get_score() > 1:
 		%TurretW.current_bullet = 1
-	if game.get_score() > 4:
+	if game.get_score() > 10:
 		%TurretS.current_bullet = 1
-	if game.get_score() > 16:
+	if game.get_score() > 50:
 		%TurretN.current_bullet = 1
-	if game.get_score() > 32:
+	if game.get_score() > 100:
 		%TurretNW.current_bullet = 1
-	if game.get_score() > 64:
+	if game.get_score() > 200:
 		%TurretSE.current_bullet = 1
-	if game.get_score() > 128:
+	if game.get_score() > 400:
 		%TurretNE.current_bullet = 1
 	if game.get_score() > 800:
 		%TurretSW.current_bullet = 1
@@ -83,6 +83,7 @@ func _physics_process(delta):
 			mob.queue_free()
 	if health <= 0.0:
 		health = 100
+		game.quantum = true
 		var new_black_hole = BLACK_HOLE.instantiate()
 		new_black_hole.position = $".".position
 		game.add_child(new_black_hole)
