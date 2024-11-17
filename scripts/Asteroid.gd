@@ -34,7 +34,10 @@ func take_damage():
 		moving = false
 		ore = true
 		$Asteroid.play("explosion")
-		$Asteroid.play("coin")
+		$AsteroidExplosion.start()
 		$".".set_collision_layer_value(1, true)
 		$".".set_collision_layer_value(2, false)
 		#queue_free()
+
+func _on_asteroid_explosion_timeout() -> void:
+	$Asteroid.play("coin")

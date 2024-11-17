@@ -66,22 +66,22 @@ animations = [{
 "speed": 5.0
 }, {
 "frames": [{
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_yg5wq")
 }, {
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_8fycg")
 }, {
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_ixphh")
 }, {
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_6idua")
 }, {
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_06p11")
 }, {
-"duration": 0.5,
+"duration": 0.2,
 "texture": SubResource("AtlasTexture_slfqt")
 }],
 "loop": false,
@@ -98,7 +98,15 @@ script = ExtResource("1_mgqqj")
 
 [node name="Asteroid" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jogq0")
-animation = &"coin"
+animation = &"explosion"
+frame = 5
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_vyoty")
+
+[node name="AsteroidExplosion" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="timeout" from="AsteroidExplosion" to="." method="_on_asteroid_explosion_timeout"]

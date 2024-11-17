@@ -24,5 +24,11 @@ func _on_body_entered(body):
 	if body.has_method("take_damage"):
 		body.take_damage()
 	%Projectile.play("contact")
+	move_speed = 0
+	$Explosion.start()
 	#await %Projectile.tree_exited 
 	#queue_free()
+
+
+func _on_explosion_timeout() -> void:
+	queue_free()

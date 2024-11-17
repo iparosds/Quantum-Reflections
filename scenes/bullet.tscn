@@ -38,30 +38,30 @@ region = Rect2(0, 0, 53, 49)
 [sub_resource type="SpriteFrames" id="SpriteFrames_jbvwe"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_tpx0u")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_qslqe")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_kwsfr")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_wiupx")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_3jlwg")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_vnxm6")
 }, {
-"duration": 1.0,
+"duration": 0.1,
 "texture": SubResource("AtlasTexture_ghous")
 }],
 "loop": false,
 "name": &"contact",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -73,7 +73,7 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qfyl0"]
-radius = 7.0
+radius = 8.0
 
 [node name="Bullet" type="Area2D"]
 collision_layer = 0
@@ -82,12 +82,14 @@ script = ExtResource("1_bel33")
 
 [node name="Projectile" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(3, 1)
 sprite_frames = SubResource("SpriteFrames_jbvwe")
-animation = &"contact"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-1, 0)
 shape = SubResource("CircleShape2D_qfyl0")
 
+[node name="Explosion" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Explosion" to="." method="_on_explosion_timeout"]

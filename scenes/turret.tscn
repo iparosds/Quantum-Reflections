@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/Turret.gd" id="1_6yqcy"]
 [ext_resource type="Resource" uid="uid://dlrki4wkv4x67" path="res://scripts/projectile_basic.tres" id="2_rhjlg"]
-[ext_resource type="AudioStream" uid="uid://qw74vps3ktr2" path="res://assets/sounds/SHOT 1.wav" id="3_k6l8g"]
+[ext_resource type="AudioStream" uid="uid://b7ayyambk0ixs" path="res://assets/sounds/TIRO SEM EXPLOSÃO.wav" id="3_e5mxp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0x0pm"]
 radius = 2032.41
@@ -30,6 +30,6 @@ wait_time = 0.6
 autostart = true
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("3_k6l8g")
+stream = ExtResource("3_e5mxp")
 
 [connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]
