@@ -2,7 +2,6 @@ extends CharacterBody2D;
 
 signal health_depleted;
 const BLACK_HOLE = preload("res://scenes/black_hole.tscn")
-
 @onready var game = get_node("/root/Game")
 var health = 100.0;
 const DAMAGE_RATE = 500.0;
@@ -15,17 +14,7 @@ var rotating_left = false;
 func is_player():
 	return true;
 
-func _ready():
-	%TurretN.current_bullet = 0
-	%TurretE.current_bullet = 1
-	%TurretS.current_bullet = 0
-	%TurretW.current_bullet = 0
-	%TurretNE.current_bullet = 0
-	%TurretNW.current_bullet = 0
-	%TurretSE.current_bullet = 0
-	%TurretSW.current_bullet = 0
-
-func _physics_process(delta):
+func add_turrets():
 	if game.get_score() > 1:
 		%TurretW.current_bullet = 2
 	if game.get_score() > 10:
@@ -40,6 +29,23 @@ func _physics_process(delta):
 		%TurretNE.current_bullet = 1
 	if game.get_score() > 800:
 		%TurretSW.current_bullet = 1
+
+func _ready():
+	%TurretN.current_bullet = 0
+	%TurretE.current_bullet = 1
+	%TurretS.current_bullet = 0
+	%TurretW.current_bullet = 0
+	%TurretNE.current_bullet = 0
+	%TurretNW.current_bullet = 0
+	%TurretSE.current_bullet = 0
+	%TurretSW.current_bullet = 0
+
+func _physics_process(delta):
+	add_turrets()
+	if game.quantum == false:
+		%Ship.play("default")
+	else:
+		%Ship.play("quantum")	
 	if Input.is_action_just_released("move_up"):
 		accelelariting = false
 	if Input.is_action_just_pressed("move_up"):
