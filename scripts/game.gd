@@ -6,6 +6,9 @@ var quantum = false;
 var score = 0;
 @onready var score_label = $ScoreLabel
 
+func _ready():
+	AudioPlayer.stop()
+
 func spawn_asteroid():
 	var new_asteroid = ASTEROID.instantiate()
 	%PathFollow2D.progress_ratio = randf()

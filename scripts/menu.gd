@@ -9,6 +9,7 @@ extends Control
 @onready var quit = $MarginContainer/VBoxContainer/Quit as Button
 @onready var start_game =preload("res://scenes/game.tscn") as PackedScene
 
+
 func _ready():
 	AudioPlayer._play_level_music()
 	new_game_button.grab_focus()
