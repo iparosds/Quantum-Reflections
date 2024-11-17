@@ -14,21 +14,24 @@ func _ready():
 	new_game_button.grab_focus()
 
 func _on_new_game_pressed() -> void:
+	$select_sound.play()
 	get_tree().change_scene_to_packed(start_game)
 
 func _on_settings_pressed() -> void:
+	$select_sound.play()
 	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
 
 func _on_rewards_pressed() -> void:
-	pass # Replace with function body.
+	$select_sound.play()
 
 func _on_credits_pressed() -> void:
-	pass # Replace with function body.
+	$select_sound.play()
 
 func _on_start_pressed() -> void:
-	pass # Replace with function body.
+	$select_sound.play()
 
 func _on_quit_pressed() -> void:
+	$select_sound.play()
 	get_tree().quit()
 
 func _physics_process(delta):
@@ -38,3 +41,17 @@ func _physics_process(delta):
 		$down_sound.play()
 	if Input.is_action_just_pressed("enter"):
 		$select_sound.play()
+
+
+func _on_new_game_mouse_entered() -> void:
+	$down_sound.play()
+func _on_settings_mouse_entered() -> void:
+	$down_sound.play()
+func _on_rewards_mouse_entered() -> void:
+	$down_sound.play()
+func _on_credits_mouse_entered() -> void:
+	$down_sound.play()
+func _on_start_mouse_entered() -> void:
+	$down_sound.play()
+func _on_quit_mouse_entered() -> void:
+	$down_sound.play()

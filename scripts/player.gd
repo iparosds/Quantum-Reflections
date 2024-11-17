@@ -10,16 +10,6 @@ var stopping = false;
 var rotating_right = false;
 var rotating_left = false;
 
-func _ready():
-	%Turret1.current_bullet = 2
-	%Turret2.current_bullet = 1
-	%Turret3.current_bullet = 1
-	%Turret4.current_bullet = 2
-	%Turret5.current_bullet = 1
-	%Turret6.current_bullet = 1
-	%Turret7.current_bullet = 1
-	%Turret8.current_bullet = 1
-
 func _physics_process(delta):
 	if Input.is_action_just_released("move_up"):
 		accelelariting = false
@@ -51,7 +41,6 @@ func _physics_process(delta):
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		$".".position += direction2 * acceleration * delta
-		%SpeedBar.value = acceleration/10
 
 	var overlapping_mobs = %HurtBox.get_overlapping_bodies()
 	for mob in overlapping_mobs:

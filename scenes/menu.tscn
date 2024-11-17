@@ -141,10 +141,16 @@ label_settings = SubResource("LabelSettings_yxhpx")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Rewards" to="." method="_on_rewards_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Rewards" to="." method="_on_rewards_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/START!" to="." method="_on_start_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/START!" to="." method="_on_start_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_start_pressed"]
+[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_start_pressed"]
