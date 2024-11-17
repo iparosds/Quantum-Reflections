@@ -12,31 +12,34 @@ var stopping = false;
 var rotating_right = false;
 var rotating_left = false;
 
+func is_player():
+	return true;
+
 func _ready():
-	%Turret1.current_bullet = 0
-	%Turret2.current_bullet = 1
-	%Turret3.current_bullet = 0
-	%Turret4.current_bullet = 0
-	%Turret5.current_bullet = 0
-	%Turret6.current_bullet = 0
-	%Turret7.current_bullet = 0
-	%Turret8.current_bullet = 0
+	%TurretN.current_bullet = 0
+	%TurretE.current_bullet = 1
+	%TurretS.current_bullet = 0
+	%TurretW.current_bullet = 0
+	%TurretNE.current_bullet = 0
+	%TurretNW.current_bullet = 0
+	%TurretSE.current_bullet = 0
+	%TurretSW.current_bullet = 0
 
 func _physics_process(delta):
-	if game.get_score() > 2:
-		%Turret1.current_bullet = 1
-	if game.get_score() > 3:
-		%Turret3.current_bullet = 1
+	if game.get_score() > 1:
+		%TurretW.current_bullet = 1
 	if game.get_score() > 4:
-		%Turret4.current_bullet = 1
-	if game.get_score() > 5:
-		%Turret5.current_bullet = 1
-	if game.get_score() > 6:
-		%Turret6.current_bullet = 1
-	if game.get_score() > 7:
-		%Turret7.current_bullet = 1
-	if game.get_score() > 8:
-		%Turret8.current_bullet = 1
+		%TurretS.current_bullet = 1
+	if game.get_score() > 16:
+		%TurretN.current_bullet = 1
+	if game.get_score() > 32:
+		%TurretNW.current_bullet = 1
+	if game.get_score() > 64:
+		%TurretSE.current_bullet = 1
+	if game.get_score() > 128:
+		%TurretNE.current_bullet = 1
+	if game.get_score() > 800:
+		%TurretSW.current_bullet = 1
 	if Input.is_action_just_released("move_up"):
 		accelelariting = false
 	if Input.is_action_just_pressed("move_up"):

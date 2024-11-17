@@ -1,4 +1,7 @@
+class_name Bullet
 extends Area2D
+
+@export_range(0, 300, .2, "or_greater") var move_speed : float = 200.0
 
 var travelled_distance = 0
 const SPEED = 200
@@ -11,9 +14,9 @@ func _ready():
 	direction = Vector2.RIGHT.rotated(bullet_rotation)
 
 func _physics_process(delta):
-	position += direction * SPEED * delta
+	position += direction * move_speed * delta
 	
-	travelled_distance += SPEED * delta
+	travelled_distance += move_speed * delta
 	if travelled_distance > RANGE:
 		queue_free()
 

@@ -9,10 +9,34 @@ func spawn_asteroid():
 	var new_asteroid = ASTEROID.instantiate()
 	%PathFollow2D.progress_ratio = randf()
 	new_asteroid.global_position = %PathFollow2D.global_position
-	add_child(new_asteroid)
+	var asteroids_group = get_tree().get_first_node_in_group("asteroids")
+	asteroids_group.add_child(new_asteroid)
 
 func _on_timer_timeout():
 	spawn_asteroid()
+	if score > 2:
+		spawn_asteroid()
+	if score > 4:
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+	if score > 8:
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+	if score > 10:
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+		spawn_asteroid()
+	
 
 func add_ore():
 	score += 1

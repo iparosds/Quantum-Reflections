@@ -74,39 +74,39 @@ rotation = -0.00413576
 stream = ExtResource("4_vtupa")
 autoplay = true
 
-[node name="Turret1" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretN" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(4.76837e-07, -10)
 rotation = -1.57528
 
-[node name="Turret2" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretE" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 
-[node name="Turret3" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretS" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(0, 12)
 rotation = 1.5708
 
-[node name="Turret4" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretW" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 rotation = 3.14159
 
-[node name="Turret5" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretNE" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(1, -6)
 rotation = -0.785398
 
-[node name="Turret6" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretNW" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(-2.38419e-07, -5)
 rotation = -2.4567
 
-[node name="Turret7" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretSE" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(3, 9)
 rotation = -5.6348
 
-[node name="Turret8" parent="." instance=ExtResource("3_w8iht")]
+[node name="TurretSW" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true
 position = Vector2(-2, 8)
 rotation = -3.90398

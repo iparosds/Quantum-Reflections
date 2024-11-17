@@ -49,7 +49,7 @@ position = Vector2(629, 342)
 texture = ExtResource("3_aelue")
 
 [node name="AsteroidInterval" type="Timer" parent="."]
-wait_time = 0.2
+wait_time = 0.42
 autostart = true
 
 [node name="Pause" type="CanvasLayer" parent="."]
@@ -126,5 +126,9 @@ text = "0 ores."
 tile_set = SubResource("TileSet_nw3xg")
 format = 2
 layer_0/tile_data = PackedInt32Array(65536, 0, 0, 327694, 0, 0, -1048547, 0, 0, -5505124, 0, 0, -5570660, 0, 0, 1638244, 0, 0, 1572708, 0, 0, 4849850, 0, 0, 16449651, 0, 0, 14090017, 0, 0, 4259921, 0, 0, -4980838, 65536, 0, -3014546, 65536, 0, 4194181, 65536, 0, 4718646, 131072, 0, -5439520, 131072, 0, -5505056, 131072, 0, 983074, 196608, 0, -131077, 131072, 0, -458746, 131072, 0, 262153, 131072, 0, 589818, 131072, 0, -458769, 131072, 0, -458755, 65536, 0, 196596, 65536, 0, -327679, 196608, 0, 196611, 196608, 0, 327676, 131072, 0, -524298, 131072, 0, -458737, 131072, 0, -65525, 131072, 0, 655365, 131072, 0, 524275, 131072, 0, -65552, 131072, 0)
+
+[node name="Projectiles" type="Node2D" parent="." groups=["projectile_parent"]]
+
+[node name="Asteroids" type="Node2D" parent="." groups=["asteroids"]]
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
