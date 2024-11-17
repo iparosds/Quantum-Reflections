@@ -1,0 +1,70 @@
+[gd_scene load_steps=11 format=3 uid="uid://b41jjpavdldes"]
+
+[ext_resource type="Script" path="res://scripts/black_hole.gd" id="1_10fyn"]
+[ext_resource type="Texture2D" uid="uid://cdhax1x2tonm3" path="res://assets/sprites/buraco negro.png" id="1_glvi2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yp22"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(0, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hhwv7"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(64, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5v0e"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(128, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m48hv"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(192, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_70kag"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(256, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_62stn"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(320, 0, 64, 59)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4rwcr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yp22")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hhwv7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d5v0e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m48hv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_70kag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_62stn")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ae7m5"]
+radius = 28.0713
+
+[node name="BlackHole" type="Area2D"]
+script = ExtResource("1_10fyn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4rwcr")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ae7m5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

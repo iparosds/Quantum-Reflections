@@ -1,7 +1,93 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdfj5mokmxuxt"]
+[gd_scene load_steps=15 format=3 uid="uid://cdfj5mokmxuxt"]
 
 [ext_resource type="Script" path="res://scripts/Asteroid.gd" id="1_mgqqj"]
 [ext_resource type="Texture2D" uid="uid://c4sr8oscwaor2" path="res://assets/sprites/asteroide01.png" id="2_ynw8h"]
+[ext_resource type="Texture2D" uid="uid://dx5bfay4jiixu" path="res://assets/sprites/asteroide02.png" id="3_tcq3t"]
+[ext_resource type="Texture2D" uid="uid://det8kav00i84l" path="res://assets/sprites/asteroide03.png" id="4_huldx"]
+[ext_resource type="Texture2D" uid="uid://b60r3ywngvxtm" path="res://assets/sprites/explode_asteroide.png" id="5_dgnjn"]
+[ext_resource type="Texture2D" uid="uid://dtqj60jwhf2qj" path="res://assets/sprites/minerio.png" id="5_sf38f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yg5wq"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fycg"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ixphh"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6idua"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06p11"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slfqt"]
+atlas = ExtResource("5_dgnjn")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jogq0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ynw8h")
+}],
+"loop": true,
+"name": &"asteroid01",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_tcq3t")
+}],
+"loop": true,
+"name": &"asteroid02",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_huldx")
+}],
+"loop": true,
+"name": &"asteroid03",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_sf38f")
+}],
+"loop": true,
+"name": &"coin",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_yg5wq")
+}, {
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_8fycg")
+}, {
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_ixphh")
+}, {
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_6idua")
+}, {
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_06p11")
+}, {
+"duration": 0.5,
+"texture": SubResource("AtlasTexture_slfqt")
+}],
+"loop": false,
+"name": &"explosion",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_vyoty"]
 radius = 8.0
@@ -10,8 +96,9 @@ radius = 8.0
 collision_layer = 2
 script = ExtResource("1_mgqqj")
 
-[node name="Asteroide01" type="Sprite2D" parent="."]
-texture = ExtResource("2_ynw8h")
+[node name="Asteroid" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jogq0")
+animation = &"coin"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_vyoty")

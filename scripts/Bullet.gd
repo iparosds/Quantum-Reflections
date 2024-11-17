@@ -1,8 +1,8 @@
 extends Area2D
 
 var travelled_distance = 0
-const SPEED = 2000
-const RANGE = 3000
+const SPEED = 200
+const RANGE = 300
 var direction
 @onready var bullet_rotation = rotation
 #@onready var bullet_rotation = %Projectile.rotation
@@ -18,6 +18,8 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_body_entered(body):
-	queue_free()
 	if body.has_method("take_damage"):
 		body.take_damage()
+	%Projectile.play("contact")
+	#await %Projectile.tree_exited 
+	#queue_free()

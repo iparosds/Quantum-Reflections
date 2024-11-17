@@ -1,7 +1,9 @@
 extends CharacterBody2D;
 
 signal health_depleted;
+const BLACK_HOLE = preload("res://scenes/black_hole.tscn")
 
+@onready var game = get_node("/root/Game")
 var health = 100.0;
 const DAMAGE_RATE = 500.0;
 var acceleration = 0;
@@ -9,6 +11,16 @@ var accelelariting = false;
 var stopping = false;
 var rotating_right = false;
 var rotating_left = false;
+
+func _ready():
+	%Turret1.current_bullet = 1
+	%Turret2.current_bullet = 1
+	%Turret3.current_bullet = 1
+	%Turret4.current_bullet = 1
+	%Turret5.current_bullet = 1
+	%Turret6.current_bullet = 1
+	%Turret7.current_bullet = 1
+	%Turret8.current_bullet = 1
 
 func _physics_process(delta):
 	if Input.is_action_just_released("move_up"):
@@ -41,11 +53,21 @@ func _physics_process(delta):
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		$".".position += direction2 * acceleration * delta
+		%SpeedBar.value = acceleration/10
 
 	var overlapping_mobs = %HurtBox.get_overlapping_bodies()
 	for mob in overlapping_mobs:
 		health -= DAMAGE_RATE * delta
 		mob.queue_free()
+	var overlapping_ores = %CollectOre.get_overlapping_bodies()
+	for mob in overlapping_ores:
+		if mob.has_method("take_damage"):
+			game.add_ore()
+			mob.queue_free()
 	if health <= 0.0:
+		health = 100
+		var new_black_hole = BLACK_HOLE.instantiate()
+		new_black_hole.position = $".".position
+		game.add_child(new_black_hole)
 		health_depleted.emit()
 	%ProgressBar.value = health
