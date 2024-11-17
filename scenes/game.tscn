@@ -9,9 +9,9 @@
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -722, -528, 0, 0, 0, 0, 674, -510, 0, 0, 0, 0, 684, 412, 0, 0, 0, 0, -732, 420, 0, 0, 0, 0, -726, -498, 0, 0, 0, 0, -722, -528)
+"points": PackedVector2Array(0, 0, 0, 0, -657, -396, 0, 0, 0, 0, 643, -392, 0, 0, 0, 0, 635, 390, 0, 0, 0, 0, -657, 384, 0, 0, 0, 0, -657, -396)
 }
-point_count = 6
+point_count = 5
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dvhfc"]
 texture = ExtResource("5_sceap")
@@ -44,7 +44,6 @@ script = ExtResource("1_ca608")
 
 [node name="Player" parent="." instance=ExtResource("2_yxpby")]
 unique_name_in_owner = true
-visible = false
 position = Vector2(1, 0)
 
 [node name="Path2D" type="Path2D" parent="Player"]
@@ -52,8 +51,8 @@ curve = SubResource("Curve2D_q82x3")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
 unique_name_in_owner = true
-position = Vector2(-722, -528)
-rotation = 0.0128933
+position = Vector2(-657, -396)
+rotation = 0.00307691
 
 [node name="Camera2D2" type="Camera2D" parent="Player"]
 limit_smoothed = true
