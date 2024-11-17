@@ -34,6 +34,7 @@ func _on_quit_pressed() -> void:
 	$select_sound.play()
 	get_tree().quit()
 
+
 func _physics_process(delta):
 	if Input.is_action_just_pressed("move_up"):
 		$up_sound.play()
