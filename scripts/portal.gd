@@ -4,8 +4,14 @@ extends Area2D
 var activated = true
 
 func activate_portal():
+	get_tree().paused = true
 	print('entrou')
 	pass
+
+func _process(delta):
+	if Input.is_action_just_pressed("pause"):
+		if get_tree().paused == true:
+			get_tree().paused = false
 
 func _on_body_entered(body):
 	if activated == true:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://cmse1wp3m74k0"]
+[gd_scene load_steps=14 format=3 uid="uid://cmse1wp3m74k0"]
 
 [ext_resource type="Script" path="res://scripts/Bullet.gd" id="1_bel33"]
 [ext_resource type="Texture2D" uid="uid://6mkay5ytpjqd" path="res://assets/sprites/explosao nova.png" id="2_3r8ol"]
@@ -35,6 +35,10 @@ region = Rect2(371, 0, 53, 49)
 atlas = ExtResource("2_3r8ol")
 region = Rect2(0, 0, 53, 49)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_adtbf"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(53, 0, 53, 49)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_jbvwe"]
 animations = [{
 "frames": [{
@@ -70,6 +74,14 @@ animations = [{
 "loop": true,
 "name": &"default",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adtbf")
+}],
+"loop": true,
+"name": &"quantum",
+"speed": 5.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qfyl0"]
@@ -83,6 +95,7 @@ script = ExtResource("1_bel33")
 [node name="Projectile" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
 sprite_frames = SubResource("SpriteFrames_jbvwe")
+animation = &"quantum"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_qfyl0")

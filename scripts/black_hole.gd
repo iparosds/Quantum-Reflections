@@ -10,6 +10,12 @@ func _on_body_entered(body):
 				game.game_over()
 				print("acabou")
 
+func _physics_process(delta):
+	if game.quantum == false:
+		$AnimatedSprite2D.play("default")
+	else:
+		$AnimatedSprite2D.play("quantum")
+
 func _on_body_exited(body):
 	activated = true
 	pass
