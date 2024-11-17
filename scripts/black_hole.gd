@@ -8,6 +8,6 @@ func _on_body_entered(body):
 		game.game_over()
 		print("acabou")
 
-
 func _on_body_exited(body):
 	activated = true
+	pass

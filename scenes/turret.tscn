@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://3vn8y1jlk7vp"]
+[gd_scene load_steps=4 format=3 uid="uid://3vn8y1jlk7vp"]
 
 [ext_resource type="Script" path="res://scripts/Turret.gd" id="1_6yqcy"]
+[ext_resource type="Resource" uid="uid://dlrki4wkv4x67" path="res://scripts/projectile_basic.tres" id="2_rhjlg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0x0pm"]
 radius = 2032.41
@@ -9,16 +10,10 @@ radius = 2032.41
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_6yqcy")
+projectile = ExtResource("2_rhjlg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_0x0pm")
-
-[node name="TurretPivot" type="Marker2D" parent="."]
-rotation = -0.00174922
-
-[node name="ShootingInterval" type="Timer" parent="."]
-wait_time = 0.6
-autostart = true
 
 [node name="Turret" type="Sprite2D" parent="."]
 position = Vector2(6.99999, -0.0122262)
@@ -28,5 +23,9 @@ scale = Vector2(1.5, 1.5)
 [node name="ShootingPoint" type="Marker2D" parent="Turret"]
 unique_name_in_owner = true
 position = Vector2(1, 0.015)
+
+[node name="ShootingInterval" type="Timer" parent="."]
+wait_time = 0.6
+autostart = true
 
 [connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]

@@ -13,16 +13,30 @@ var rotating_right = false;
 var rotating_left = false;
 
 func _ready():
-	%Turret1.current_bullet = 1
+	%Turret1.current_bullet = 0
 	%Turret2.current_bullet = 1
-	%Turret3.current_bullet = 1
-	%Turret4.current_bullet = 1
-	%Turret5.current_bullet = 1
-	%Turret6.current_bullet = 1
-	%Turret7.current_bullet = 1
-	%Turret8.current_bullet = 1
+	%Turret3.current_bullet = 0
+	%Turret4.current_bullet = 0
+	%Turret5.current_bullet = 0
+	%Turret6.current_bullet = 0
+	%Turret7.current_bullet = 0
+	%Turret8.current_bullet = 0
 
 func _physics_process(delta):
+	if game.get_score() > 2:
+		%Turret1.current_bullet = 1
+	if game.get_score() > 3:
+		%Turret3.current_bullet = 1
+	if game.get_score() > 4:
+		%Turret4.current_bullet = 1
+	if game.get_score() > 5:
+		%Turret5.current_bullet = 1
+	if game.get_score() > 6:
+		%Turret6.current_bullet = 1
+	if game.get_score() > 7:
+		%Turret7.current_bullet = 1
+	if game.get_score() > 8:
+		%Turret8.current_bullet = 1
 	if Input.is_action_just_released("move_up"):
 		accelelariting = false
 	if Input.is_action_just_pressed("move_up"):

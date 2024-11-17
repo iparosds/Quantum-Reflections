@@ -35,6 +35,7 @@ script = ExtResource("1_xdt2u")
 
 [node name="Ship" parent="." instance=ExtResource("2_j6r6q")]
 unique_name_in_owner = true
+rotation = 1.5708
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)

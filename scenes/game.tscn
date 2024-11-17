@@ -1,15 +1,28 @@
-[gd_scene load_steps=6 format=3 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=9 format=3 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="Texture2D" uid="uid://dbomakkp7kcl7" path="res://assets/sprites/bg.png" id="3_aelue"]
 [ext_resource type="Script" path="res://scripts/Pause.gd" id="4_lrqhk"]
+[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, -722, -528, 0, 0, 0, 0, 674, -510, 0, 0, 0, 0, 684, 412, 0, 0, 0, 0, -732, 420, 0, 0, 0, 0, -726, -498, 0, 0, 0, 0, -722, -528)
 }
 point_count = 6
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dvhfc"]
+texture = ExtResource("5_sceap")
+texture_region_size = Vector2i(50, 50)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_nw3xg"]
+tile_size = Vector2i(50, 50)
+sources/0 = SubResource("TileSetAtlasSource_dvhfc")
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_ca608")
@@ -31,6 +44,7 @@ limit_smoothed = true
 position_smoothing_enabled = true
 
 [node name="Bg" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(629, 342)
 texture = ExtResource("3_aelue")
 
@@ -107,5 +121,10 @@ offset_bottom = -45.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "0 ores."
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_nw3xg")
+format = 2
+layer_0/tile_data = PackedInt32Array(65536, 0, 0, 327694, 0, 0, -1048547, 0, 0, -5505124, 0, 0, -5570660, 0, 0, 1638244, 0, 0, 1572708, 0, 0, 4849850, 0, 0, 16449651, 0, 0, 14090017, 0, 0, 4259921, 0, 0, -4980838, 65536, 0, -3014546, 65536, 0, 4194181, 65536, 0, 4718646, 131072, 0, -5439520, 131072, 0, -5505056, 131072, 0, 983074, 196608, 0, -131077, 131072, 0, -458746, 131072, 0, 262153, 131072, 0, 589818, 131072, 0, -458769, 131072, 0, -458755, 65536, 0, 196596, 65536, 0, -327679, 196608, 0, 196611, 196608, 0, 327676, 131072, 0, -524298, 131072, 0, -458737, 131072, 0, -65525, 131072, 0, 655365, 131072, 0, 524275, 131072, 0, -65552, 131072, 0)
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]

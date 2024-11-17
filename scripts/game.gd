@@ -21,3 +21,6 @@ func add_ore():
 func game_over():
 	%GameOver.visible = true
 	get_tree().paused = true
+
+func get_score():
+	return score;

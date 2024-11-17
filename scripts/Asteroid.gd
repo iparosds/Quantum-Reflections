@@ -3,7 +3,7 @@ extends CharacterBody2D
 var health = 3
 var moving = true
 var ore = false
-const SHIP_ATTRACTION = 10000.0
+const SHIP_ATTRACTION = 100.0
 @onready var player = get_node("/root/Game/Player")
 
 func _ready():
