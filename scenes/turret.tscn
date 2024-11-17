@@ -17,18 +17,18 @@ shape = SubResource("CircleShape2D_0x0pm")
 [node name="TurretPivot" type="Marker2D" parent="."]
 rotation = -0.00174922
 
-[node name="Turret" type="Sprite2D" parent="TurretPivot"]
-position = Vector2(7, 1.83765e-05)
-rotation = 0.0144207
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_jqimm")
-
-[node name="ShootingPoint" type="Marker2D" parent="TurretPivot/Turret"]
-unique_name_in_owner = true
-position = Vector2(1, 0.015)
-
 [node name="ShootingInterval" type="Timer" parent="."]
 wait_time = 0.3
 autostart = true
+
+[node name="Turret" type="Sprite2D" parent="."]
+position = Vector2(6.99999, -0.0122262)
+rotation = 0.0126715
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_jqimm")
+
+[node name="ShootingPoint" type="Marker2D" parent="Turret"]
+unique_name_in_owner = true
+position = Vector2(1, 0.015)
 
 [connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]

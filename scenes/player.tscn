@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://exvs04d5gcyx"]
+[gd_scene load_steps=11 format=3 uid="uid://exvs04d5gcyx"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_xdt2u"]
 [ext_resource type="PackedScene" uid="uid://bfxtc14hrjx1i" path="res://scenes/ship.tscn" id="2_j6r6q"]
@@ -17,7 +17,13 @@ height = 32.0
 bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5x0j0"]
-bg_color = Color(0.0941176, 0.0431373, 0.6, 0.572549)
+bg_color = Color(0.0941176, 0.0431373, 0.6, 0.913725)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vijf"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kbtyy"]
+bg_color = Color(0.0941176, 1, 0.6, 0.572549)
 
 [node name="Player" type="CharacterBody2D"]
 z_index = 5
@@ -56,4 +62,49 @@ rotation = -0.00413576
 stream = ExtResource("4_vtupa")
 autoplay = true
 
-[node name="Turret" parent="." instance=ExtResource("3_w8iht")]
+[node name="Turret1" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(4.76837e-07, -10)
+rotation = -1.57528
+
+[node name="Turret2" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+
+[node name="Turret3" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(0, 12)
+rotation = 1.5708
+
+[node name="Turret4" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+rotation = 3.14159
+
+[node name="Turret5" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(1, -6)
+rotation = -0.785398
+
+[node name="Turret6" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(-2.38419e-07, -5)
+rotation = -2.4567
+
+[node name="Turret7" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(3, 9)
+rotation = -5.6348
+
+[node name="Turret8" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(-2, 8)
+rotation = -3.90398
+
+[node name="SpeedBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+offset_left = -22.0
+offset_top = 25.0
+offset_right = 23.0
+offset_bottom = 29.0
+theme_override_styles/background = SubResource("StyleBoxFlat_4vijf")
+theme_override_styles/fill = SubResource("StyleBoxFlat_kbtyy")
+show_percentage = false

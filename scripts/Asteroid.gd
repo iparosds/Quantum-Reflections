@@ -11,7 +11,7 @@ func _physics_process(delta):
 
 func take_damage():
 	player.acceleration
-	print(player.acceleration)
+	health -= 3
 	health -= player.acceleration/100
 	
 	if health <= 0:
