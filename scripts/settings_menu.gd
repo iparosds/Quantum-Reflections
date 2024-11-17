@@ -21,6 +21,7 @@ func _on_back_pressed() -> void:
 	
 func _on_resolution_pressed() -> void:
 	$select_sound.play()
+	get_tree().change_scene_to_file("res://scenes/resolution.tscn")
 
 
 func _physics_process(delta):
