@@ -21,13 +21,7 @@ func _on_settings_pressed() -> void:
 	$select_sound.play()
 	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
 
-func _on_rewards_pressed() -> void:
-	$select_sound.play()
-
 func _on_credits_pressed() -> void:
-	$select_sound.play()
-
-func _on_start_pressed() -> void:
 	$select_sound.play()
 
 func _on_quit_pressed() -> void:
@@ -48,11 +42,7 @@ func _on_new_game_mouse_entered() -> void:
 	$down_sound.play()
 func _on_settings_mouse_entered() -> void:
 	$down_sound.play()
-func _on_rewards_mouse_entered() -> void:
-	$down_sound.play()
 func _on_credits_mouse_entered() -> void:
-	$down_sound.play()
-func _on_start_mouse_entered() -> void:
 	$down_sound.play()
 func _on_quit_mouse_entered() -> void:
 	$down_sound.play()
