@@ -1,9 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=10 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_l1qqr"]
 [ext_resource type="Texture2D" uid="uid://cqvqrxuxky4ih" path="res://assets/sprites/logo copiar.png" id="2_y8hp7"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_7krxr"]
-[ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="3_8h3rd"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="3_la3r8"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="4_ath1i"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="5_lao82"]
@@ -123,9 +122,6 @@ theme_override_fonts/font = ExtResource("3_la3r8")
 theme_override_font_sizes/font_size = 12
 text = "Quit"
 flat = true
-
-[node name="menu_music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_8h3rd")
 
 [node name="down_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_7krxr")

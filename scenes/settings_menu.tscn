@@ -1,8 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=9 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_5ttin"]
-[ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="2_h3f4r"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="2_mrlip"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="3_v2gib"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
@@ -13,6 +12,7 @@ default_font_size = 24
 
 [sub_resource type="LabelSettings" id="LabelSettings_5hkut"]
 font_size = 12
+font_color = Color(0.486275, 0.494118, 0.631373, 1)
 
 [node name="Settings Menu" type="Control"]
 layout_mode = 3
@@ -48,10 +48,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -88.0
-offset_right = 171.0
-offset_bottom = 236.0
+offset_left = -165.5
+offset_top = -162.0
+offset_right = 165.5
+offset_bottom = 162.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -85,9 +85,6 @@ theme_override_font_sizes/font_size = 12
 text = "Back"
 flat = true
 
-[node name="menu_music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_h3f4r")
-
 [node name="down_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_mrlip")
 
@@ -101,11 +98,19 @@ stream = ExtResource("4_ny5do")
 stream = ExtResource("5_jp286")
 
 [node name="Label2" type="Label" parent="."]
-layout_mode = 0
-offset_left = 20.0
-offset_top = 616.0
-offset_right = 158.0
-offset_bottom = 639.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -273.0
+offset_top = 139.0
+offset_right = -135.0
+offset_bottom = 162.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_5ttin")
 text = "ESC to go to main menu"
 label_settings = SubResource("LabelSettings_5hkut")
 horizontal_alignment = 1

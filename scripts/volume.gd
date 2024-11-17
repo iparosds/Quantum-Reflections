@@ -3,7 +3,6 @@ extends Control
 @onready var back = $Back as Button
 
 func _ready():
-	$menu_music.play()
 	back.grab_focus()
 
 func _on_volume_value_changed(_value: float) -> void:

@@ -4,7 +4,6 @@ extends Control
 @onready var back = $MarginContainer/VBoxContainer/Back as Button
 
 func _ready():
-	$menu_music.play()
 	volume.grab_focus()
 
 func _on_volume_pressed() -> void:

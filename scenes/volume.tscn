@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" path="res://scripts/volume.gd" id="1_efkki"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_75e1g"]
-[ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="2_had5s"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="3_mr224"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="4_4fa2d"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1m1bf"]
 font = ExtResource("2_75e1g")
 font_color = Color(0.705882, 0.709804, 0.258824, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_43ec8"]
 
 [node name="Volume" type="Control"]
 layout_mode = 3
@@ -48,10 +49,15 @@ label_settings = SubResource("LabelSettings_1m1bf")
 [node name="Volume" type="HSlider" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
+focus_neighbor_top = NodePath("../../../Back")
+focus_neighbor_bottom = NodePath("../CheckBox")
+theme_override_styles/slider = SubResource("StyleBoxEmpty_43ec8")
 
 [node name="CheckBox" type="CheckBox" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
+focus_neighbor_top = NodePath("../Volume")
+focus_neighbor_bottom = NodePath("../../../Back")
 theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
 theme_override_colors/font_pressed_color = Color(0.486275, 0.494118, 0.631373, 1)
 theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
@@ -59,9 +65,6 @@ theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
 theme_override_font_sizes/font_size = 12
 text = "Mute"
 expand_icon = true
-
-[node name="menu_music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("2_had5s")
 
 [node name="select_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_mr224")
@@ -82,6 +85,8 @@ offset_right = 18.5
 offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_neighbor_top = NodePath("../MarginContainer/VBoxContainer/CheckBox")
+focus_neighbor_bottom = NodePath("../MarginContainer/VBoxContainer/Volume")
 theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
 theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
 theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
