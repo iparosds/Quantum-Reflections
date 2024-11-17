@@ -12,10 +12,14 @@
 default_font_size = 24
 
 [sub_resource type="LabelSettings" id="LabelSettings_nn863"]
+font = ExtResource("3_la3r8")
 font_size = 12
+font_color = Color(0.486275, 0.494118, 0.631373, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_yxhpx"]
+font = ExtResource("3_la3r8")
 font_size = 12
+font_color = Color(0.486275, 0.494118, 0.631373, 1)
 
 [node name="Menu" type="Control"]
 layout_mode = 3
