@@ -1,7 +1,8 @@
-[gd_scene load_steps=11 format=4 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=13 format=4 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
+[ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
 [ext_resource type="Script" path="res://scripts/Pause.gd" id="4_lrqhk"]
 [ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
@@ -35,11 +36,15 @@ texture_region_size = Vector2i(50, 50)
 [sub_resource type="TileSet" id="TileSet_5ghot"]
 sources/0 = SubResource("TileSetAtlasSource_7l8sx")
 
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_tkgxg"]
+distance = -742.0
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_ca608")
 
 [node name="Player" parent="." instance=ExtResource("2_yxpby")]
 unique_name_in_owner = true
+visible = false
 position = Vector2(1, 0)
 
 [node name="Path2D" type="Path2D" parent="Player"]
@@ -126,6 +131,7 @@ offset_right = 22.0
 offset_bottom = -45.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_coeoj")
 text = "0 ores."
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -146,5 +152,11 @@ position = Vector2(127, 22)
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AADz/+z/AAACAAAAAAAcAAwAAAACAAAAAAAbAAwAAAACAAAAAAAaAOj/AAACAAAAAAD1/9z/AAACAAAAAADe////AAACAAAAAAD+/x4AAAACAAAAAAD5/wUAAAACAAAAAADr//L/AAACAAAAAAAQAPL/AAACAAAAAADj/wIAAAACAAAAAAD6//H/AAADAAAAAAAGAAkAAAABAAAAAAAaAPf/AAABAAAAAAD//xMAAAACAAAAAADs/w4AAAAAAAAAAADr//3/AAABAAAAAAAGAOP/AAACAAAAAAA=")
 tile_set = SubResource("TileSet_5ghot")
+
+[node name="WorldLimit" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldLimit"]
+position = Vector2(-8, 85)
+shape = SubResource("WorldBoundaryShape2D_tkgxg")
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
