@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Projectile" load_steps=5 format=3 uid="uid://byjt0mjhvkhyr"]
+[gd_resource type="Resource" script_class="Projectile" load_steps=5 format=3 uid="uid://dlrki4wkv4x67"]
 
 [ext_resource type="Texture2D" uid="uid://6mkay5ytpjqd" path="res://assets/sprites/explosao nova.png" id="1_lrj2o"]
 [ext_resource type="Script" path="res://scripts/projectile.gd" id="2_hambk"]
