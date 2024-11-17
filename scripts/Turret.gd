@@ -19,6 +19,7 @@ func _ready() -> void:
 	assert(projectiles_node != null, "Projectiles node is required")
 
 func shoot():
+	$AudioStreamPlayer2D.play()
 	var new_bullet = projectile.scene.instantiate()
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()

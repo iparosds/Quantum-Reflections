@@ -14,14 +14,16 @@ func spawn_asteroid():
 	asteroids_group.add_child(new_asteroid)
 
 func reset_quantum():
-	if randi_range(0,20) == 0:
+	if randi_range(0,10) == 0:
 		quantum = false;
 
 func _physics_process(delta):
 	if quantum == true:
-		RenderingServer.set_default_clear_color(Color.hex(0x2f213bff))
-	else:
+		Engine.time_scale = 0.5
 		RenderingServer.set_default_clear_color(Color.hex(0x7c7ea1ff))
+	else:
+		Engine.time_scale = 1
+		RenderingServer.set_default_clear_color(Color.hex(0x2f213bff))
 		
 func _on_timer_timeout():
 	if quantum == true:
@@ -49,7 +51,6 @@ func _on_timer_timeout():
 		spawn_asteroid()
 		spawn_asteroid()
 		spawn_asteroid()
-	
 
 func add_ore():
 	score += 1

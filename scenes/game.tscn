@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=11 format=4 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
@@ -23,6 +23,17 @@ texture_region_size = Vector2i(50, 50)
 [sub_resource type="TileSet" id="TileSet_nw3xg"]
 tile_size = Vector2i(50, 50)
 sources/0 = SubResource("TileSetAtlasSource_dvhfc")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7l8sx"]
+texture = ExtResource("5_sceap")
+texture_region_size = Vector2i(50, 50)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_5ghot"]
+sources/0 = SubResource("TileSetAtlasSource_7l8sx")
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_ca608")
@@ -118,6 +129,7 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 text = "0 ores."
 
 [node name="TileMap" type="TileMap" parent="."]
+visible = false
 tile_set = SubResource("TileSet_nw3xg")
 format = 2
 layer_0/tile_data = PackedInt32Array(65536, 0, 0, 327694, 0, 0, -1048547, 0, 0, -5505124, 0, 0, -5570660, 0, 0, 1638244, 0, 0, 1572708, 0, 0, 4849850, 0, 0, 16449651, 0, 0, 14090017, 0, 0, 4259921, 0, 0, -4980838, 65536, 0, -3014546, 65536, 0, 4194181, 65536, 0, 4718646, 131072, 0, -5439520, 131072, 0, -5505056, 131072, 0, 983074, 196608, 0, -131077, 131072, 0, -458746, 131072, 0, 262153, 131072, 0, 589818, 131072, 0, -458769, 131072, 0, -458755, 65536, 0, 196596, 65536, 0, -327679, 196608, 0, 196611, 196608, 0, 327676, 131072, 0, -524298, 131072, 0, -458737, 131072, 0, -65525, 131072, 0, 655365, 131072, 0, 524275, 131072, 0, -65552, 131072, 0)
@@ -130,5 +142,9 @@ layer_0/tile_data = PackedInt32Array(65536, 0, 0, 327694, 0, 0, -1048547, 0, 0, 
 
 [node name="Portal" parent="Portals" instance=ExtResource("5_80oj7")]
 position = Vector2(127, 22)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AADz/+z/AAACAAAAAAAcAAwAAAACAAAAAAAbAAwAAAACAAAAAAAaAOj/AAACAAAAAAD1/9z/AAACAAAAAADe////AAACAAAAAAD+/x4AAAACAAAAAAD5/wUAAAACAAAAAADr//L/AAACAAAAAAAQAPL/AAACAAAAAADj/wIAAAACAAAAAAD6//H/AAADAAAAAAAGAAkAAAABAAAAAAAaAPf/AAABAAAAAAD//xMAAAACAAAAAADs/w4AAAAAAAAAAADr//3/AAABAAAAAAAGAOP/AAACAAAAAAA=")
+tile_set = SubResource("TileSet_5ghot")
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]

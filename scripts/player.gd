@@ -27,7 +27,7 @@ func _ready():
 
 func _physics_process(delta):
 	if game.get_score() > 1:
-		%TurretW.current_bullet = 1
+		%TurretW.current_bullet = 2
 	if game.get_score() > 10:
 		%TurretS.current_bullet = 1
 	if game.get_score() > 50:
