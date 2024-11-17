@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
-[ext_resource type="Script" path="res://scripts/Pause.gd" id="4_lrqhk"]
-[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
+[ext_resource type="PackedScene" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 [ext_resource type="Script" path="res://scripts/world_limit.gd" id="7_0xqwm"]
+[ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
@@ -51,36 +51,9 @@ position_smoothing_enabled = true
 wait_time = 0.42
 autostart = true
 
-[node name="Pause" type="CanvasLayer" parent="."]
-unique_name_in_owner = true
-process_mode = 3
-visible = false
-script = ExtResource("4_lrqhk")
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="ColorRect" type="ColorRect" parent="Pause"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.337255)
-
-[node name="Label" type="Label" parent="Pause/ColorRect"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -199.0
-offset_top = -41.5
-offset_right = 199.0
-offset_bottom = 41.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 60
-text = "Game Paused"
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("8_de88q")]
 
 [node name="GameOver" type="CanvasLayer" parent="."]
 unique_name_in_owner = true

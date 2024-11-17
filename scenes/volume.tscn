@@ -26,8 +26,8 @@ size_flags_vertical = 4
 script = ExtResource("1_efkki")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(374, 216)
-scale = Vector2(0.4, 0.4)
+position = Vector2(381, 228)
+scale = Vector2(0.4, 0.412037)
 texture = ExtResource("3_v6mll")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
