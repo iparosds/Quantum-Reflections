@@ -5,14 +5,24 @@ const BLACK_HOLE = preload("res://scenes/black_hole.tscn")
 @onready var game = get_node("/root/Game")
 var health = 100.0;
 const DAMAGE_RATE = 500.0;
-var acceleration = 0;
+var acceleration = 0.0;
+const MAX_ACCELERATION = 1000.0
 var accelelariting = false;
+var boosting = false;
 var stopping = false;
 var rotating_right = false;
 var rotating_left = false;
 
 func is_player():
 	return true;
+
+func world_limit(size):
+	var player_position = global_position
+	var vx = 563 - player_position.x
+	var vy = 339 - player_position.y
+	var length = sqrt(vx*vx + vy*vy)
+	global_position.x = vx / length * size + 563
+	global_position.y = vy / length * size + 339
 
 func portal():
 	if %TurretN.current_bullet != 0:
@@ -34,17 +44,17 @@ func portal():
 	pass
 
 func add_turrets():
-	if game.get_score() > 1:
-		%TurretW.current_bullet = 2
 	if game.get_score() > 10:
-		%TurretS.current_bullet = 1
+		%TurretW.current_bullet = 1
 	if game.get_score() > 50:
-		%TurretN.current_bullet = 1
+		%TurretS.current_bullet = 1
 	if game.get_score() > 100:
-		%TurretNW.current_bullet = 1
+		%TurretN.current_bullet = 1
 	if game.get_score() > 200:
-		%TurretSE.current_bullet = 1
+		%TurretNW.current_bullet = 1
 	if game.get_score() > 400:
+		%TurretSE.current_bullet = 1
+	if game.get_score() > 600:
 		%TurretNE.current_bullet = 1
 	if game.get_score() > 800:
 		%TurretSW.current_bullet = 1
@@ -69,13 +79,19 @@ func _physics_process(delta):
 		accelelariting = false
 	if Input.is_action_just_pressed("move_up"):
 		accelelariting = true
-	if accelelariting == true && acceleration < 1000:
+	if Input.is_action_just_released("boost"):
+		boosting = false
+	if Input.is_action_just_pressed("boost"):
+		boosting = true
+	if accelelariting == true && stopping == false && acceleration < 1000:
 		acceleration += 1
+	if boosting == true && stopping == false && acceleration < 990:
+		acceleration += 5
 	if Input.is_action_just_released("move_down"):
 		stopping = false
 	if Input.is_action_just_pressed("move_down"):
 		stopping = true
-	if stopping == true && acceleration > 0:
+	if stopping == true && accelelariting == false && acceleration > 10:
 		acceleration -= 5
 	if stopping == false && accelelariting == false && acceleration > 0:
 		acceleration -= 1
@@ -83,27 +99,36 @@ func _physics_process(delta):
 		rotating_right = true
 	if Input.is_action_just_released("move_right"):
 		rotating_right = false
-	if rotating_right == true:
-		%Ship.rotation += 0.1
 	if Input.is_action_just_pressed("move_left"):
 		rotating_left = true
 	if Input.is_action_just_released("move_left"):
 		rotating_left = false
-	if rotating_left == true:
-		%Ship.rotation -= 0.1
+	if rotating_right == true && boosting == false:
+		%Ship.rotation += (1000-(acceleration/2))/10000.0
+	if rotating_left == true && boosting == false:
+		%Ship.rotation -= (1000-(acceleration/2))/10000.0
 		
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
-		$".".position += direction2 * acceleration * delta
+		$".".position += direction2 * (acceleration/2) * delta
 		%SpeedBar.value = acceleration/10
 
 	var overlapping_mobs = %HurtBox.get_overlapping_bodies()
 	for mob in overlapping_mobs:
-		health -= DAMAGE_RATE * delta
-		mob.queue_free()
+		if mob.has_method("player_collision"):
+			var damage = acceleration/30
+			if damage <= 10:
+				damage = 10
+			health -= damage
+			if game.quantum == true:
+				Singleton.display_number(damage, position, "#2f213b")
+			else:
+				Singleton.display_number(damage, position, "#7c7ea1")
+			mob.player_collision()
+#		mob.queue_free()
 	var overlapping_ores = %CollectOre.get_overlapping_bodies()
 	for mob in overlapping_ores:
-		if mob.has_method("take_damage"):
+		if mob.has_method("is_coin"):
 			game.add_ore()
 			mob.queue_free()
 	if health <= 0.0:

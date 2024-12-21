@@ -102,9 +102,10 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ae7m5"]
-radius = 28.0713
+radius = 20.0998
 
 [node name="BlackHole" type="Area2D"]
+collision_mask = 3
 script = ExtResource("1_10fyn")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -115,5 +116,12 @@ frame_progress = 0.496867
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_ae7m5")
 
+[node name="IncreaseSize" type="Timer" parent="."]
+autostart = true
+
+[node name="ActivateTimer" type="Timer" parent="."]
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]
+[connection signal="timeout" from="IncreaseSize" to="." method="_on_increase_size_timeout"]
+[connection signal="timeout" from="ActivateTimer" to="." method="_on_activate_timer_timeout"]

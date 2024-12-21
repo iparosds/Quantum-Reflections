@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b7lv7hiaq1ntl" path="res://assets/sprites/nave.png" id="2_7lkev"]
 [ext_resource type="Texture2D" uid="uid://dndi2isgftvkc" path="res://assets/sprites/mundo invertido/nave.png" id="3_kqf54"]
 [ext_resource type="PackedScene" uid="uid://3vn8y1jlk7vp" path="res://scenes/turret.tscn" id="3_w8iht"]
-[ext_resource type="AudioStream" uid="uid://bxbastebv484j" path="res://assets/sounds/MUSIC.mp3" id="4_vtupa"]
+[ext_resource type="AudioStream" uid="uid://cc8g2d8ra360l" path="res://assets/sounds/GAMEPLAY SONG MASTER.mp3" id="4_kxwta"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j1v7l"]
 atlas = ExtResource("2_7lkev")
@@ -42,8 +42,8 @@ radius = 7.0
 height = 32.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8adnd"]
-radius = 16.0
-height = 48.0
+radius = 15.0
+height = 56.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1q5i"]
 bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
@@ -99,8 +99,7 @@ show_percentage = false
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 rotation = -0.00413576
-stream = ExtResource("4_vtupa")
-autoplay = true
+stream = ExtResource("4_kxwta")
 
 [node name="TurretN" parent="." instance=ExtResource("3_w8iht")]
 unique_name_in_owner = true

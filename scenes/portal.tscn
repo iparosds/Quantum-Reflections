@@ -166,11 +166,11 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_ow35e"]
 
 [node name="Portal" type="Area2D"]
+collision_mask = 3
 script = ExtResource("1_h8akq")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_1eblb")
-animation = &"unloaded"
 autoplay = "default"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

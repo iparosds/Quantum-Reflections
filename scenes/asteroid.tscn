@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://cdfj5mokmxuxt"]
+[gd_scene load_steps=23 format=3 uid="uid://cdfj5mokmxuxt"]
 
 [ext_resource type="Script" path="res://scripts/Asteroid.gd" id="1_mgqqj"]
 [ext_resource type="Texture2D" uid="uid://c4sr8oscwaor2" path="res://assets/sprites/asteroide01.png" id="2_ynw8h"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://b60r3ywngvxtm" path="res://assets/sprites/explode_asteroide.png" id="5_dgnjn"]
 [ext_resource type="Texture2D" uid="uid://dtqj60jwhf2qj" path="res://assets/sprites/minerio.png" id="5_sf38f"]
 [ext_resource type="Texture2D" uid="uid://fb45i43qb8w7" path="res://assets/sprites/mundo invertido/asteroide03.png" id="7_kox2f"]
+[ext_resource type="AudioStream" uid="uid://bg3a6bx85s7d3" path="res://assets/sounds/EXPLOSÃO 2 SEM PARTICULAS.wav" id="10_dweun"]
+[ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="11_7qt8v"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_erx0o"]
 atlas = ExtResource("3_qigiv")
@@ -146,4 +148,27 @@ shape = SubResource("CircleShape2D_vyoty")
 wait_time = 0.2
 one_shot = true
 
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_dweun")
+
+[node name="AsteroidLife" type="Timer" parent="."]
+wait_time = 60.0
+one_shot = true
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = 8.0
+offset_top = -12.0
+offset_right = 61.0
+offset_bottom = 4.0
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("11_7qt8v")
+theme_override_font_sizes/font_size = 13
+text = "10.0"
+
+[node name="DamageText" type="Node2D" parent="."]
+position = Vector2(0, -17)
+
 [connection signal="timeout" from="AsteroidExplosion" to="." method="_on_asteroid_explosion_timeout"]
+[connection signal="timeout" from="AsteroidLife" to="." method="_on_asteroid_life_timeout"]

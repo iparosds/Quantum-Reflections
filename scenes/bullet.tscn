@@ -95,7 +95,7 @@ script = ExtResource("1_bel33")
 [node name="Projectile" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
 sprite_frames = SubResource("SpriteFrames_jbvwe")
-animation = &"quantum"
+animation = &"contact"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_qfyl0")
