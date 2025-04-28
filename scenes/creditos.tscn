@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://1xxwiwv6mkli"]
 
-[ext_resource type="Script" path="res://scenes/creditos.gd" id="1_72of5"]
+[ext_resource type="Script" uid="uid://b7pyo88fi3cou" path="res://scenes/creditos.gd" id="1_72of5"]
 [ext_resource type="Texture2D" uid="uid://krnpsv5q7w60" path="res://assets/sprites/creditos2.png" id="1_ltvou"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="3_kuonx"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_0k3em"]

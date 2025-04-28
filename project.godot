@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Quantum Reflections"
 run/main_scene="res://scenes/menu.tscn"
-config/features=PackedStringArray("4.3", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,6 +25,10 @@ Singleton="*res://scripts/Singleton.gd"
 window/size/mode=3
 window/subwindows/embed_subwindows=false
 window/stretch/mode="viewport"
+
+[dotnet]
+
+project/assembly_name="Quantum Reflections"
 
 [input]
 

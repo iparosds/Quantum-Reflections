@@ -1,12 +1,13 @@
-[gd_scene load_steps=15 format=4 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=16 format=4 uid="uid://bepgb8gyvqqc1"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
+[ext_resource type="Script" uid="uid://lx8jjsjniama" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
 [ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 [ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="8_d7gnp"]
 [ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
+[ext_resource type="AudioStream" uid="uid://cc8g2d8ra360l" path="res://assets/sounds/GAMEPLAY SONG MASTER.mp3" id="8_gee14"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
@@ -53,7 +54,7 @@ curve = SubResource("Curve2D_q82x3")
 [node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
 unique_name_in_owner = true
 position = Vector2(-475.155, -570.064)
-rotation = -0.404752
+rotation = -0.404754
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(-6, -6)
@@ -195,6 +196,11 @@ shape = SubResource("CircleShape2D_dgy74")
 [node name="Time" type="Timer" parent="."]
 wait_time = 0.7
 autostart = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_gee14")
+autoplay = true
+bus = &"Gameplay Music"
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="GameOver/Button" to="." method="_on_button_pressed"]
