@@ -1,5 +1,7 @@
 extends Control
 
+@onready var btn_resume: Button = $PanelContainer/VBoxContainer/Resume
+
 func _ready():
 	$AnimationPlayer.play("RESET")
 
@@ -10,6 +12,8 @@ func resume():
 func pause():
 	get_tree().paused = true
 	$AnimationPlayer.play("blur")
+	btn_resume.grab_focus()
+
 	
 func testEsc():
 	if Input.is_action_just_pressed("back") and get_tree().paused == false:
@@ -27,5 +31,5 @@ func _on_restart_pressed():
 func _on_quit_pressed():
 	get_tree().quit() 
 
-#func _process(_delta):
-#	testEsc()
+func _process(_delta):
+	testEsc()

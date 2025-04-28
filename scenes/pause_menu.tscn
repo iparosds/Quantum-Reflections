@@ -81,10 +81,11 @@ script = ExtResource("1_dx1k4")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_htex5")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 2
+offset_left = 541.0
+offset_top = 378.0
+offset_right = 611.0
+offset_bottom = 378.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -104,10 +105,10 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="Resume" type="Button" parent="PanelContainer/VBoxContainer"]
+process_mode = 3
 layout_mode = 2
 text = "Resume"
 
@@ -121,7 +122,7 @@ text = "Quit"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_hjivf")
+&"": SubResource("AnimationLibrary_hjivf")
 }
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
