@@ -13,6 +13,27 @@ var stopping = false;
 var rotating_right = false;
 var rotating_left = false;
 
+signal level_up # ← sinal que será disparado quando subir de nível
+var experience = 0
+var level = 1
+var experience_to_next_level = 1
+
+var weapons = []
+
+func add_experience(amount):
+	experience += amount
+	if experience >= experience_to_next_level:
+		experience -= experience_to_next_level
+		level += 1
+		experience_to_next_level = int(experience_to_next_level * 1.2) # aumenta para próximos níveis
+		emit_signal("level_up") # avisa o jogo que subiu de nível
+		
+
+func add_weapon(script):
+	var weapon_instance = script.new()
+	weapons.append(weapon_instance)
+	add_child(weapon_instance) # se as armas forem nós (tipo tiros, áreas de efeito, etc.)
+
 func is_player():
 	return true;
 
@@ -130,6 +151,7 @@ func _physics_process(delta):
 	for mob in overlapping_ores:
 		if mob.has_method("is_coin"):
 			game.add_ore()
+			add_experience(10) # ganha 10 de XP por ore coletado
 			mob.queue_free()
 	if health <= 0.0:
 		health = 100

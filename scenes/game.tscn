@@ -1,13 +1,15 @@
-[gd_scene load_steps=16 format=4 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=18 format=4 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" uid="uid://lx8jjsjniama" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
+[ext_resource type="PackedScene" uid="uid://c4tm26uo30pl5" path="res://scenes/level_up_menu.tscn" id="4_vtaks"]
 [ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 [ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="8_d7gnp"]
 [ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
 [ext_resource type="AudioStream" uid="uid://cc8g2d8ra360l" path="res://assets/sounds/GAMEPLAY SONG MASTER.mp3" id="8_gee14"]
+[ext_resource type="Script" uid="uid://c5fo4xscntlhy" path="res://scripts/weapons.gd" id="9_0tnpc"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
@@ -200,6 +202,13 @@ autostart = true
 stream = ExtResource("8_gee14")
 autoplay = true
 bus = &"Gameplay Music"
+
+[node name="Weapons" type="Node" parent="."]
+script = ExtResource("9_0tnpc")
+
+[node name="LevelUpMenu" type="CanvasLayer" parent="."]
+
+[node name="LevelUpMenu" parent="LevelUpMenu" instance=ExtResource("4_vtaks")]
 
 [connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="GameOver/Button" to="." method="_on_button_pressed"]

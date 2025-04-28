@@ -11,8 +11,16 @@ var portal_timer = 150.0
 @onready var score_label = $UI/ScoreLabel
 @onready var start_game = preload("res://scenes/game.tscn") as PackedScene
 
+@onready var level_up_menu: Control = $LevelUpMenu/LevelUpMenu
+
 func _ready():
 	AudioPlayer.stop()
+	$Player.connect("level_up", Callable(self, "_on_player_level_up"))
+	
+func _on_player_level_up():
+	get_tree().paused = true
+	level_up_menu.show()
+	level_up_menu.setup_random_options()
 
 func win():
 	get_tree().paused = true
