@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://cqpb3iwjo54sn" path="res://scripts/level_up_menu.gd" id="1_nt8lk"]
 
 [node name="LevelUpMenu" type="Control"]
-visible = false
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -44,3 +43,8 @@ text = "Option 2"
 [node name="Option3" type="Button" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Option 3"
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Option1" to="." method="on_weapon_selected"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Option1" to="." method="_on_option_1_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Option2" to="." method="on_weapon_selected"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/Option3" to="." method="on_weapon_selected"]

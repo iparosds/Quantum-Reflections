@@ -17,6 +17,11 @@ func _ready():
 	AudioPlayer.stop()
 	$Player.connect("level_up", Callable(self, "_on_player_level_up"))
 	
+func level_up():
+	get_tree().paused = true
+	level_up_menu.show()
+	level_up_menu.setup_random_options()
+	
 func _on_player_level_up():
 	get_tree().paused = true
 	level_up_menu.show()
@@ -92,24 +97,31 @@ func add_ore():
 	if score <= 10:
 		$UI/XP.max_value = 10
 		$UI/XP.value = score
+		level_up()
 	elif score > 10 && score <= 50:
 		$UI/XP.max_value = 50
 		$UI/XP.value = score - 10
+		level_up()
 	elif score > 50 && score <= 100:
 		$UI/XP.max_value = 100
 		$UI/XP.value = score - 50
+		level_up()
 	elif score > 100 && score <=200:
 		$UI/XP.max_value = 200
 		$UI/XP.value = score - 100
+		level_up()
 	elif score > 200 && score <= 400:
 		$UI/XP.max_value = 400
 		$UI/XP.value = score - 200
+		level_up()
 	elif score > 400 && score <= 600:
 		$UI/XP.max_value = 600
 		$UI/XP.value = score - 400
+		level_up()
 	elif score > 600 && score < 800:
 		$UI/XP.max_value = 800
 		$UI/XP.value = score - 600
+		level_up()
 
 func _on_button_pressed() -> void:
 	get_tree().paused = false
