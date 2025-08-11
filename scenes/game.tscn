@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=4 uid="uid://bepgb8gyvqqc1"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_ca608"]
+[ext_resource type="Script" uid="uid://k3dun2g1kqy" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
 [ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
