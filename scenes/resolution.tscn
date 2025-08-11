@@ -1,9 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://b20crjjh1b6mm"]
 
-[ext_resource type="Script" path="res://scripts/resolution.gd" id="1_h2akj"]
 [ext_resource type="AudioStream" uid="uid://bg32u8hnfgwy0" path="res://assets/sounds/MENU MUSIC.wav" id="2_qgh43"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_tx1tp"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_5uo2q"]
+
+[sub_resource type="Resource" id="Resource_65ib4"]
+metadata/__load_path__ = "res://scripts/resolution.gd"
 
 [node name="Resolution" type="Control"]
 layout_mode = 3
@@ -12,7 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_h2akj")
+script = SubResource("Resource_65ib4")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1

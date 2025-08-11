@@ -1,6 +1,6 @@
 [gd_scene load_steps=18 format=3 uid="uid://b41jjpavdldes"]
 
-[ext_resource type="Script" path="res://scripts/black_hole.gd" id="1_10fyn"]
+[ext_resource type="Script" uid="uid://dmnw2jtbq7gmd" path="res://scripts/black_hole.gd" id="1_10fyn"]
 [ext_resource type="Texture2D" uid="uid://cdhax1x2tonm3" path="res://assets/sprites/buraco negro.png" id="1_glvi2"]
 [ext_resource type="Texture2D" uid="uid://np04pydarl48" path="res://assets/sprites/mundo invertido/buraco negro invertido.png" id="3_7ikdj"]
 

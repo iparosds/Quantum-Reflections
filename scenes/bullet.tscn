@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://cmse1wp3m74k0"]
 
-[ext_resource type="Script" path="res://scripts/Bullet.gd" id="1_bel33"]
+[ext_resource type="Script" uid="uid://cv8d11id8qinp" path="res://scripts/Bullet.gd" id="1_bel33"]
 [ext_resource type="Texture2D" uid="uid://6mkay5ytpjqd" path="res://assets/sprites/explosao nova.png" id="2_3r8ol"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tpx0u"]
