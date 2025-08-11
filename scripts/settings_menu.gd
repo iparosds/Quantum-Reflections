@@ -1,7 +1,7 @@
-extends Control
+extends CanvasLayer
+@onready var volume: Button = $MarginContainer2/VBoxContainer/Volume
+@onready var back: Button = $MarginContainer2/VBoxContainer/Back
 
-@onready var volume = $MarginContainer/VBoxContainer/Volume as Button
-@onready var back = $MarginContainer/VBoxContainer/Back as Button
 
 func _ready():
 	volume.grab_focus()
