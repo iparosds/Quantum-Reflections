@@ -161,7 +161,6 @@ stream = ExtResource("4_ny5do")
 stream = ExtResource("5_jp286")
 
 [node name="instructions" type="Label" parent="."]
-anchors_preset = -1
 offset_left = 124.0
 offset_top = 608.0
 offset_right = 377.0
