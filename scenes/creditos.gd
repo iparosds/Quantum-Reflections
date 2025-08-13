@@ -1,6 +1,5 @@
-extends Node2D
-
-@onready var back = $Back as Button
+extends CanvasLayer
+@onready var back : Button = $MarginContainer/VBoxContainer/Back
 
 func _ready():
 	back.grab_focus()
