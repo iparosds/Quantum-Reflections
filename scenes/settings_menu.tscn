@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=21 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" uid="uid://caqhfoipojq6h" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_5ttin"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
 [ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons_theme.tres" id="5_fb6cq"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/MENU SOUND - BACK.wav" id="5_jp286"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="10_2ctot"]
 
 [sub_resource type="Theme" id="Theme_n35ux"]
 default_font_size = 24
@@ -172,6 +173,8 @@ text = "ESC to go to main menu"
 label_settings = SubResource("LabelSettings_48ojb")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SoundIcon" parent="." instance=ExtResource("10_2ctot")]
 
 [connection signal="value_changed" from="MarginContainer/ButtonsContainer/Volume" to="." method="_on_volume_value_changed"]
 [connection signal="mouse_entered" from="MarginContainer/ButtonsContainer/Back" to="." method="_on_back_mouse_entered"]

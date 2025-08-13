@@ -11,7 +11,7 @@ extends Control
 
 
 func _ready():
-	AudioPlayer._play_level_music()
+	AudioPlayer._play_menu_music()
 	new_game_button.grab_focus()
 
 

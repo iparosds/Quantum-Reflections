@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=21 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" uid="uid://feqigi5v2k7f" path="res://scripts/menu.gd" id="1_l1qqr"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_7krxr"]
@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="4_ath1i"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="5_lao82"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="7_apl2l"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="9_i6lef"]
 
 [sub_resource type="Theme" id="Theme_uhqyi"]
 default_font_size = 24
@@ -222,6 +223,8 @@ text = "ENTER to select"
 label_settings = SubResource("LabelSettings_yxhpx")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SoundIcon" parent="." instance=ExtResource("9_i6lef")]
 
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
