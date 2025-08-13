@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=20 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" uid="uid://feqigi5v2k7f" path="res://scripts/menu.gd" id="1_l1qqr"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_7krxr"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="3_la3r8"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/logo animado.png" id="4_5g2qc"]
+[ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons_theme.tres" id="4_13sgg"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="4_ath1i"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="5_lao82"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="7_apl2l"]
@@ -115,8 +116,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme = SubResource("Theme_uhqyi")
-theme_override_constants/margin_top = 32
+theme_override_constants/margin_top = 62
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MarginContainer"]
 position = Vector2(70, -31)
@@ -136,41 +136,27 @@ theme = SubResource("Theme_uhqyi")
 layout_mode = 2
 focus_neighbor_top = NodePath("../Quit")
 focus_neighbor_bottom = NodePath("../Settings")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "New Game"
 flat = true
 
 [node name="Continue_Game" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 disabled = true
 text = "Continue Game"
 flat = true
 
 [node name="Load_Game" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 disabled = true
 text = "Load Game"
 flat = true
 
 [node name="Save_Game" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 disabled = true
 text = "Save Game"
 flat = true
@@ -180,12 +166,7 @@ layout_mode = 2
 size_flags_vertical = 4
 focus_neighbor_top = NodePath("../New_Game")
 focus_neighbor_bottom = NodePath("../Credits")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "Settings"
 flat = true
 
@@ -195,12 +176,7 @@ size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 focus_neighbor_top = NodePath("../Settings")
 focus_neighbor_bottom = NodePath("../Quit")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "Credits"
 flat = true
 
@@ -208,10 +184,7 @@ flat = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../Credits")
 focus_neighbor_bottom = NodePath("../New_Game")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
+theme = ExtResource("4_13sgg")
 theme_override_fonts/font = ExtResource("3_la3r8")
 theme_override_font_sizes/font_size = 12
 text = "Quit"

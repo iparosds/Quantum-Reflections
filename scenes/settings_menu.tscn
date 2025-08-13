@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=20 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" uid="uid://caqhfoipojq6h" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_5ttin"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="3_v2gib"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/logo animado.png" id="4_n35ux"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
+[ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons_theme.tres" id="5_fb6cq"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/MENU SOUND - BACK.wav" id="5_jp286"]
 
 [sub_resource type="Theme" id="Theme_n35ux"]
@@ -103,7 +104,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = SubResource("Theme_n35ux")
-theme_override_constants/margin_top = 32
+theme_override_constants/margin_top = 62
 
 [node name="AnimatedLogo" type="AnimatedSprite2D" parent="MarginContainer"]
 position = Vector2(70, -31)
@@ -146,11 +147,7 @@ value = -15.0
 
 [node name="Back" type="Button" parent="MarginContainer/ButtonsContainer"]
 layout_mode = 2
-theme_override_colors/font_hover_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
-theme_override_fonts/font = ExtResource("2_5ttin")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("5_fb6cq")
 text = "Back"
 flat = true
 
