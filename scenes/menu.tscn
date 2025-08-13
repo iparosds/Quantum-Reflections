@@ -102,22 +102,30 @@ expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 0.608
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.608
-offset_left = -68.0
-offset_top = -76.984
-offset_right = 67.0
-offset_bottom = 121.016
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -112.0
+offset_right = 67.5
+offset_bottom = 112.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = SubResource("Theme_uhqyi")
+theme_override_constants/margin_top = 32
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MarginContainer"]
+position = Vector2(70, -31)
+sprite_frames = SubResource("SpriteFrames_6ibcn")
+autoplay = "default"
+frame_progress = 0.603134
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(94, 192)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -135,6 +143,36 @@ theme_override_colors/font_focus_color = Color(0.623529, 0.615686, 0.505882, 1)
 theme_override_fonts/font = ExtResource("3_la3r8")
 theme_override_font_sizes/font_size = 12
 text = "New Game"
+flat = true
+
+[node name="Continue_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
+theme_override_fonts/font = ExtResource("3_la3r8")
+theme_override_font_sizes/font_size = 12
+disabled = true
+text = "Continue Game"
+flat = true
+
+[node name="Load_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
+theme_override_fonts/font = ExtResource("3_la3r8")
+theme_override_font_sizes/font_size = 12
+disabled = true
+text = "Load Game"
+flat = true
+
+[node name="Save_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme_override_colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
+theme_override_fonts/font = ExtResource("3_la3r8")
+theme_override_font_sizes/font_size = 12
+disabled = true
+text = "Save Game"
 flat = true
 
 [node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
@@ -179,12 +217,6 @@ theme_override_font_sizes/font_size = 12
 text = "Quit"
 flat = true
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MarginContainer"]
-position = Vector2(70, -31)
-sprite_frames = SubResource("SpriteFrames_6ibcn")
-autoplay = "default"
-frame_progress = 0.603134
-
 [node name="down_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_7krxr")
 
@@ -220,6 +252,9 @@ vertical_alignment = 1
 
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Continue_Game" to="." method="_on_continue_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Load_Game" to="." method="_on_load_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Save_Game" to="." method="_on_save_game_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_mouse_entered"]
