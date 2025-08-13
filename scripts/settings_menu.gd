@@ -2,10 +2,10 @@ extends CanvasLayer
 
 @onready var volume: HSlider = $MarginContainer/ButtonsContainer/Volume
 @onready var back: Button = $MarginContainer/ButtonsContainer/Back
-
+@onready var controls_button: Button = $MarginContainer/ButtonsContainer/ControlsButton
 
 func _ready():
-	back.grab_focus()
+	controls_button.grab_focus()
 
 
 func _on_volume_pressed() -> void:
@@ -18,6 +18,10 @@ func _on_volume_mouse_entered() -> void:
 
 func _on_volume_value_changed(value: float) -> void:
 	AudioServer.set_bus_volume_db(0,value)
+
+
+func _on_controls_button_pressed() -> void:
+	pass # Replace with function body.
 
 
 func _on_back_pressed() -> void:
