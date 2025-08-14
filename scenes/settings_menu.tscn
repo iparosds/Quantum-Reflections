@@ -1,22 +1,85 @@
-[gd_scene load_steps=10 format=3 uid="uid://cgcnt4ng31dih"]
+[gd_scene load_steps=21 format=3 uid="uid://cgcnt4ng31dih"]
 
 [ext_resource type="Script" uid="uid://caqhfoipojq6h" path="res://scripts/settings_menu.gd" id="1_7pq2e"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="2_5ttin"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="2_14wrj"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="2_mrlip"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="3_v2gib"]
+[ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/logo animado.png" id="4_n35ux"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="4_ny5do"]
+[ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons_theme.tres" id="5_fb6cq"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/MENU SOUND - BACK.wav" id="5_jp286"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="10_2ctot"]
 
-[sub_resource type="Theme" id="Theme_x3hd2"]
+[sub_resource type="Theme" id="Theme_n35ux"]
 default_font_size = 24
 
-[sub_resource type="LabelSettings" id="LabelSettings_5hkut"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_av8d4"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(0, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lygdd"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(368, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fk72n"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(736, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hocec"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(1104, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jm1mg"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(1472, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vhjel"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(1840, 0, 368, 120)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icv02"]
+atlas = ExtResource("4_n35ux")
+region = Rect2(2208, 0, 368, 120)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fb6cq"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_av8d4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lygdd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fk72n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hocec")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jm1mg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vhjel")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_icv02")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="LabelSettings" id="LabelSettings_48ojb"]
+font = ExtResource("2_5ttin")
 font_size = 12
 font_color = Color(0.486275, 0.494118, 0.631373, 1)
 
-[node name="Settings Menu" type="Control"]
-layout_mode = 3
+[node name="Settings Menu" type="CanvasLayer"]
+script = ExtResource("1_7pq2e")
+
+[node name="TextureRect" type="TextureRect" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -24,70 +87,68 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-script = ExtResource("1_7pq2e")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(381, 228)
-scale = Vector2(0.4, 0.412037)
 texture = ExtResource("2_14wrj")
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 1.0
-offset_top = -4.0
-offset_right = 1.0
-offset_bottom = 175.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_fonts/font = ExtResource("2_5ttin")
-theme_override_font_sizes/font_size = 36
-text = "Settings"
-horizontal_alignment = 1
-vertical_alignment = 1
+expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -165.0
-offset_top = -163.0
-offset_right = 166.0
-offset_bottom = 161.0
+offset_left = -67.5
+offset_top = -99.0
+offset_right = 67.5
+offset_bottom = 99.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = SubResource("Theme_n35ux")
+theme_override_constants/margin_top = 62
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="AnimatedLogo" type="AnimatedSprite2D" parent="MarginContainer"]
+position = Vector2(70, -31)
+sprite_frames = SubResource("SpriteFrames_fb6cq")
+autoplay = "default"
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(94, 192)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme = SubResource("Theme_x3hd2")
+size_flags_stretch_ratio = 0.0
+theme = SubResource("Theme_n35ux")
 
-[node name="Volume" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="SettingsLabel" type="Label" parent="MarginContainer/ButtonsContainer"]
 layout_mode = 2
-focus_neighbor_top = NodePath("../Back")
-focus_neighbor_bottom = NodePath("../Back")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("2_5ttin")
+text = "Settings"
+
+[node name="VolumeLabel" type="Label" parent="MarginContainer/ButtonsContainer"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
 theme_override_fonts/font = ExtResource("2_5ttin")
 theme_override_font_sizes/font_size = 12
 text = "Volume"
-flat = true
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Back" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Volume" type="HSlider" parent="MarginContainer/ButtonsContainer"]
 layout_mode = 2
-focus_neighbor_top = NodePath("../Volume")
-focus_neighbor_bottom = NodePath("../Volume")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_fonts/font = ExtResource("2_5ttin")
-theme_override_font_sizes/font_size = 12
+size_flags_vertical = 4
+focus_neighbor_top = NodePath("../Back")
+focus_neighbor_bottom = NodePath("../Back")
+min_value = -45.0
+max_value = -15.0
+step = 2.0
+value = -15.0
+
+[node name="Back" type="Button" parent="MarginContainer/ButtonsContainer"]
+layout_mode = 2
+theme = ExtResource("5_fb6cq")
 text = "Back"
 flat = true
 
@@ -103,26 +164,18 @@ stream = ExtResource("4_ny5do")
 [node name="back_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_jp286")
 
-[node name="Label2" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -273.0
-offset_top = 139.0
-offset_right = -135.0
-offset_bottom = 162.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_fonts/font = ExtResource("2_5ttin")
+[node name="instructions" type="Label" parent="."]
+offset_left = 124.0
+offset_top = 608.0
+offset_right = 377.0
+offset_bottom = 642.0
 text = "ESC to go to main menu"
-label_settings = SubResource("LabelSettings_5hkut")
+label_settings = SubResource("LabelSettings_48ojb")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Volume" to="." method="_on_volume_mouse_entered"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Volume" to="." method="_on_volume_pressed"]
-[connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Back" to="." method="_on_back_mouse_entered"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Back" to="." method="_on_back_pressed"]
+[node name="SoundIcon" parent="." instance=ExtResource("10_2ctot")]
+
+[connection signal="value_changed" from="MarginContainer/ButtonsContainer/Volume" to="." method="_on_volume_value_changed"]
+[connection signal="mouse_entered" from="MarginContainer/ButtonsContainer/Back" to="." method="_on_back_mouse_entered"]
+[connection signal="pressed" from="MarginContainer/ButtonsContainer/Back" to="." method="_on_back_pressed"]

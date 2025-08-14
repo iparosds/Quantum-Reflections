@@ -1,6 +1,8 @@
 extends AudioStreamPlayer
 
-const menu_music = preload("res://assets/sounds/MENU MUSIC.wav")
+const MENU_MUSIC = preload("res://assets/sounds/MENU MUSIC.wav")
+const LEVEL_MUSIC = preload("res://assets/sounds/GAMEPLAY SONG MASTER.mp3")
+
 
 func _play_music (music: AudioStream, volume = 0.0):
 	if stream == music:
@@ -10,5 +12,9 @@ func _play_music (music: AudioStream, volume = 0.0):
 	volume_db = volume
 	play()
 	
+func _play_menu_music():
+	_play_music(MENU_MUSIC) 
+
+
 func _play_level_music():
-	_play_music(menu_music) 
+	_play_music(LEVEL_MUSIC) 

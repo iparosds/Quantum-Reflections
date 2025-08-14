@@ -1,12 +1,14 @@
-[gd_scene load_steps=19 format=3 uid="uid://bll1gjahn6i7g"]
+[gd_scene load_steps=21 format=3 uid="uid://bll1gjahn6i7g"]
 
 [ext_resource type="Script" uid="uid://feqigi5v2k7f" path="res://scripts/menu.gd" id="1_l1qqr"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="3_7krxr"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="3_la3r8"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/logo animado.png" id="4_5g2qc"]
+[ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons_theme.tres" id="4_13sgg"]
 [ext_resource type="AudioStream" uid="uid://dkkiy87rlj0h8" path="res://assets/sounds/MENU SOUND - UP.wav" id="4_ath1i"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="5_lao82"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="7_apl2l"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="9_i6lef"]
 
 [sub_resource type="Theme" id="Theme_uhqyi"]
 default_font_size = 24
@@ -90,29 +92,41 @@ size_flags_vertical = 4
 theme = SubResource("Theme_uhqyi")
 script = ExtResource("1_l1qqr")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(578, 327.25)
-scale = Vector2(0.605208, 0.595833)
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("7_apl2l")
+expand_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 0.608
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.608
-offset_left = -68.0
-offset_top = -76.984
-offset_right = 67.0
-offset_bottom = 121.016
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -112.0
+offset_right = 67.5
+offset_bottom = 112.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme = SubResource("Theme_uhqyi")
+theme_override_constants/margin_top = 62
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MarginContainer"]
+position = Vector2(70, -31)
+sprite_frames = SubResource("SpriteFrames_6ibcn")
+autoplay = "default"
+frame_progress = 0.603134
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(94, 192)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -123,13 +137,29 @@ theme = SubResource("Theme_uhqyi")
 layout_mode = 2
 focus_neighbor_top = NodePath("../Quit")
 focus_neighbor_bottom = NodePath("../Settings")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "New Game"
+flat = true
+
+[node name="Continue_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_13sgg")
+disabled = true
+text = "Continue Game"
+flat = true
+
+[node name="Load_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_13sgg")
+disabled = true
+text = "Load Game"
+flat = true
+
+[node name="Save_Game" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("4_13sgg")
+disabled = true
+text = "Save Game"
 flat = true
 
 [node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
@@ -137,12 +167,7 @@ layout_mode = 2
 size_flags_vertical = 4
 focus_neighbor_top = NodePath("../New_Game")
 focus_neighbor_bottom = NodePath("../Credits")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "Settings"
 flat = true
 
@@ -152,12 +177,7 @@ size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 focus_neighbor_top = NodePath("../Settings")
 focus_neighbor_bottom = NodePath("../Quit")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
-theme_override_fonts/font = ExtResource("3_la3r8")
-theme_override_font_sizes/font_size = 12
+theme = ExtResource("4_13sgg")
 text = "Credits"
 flat = true
 
@@ -165,20 +185,11 @@ flat = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../Credits")
 focus_neighbor_bottom = NodePath("../New_Game")
-theme = SubResource("Theme_uhqyi")
-theme_override_colors/font_hover_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_focus_color = Color(0.705882, 0.709804, 0.258824, 1)
-theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme = ExtResource("4_13sgg")
 theme_override_fonts/font = ExtResource("3_la3r8")
 theme_override_font_sizes/font_size = 12
 text = "Quit"
 flat = true
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MarginContainer"]
-position = Vector2(70, -31)
-sprite_frames = SubResource("SpriteFrames_6ibcn")
-autoplay = "default"
-frame_progress = 0.603134
 
 [node name="down_sound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_7krxr")
@@ -213,12 +224,16 @@ label_settings = SubResource("LabelSettings_yxhpx")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="SoundIcon" parent="." instance=ExtResource("9_i6lef")]
+
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/New_Game" to="." method="_on_new_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Continue_Game" to="." method="_on_continue_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Load_Game" to="." method="_on_load_game_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Save_Game" to="." method="_on_save_game_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_mouse_entered"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Credits" to="." method="_on_credits_pressed"]
 [connection signal="mouse_entered" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_mouse_entered"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_start_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

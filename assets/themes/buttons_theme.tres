@@ -1,0 +1,24 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://765j1dxaivoe"]
+
+[ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="1_61f00"]
+
+[resource]
+default_font = ExtResource("1_61f00")
+Button/colors/font_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_disabled_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_hover_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_hover_pressed_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_outline_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_pressed_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/icon_disabled_color = Color(1, 1, 1, 0.4)
+Button/colors/icon_focus_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_color = Color(1, 1, 1, 1)
+Button/colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/icon_normal_color = Color(1, 1, 1, 1)
+Button/colors/icon_pressed_color = Color(1, 1, 1, 1)
+Button/constants/align_to_largest_stylebox = 0
+Button/constants/h_separation = 4
+Button/constants/icon_max_width = 0
+Button/constants/outline_size = 0
+Button/font_sizes/font_size = 12

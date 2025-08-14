@@ -1,18 +1,32 @@
-extends Control
+extends CanvasLayer
 
-@onready var volume = $MarginContainer/VBoxContainer/Volume as Button
-@onready var back = $MarginContainer/VBoxContainer/Back as Button
+@onready var volume: HSlider = $MarginContainer/ButtonsContainer/Volume
+@onready var back: Button = $MarginContainer/ButtonsContainer/Back
+
 
 func _ready():
-	volume.grab_focus()
+	back.grab_focus()
+
 
 func _on_volume_pressed() -> void:
 	$select_sound.play()
-	get_tree().change_scene_to_file("res://scenes/volume.tscn")
+
+
+func _on_volume_mouse_entered() -> void:
+	$down_sound.play()
+
+
+func _on_volume_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_db(0,value)
+
 
 func _on_back_pressed() -> void:
 	$select_sound.play()
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
+
+
+func _on_back_mouse_entered() -> void:
+	$down_sound.play()
 
 
 func _physics_process(delta):
@@ -25,10 +39,3 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("back"):
 		$back_sound.play()
 		get_tree().change_scene_to_file("res://scenes/menu.tscn")
-
-
-func _on_volume_mouse_entered() -> void:
-	$down_sound.play()
-func _on_back_mouse_entered() -> void:
-	$down_sound.play()
-	

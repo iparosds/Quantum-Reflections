@@ -11,20 +11,36 @@ extends Control
 
 
 func _ready():
-	AudioPlayer._play_level_music()
+	AudioPlayer._play_menu_music()
 	new_game_button.grab_focus()
+
 
 func _on_new_game_pressed() -> void:
 	$select_sound.play()
 	get_tree().change_scene_to_packed(start_game)
 
+
+func _on_continue_game_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_load_game_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_save_game_pressed() -> void:
+	pass # Replace with function body.
+
+
 func _on_settings_pressed() -> void:
 	$select_sound.play()
 	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
 
+
 func _on_credits_pressed() -> void:
 	$select_sound.play()
 	get_tree().change_scene_to_file("res://scenes/creditos.tscn")
+
 
 func _on_quit_pressed() -> void:
 	$select_sound.play()

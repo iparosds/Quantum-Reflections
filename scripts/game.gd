@@ -12,7 +12,7 @@ var portal_timer = 150.0
 @onready var start_game = preload("res://scenes/game.tscn") as PackedScene
 
 func _ready():
-	AudioPlayer.stop()
+	AudioPlayer._play_level_music()
 
 func win():
 	get_tree().paused = true
