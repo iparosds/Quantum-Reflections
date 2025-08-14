@@ -1,24 +1,29 @@
 extends CanvasLayer
 
-@onready var sound_toggle_button: TextureButton = $VBoxContainer/Sound_Toggle_Button
-var sound_muted: bool = false
+const MASTER_BUS_NAME := "Master"
 const ICON_OFF := preload("res://assets/sprites/sound-off.svg")
-const ICON_ON  := preload("res://assets/sprites/sound-loud.svg")
+const ICON_ON := preload("res://assets/sprites/sound-loud.svg")
+
+@onready var sound_toggle_button : TextureButton = $VBoxContainer/Sound_Toggle_Button
+@onready var master_bus_index : int = AudioServer.get_bus_index(MASTER_BUS_NAME)
 
 
 func _ready() -> void:
-	var is_muted := AudioServer.is_bus_mute(AudioServer.get_bus_index("Master"))
-	_sync(is_muted)
+	_update_icon(_is_master_muted())
 
 
 func _on_sound_toggle_button_pressed() -> void:
-	var next := !AudioServer.is_bus_mute(AudioServer.get_bus_index("Master"))
-	AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"), next)
-	_sync(next)
+	_set_master_muted(not _is_master_muted())
+	_update_icon(_is_master_muted())
 
 
-func _sync(is_muted: bool) -> void:
-	if is_muted:
-		sound_toggle_button.texture_normal = ICON_OFF
-	else:
-		sound_toggle_button.texture_normal = ICON_ON
+func _is_master_muted() -> bool:
+	return AudioServer.is_bus_mute(master_bus_index)
+
+
+func _set_master_muted(muted: bool) -> void:
+	AudioServer.set_bus_mute(master_bus_index, muted)
+
+
+func _update_icon(is_muted: bool) -> void:
+	sound_toggle_button.texture_normal = ICON_OFF if is_muted else ICON_ON
