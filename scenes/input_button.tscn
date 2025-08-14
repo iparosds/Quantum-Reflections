@@ -35,24 +35,44 @@ theme_override_constants/margin_bottom = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 46
 
-[node name="LabelInput" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="LeftColumn" type="Control" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 1
+
+[node name="LabelInput" type="Label" parent="MarginContainer/HBoxContainer/LeftColumn"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -8.0
+offset_right = 56.0
+offset_bottom = 8.0
+grow_vertical = 2
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("1_xvydj")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "INPUT KEY"
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="RightColumn" type="Control" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 1
 
-[node name="LabelAction" type="Label" parent="MarginContainer/HBoxContainer"]
-layout_mode = 2
+[node name="LabelAction" type="Label" parent="MarginContainer/HBoxContainer/RightColumn"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -8.0
+offset_right = 73.0
+offset_bottom = 8.0
+grow_vertical = 2
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("1_xvydj")
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 14
 text = "ACTION NAME"
 vertical_alignment = 1
