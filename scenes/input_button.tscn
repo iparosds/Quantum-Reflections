@@ -36,12 +36,12 @@ theme_override_constants/margin_bottom = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="LabelAction" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="LabelInput" type="Label" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("1_xvydj")
 theme_override_font_sizes/font_size = 12
-text = "ACTION NAME"
+text = "INPUT KEY"
 vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="MarginContainer/HBoxContainer"]
@@ -49,10 +49,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
 
-[node name="LabelInput" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="LabelAction" type="Label" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 mouse_filter = 1
 theme_override_fonts/font = ExtResource("1_xvydj")
 theme_override_font_sizes/font_size = 12
-text = "INPUT KEY"
+text = "ACTION NAME"
 vertical_alignment = 1
