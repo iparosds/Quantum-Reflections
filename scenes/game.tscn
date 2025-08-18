@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=15 format=4 uid="uid://bepgb8gyvqqc1"]
 
 [ext_resource type="Script" uid="uid://k3dun2g1kqy" path="res://scripts/game.gd" id="1_ca608"]
 [ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
 [ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
 [ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="8_d7gnp"]
-[ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
 [ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="8_gee14"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
@@ -117,15 +116,6 @@ offset_top = 123.0
 offset_right = 633.0
 offset_bottom = 146.0
 text = "You are a God!"
-
-[node name="Pause" type="CanvasLayer" parent="."]
-visible = false
-
-[node name="PauseMenu" parent="Pause" instance=ExtResource("8_de88q")]
-offset_left = 3.0
-offset_top = 5.0
-offset_right = 3.0
-offset_bottom = 5.0
 
 [node name="GameOver" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
