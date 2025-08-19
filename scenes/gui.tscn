@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=35 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/gui_manager.gd" id="1_p54wi"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/bg menu.jpg" id="2_xki8e"]
@@ -8,6 +8,8 @@
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/MENU SOUND - DOWN.wav" id="6_jw8q3"]
 [ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="6_p54wi"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/MENU SOUND - SELECT.wav" id="8_qsswy"]
+[ext_resource type="PackedScene" uid="uid://duqt0xpu2vl7s" path="res://scenes/input_button.tscn" id="8_v3be1"]
+[ext_resource type="Script" uid="uid://c8nh1wpwg1qo2" path="res://scripts/input_settings.gd" id="8_xqxrh"]
 [ext_resource type="Texture2D" uid="uid://krnpsv5q7w60" path="res://assets/sprites/creditos2.png" id="9_p54wi"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/MENU SOUND - BACK.wav" id="11_xqxrh"]
 
@@ -146,10 +148,14 @@ font = ExtResource("5_qupqx")
 font_size = 12
 font_color = Color(0.486275, 0.494118, 0.631373, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xqxrh"]
+bg_color = Color(0, 0, 0, 0)
+
 [node name="GuiManager" type="Node2D"]
 script = ExtResource("1_p54wi")
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="TextureRect" type="TextureRect" parent="MainMenu"]
 anchors_preset = 15
@@ -199,6 +205,7 @@ flat = true
 
 [node name="ContinueGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 theme = ExtResource("4_xqxrh")
 disabled = true
 text = "Continue Game"
@@ -206,6 +213,7 @@ flat = true
 
 [node name="LoadGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 theme = ExtResource("4_xqxrh")
 disabled = true
 text = "Load Game"
@@ -213,6 +221,7 @@ flat = true
 
 [node name="SaveGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 theme = ExtResource("4_xqxrh")
 disabled = true
 text = "Save Game"
@@ -416,6 +425,127 @@ vertical_alignment = 1
 
 [node name="SoundIcon" parent="SettingsMenu" instance=ExtResource("6_p54wi")]
 
+[node name="InputSettings" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="InputSettings"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_xqxrh")
+
+[node name="TextureRect" type="TextureRect" parent="InputSettings/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_xki8e")
+expand_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="InputSettings/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -283.0
+offset_top = -196.0
+offset_right = 243.0
+offset_bottom = 157.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_top = NodePath("MarginContainer/VBoxContainer/BackToSettingsButton")
+focus_neighbor_bottom = NodePath("MarginContainer/VBoxContainer/ResetButton")
+theme_override_styles/panel = SubResource("StyleBoxFlat_xqxrh")
+
+[node name="MarginContainer" type="MarginContainer" parent="InputSettings/Control/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InputSettings/Control/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="ControlsLabel" type="Label" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("5_qupqx")
+theme_override_font_sizes/font_size = 24
+text = "Controls"
+
+[node name="Spacer" type="Control" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionList" type="VBoxContainer" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InputButton" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton2" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton3" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton4" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton5" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton6" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton7" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton8" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="InputButton9" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList" instance=ExtResource("8_v3be1")]
+layout_mode = 2
+
+[node name="SaveConfigButton" type="Button" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../BackToSettingsButton")
+focus_neighbor_bottom = NodePath("../ResetButton")
+theme = ExtResource("4_xqxrh")
+text = "Save Controls "
+flat = true
+
+[node name="ResetButton" type="Button" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../SaveConfigButton")
+focus_neighbor_bottom = NodePath("../BackToSettingsButton")
+theme = ExtResource("4_xqxrh")
+text = "Reset to default"
+flat = true
+
+[node name="BackToSettingsButton" type="Button" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../ResetButton")
+focus_neighbor_bottom = NodePath("../SaveConfigButton")
+theme = ExtResource("4_xqxrh")
+text = "Back to settings"
+flat = true
+
+[node name="SoundIcon" parent="InputSettings" instance=ExtResource("6_p54wi")]
+
 [node name="Sounds" type="Node" parent="."]
 
 [node name="HoverSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
@@ -426,3 +556,6 @@ stream = ExtResource("8_qsswy")
 
 [node name="BackSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("11_xqxrh")
+
+[connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/SaveConfigButton" to="InputSettings/Control" method="_on_save_config_button_pressed"]
+[connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]

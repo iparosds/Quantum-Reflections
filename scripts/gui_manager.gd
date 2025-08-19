@@ -4,11 +4,13 @@ extends Node2D
 const MAIN_MENU_BUTTON_GROUP := "main_menu_button"
 const CREDITS_BUTTON_GROUP   := "credits_menu_button"
 const SETTINGS_BUTTON_GROUP  := "settings_menu_button"
+const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 
 # Layers
 @onready var main_menu_layer: CanvasLayer  = $MainMenu
 @onready var credits_layer: CanvasLayer    = $Credits
 @onready var settings_layer: CanvasLayer   = $SettingsMenu
+@onready var input_settings_layer: CanvasLayer = $InputSettings
 
 # Sounds
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
@@ -32,12 +34,14 @@ func _ready() -> void:
 	main_menu_layer.visible  = true
 	credits_layer.visible    = false
 	settings_layer.visible   = false
+	input_settings_layer.visible = false
 	AudioPlayer._play_menu_music()
 
 	# Tag de grupos por camada
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
 	_tag_buttons_in_tree(settings_layer,   SETTINGS_BUTTON_GROUP)
+	_tag_buttons_in_tree(input_settings_layer, INPUT_SETTINGS_BUTTON_GROUP)
 
 	# Conecta sinais genéricos para todos os botões
 	_connect_button_signals_recursively(self)
@@ -131,6 +135,8 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 		_on_credits_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(SETTINGS_BUTTON_GROUP):
 		_on_settings_button_pressed(pressed_button)
+	elif pressed_button.is_in_group(INPUT_SETTINGS_BUTTON_GROUP):
+		_on_input_settings_button_pressed(pressed_button)
 
 
 # Main Menu
@@ -174,6 +180,14 @@ func _on_settings_volume_changed(new_value_db: float) -> void:
 	Singleton.set_master_volume_db(new_value_db)
 
 
+# Input Settings
+func _on_input_settings_button_pressed(pressed_button: BaseButton) -> void:
+	match pressed_button.name:
+		"BackToSettingsButton":
+			_play_back_sound()
+			show_settings()
+
+
 # Singleton
 func show_main_menu() -> void:
 	credits_layer.visible   = false
@@ -186,6 +200,7 @@ func show_settings() -> void:
 	main_menu_layer.visible = false
 	credits_layer.visible   = false
 	settings_layer.visible  = true
+	input_settings_layer.visible = false
 	settings_controls_btn.grab_focus()
 
 
@@ -194,3 +209,11 @@ func show_credits() -> void:
 	settings_layer.visible  = false
 	credits_layer.visible   = true
 	_focus_first_button_in(credits_layer)
+
+
+func show_input_settings() -> void:
+	main_menu_layer.visible   = false
+	credits_layer.visible     = false
+	settings_layer.visible    = false
+	input_settings_layer.visible = true
+	_focus_first_button_in(input_settings_layer)

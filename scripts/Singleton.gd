@@ -45,7 +45,8 @@ func open_main_menu() -> void:
 
 
 func open_controls() -> void:
-	get_tree().change_scene_to_file("res://scenes/input_settings.tscn")
+	if gui_manager:
+		gui_manager.show_input_settings()
 
 
 func set_master_volume_db(db_value: float) -> void:
