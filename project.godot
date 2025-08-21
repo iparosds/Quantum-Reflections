@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Singleton="*res://scripts/singleton.gd"
-AudioPlayer="*res://scripts/audio_player.gd"
+Singleton="*res://scripts/globals/singleton.gd"
+AudioPlayer="*res://scripts/globals/audio_player.gd"
 
 [display]
 

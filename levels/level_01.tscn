@@ -1,11 +1,11 @@
 [gd_scene load_steps=11 format=4 uid="uid://c165xjnqgru8j"]
 
-[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="1_j60wy"]
-[ext_resource type="Script" uid="uid://bxxy4xisa1vhy" path="res://scripts/level.gd" id="1_q7ibo"]
-[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="2_qgxqk"]
-[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="3_t0ybu"]
-[ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="4_1b6n0"]
-[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/sound_icon.tscn" id="5_llcge"]
+[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/ships/player.tscn" id="1_j60wy"]
+[ext_resource type="Script" uid="uid://bxxy4xisa1vhy" path="res://scripts/in_game/level.gd" id="1_q7ibo"]
+[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/in_game/portal.tscn" id="2_qgxqk"]
+[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/levels_sprites/universe.png" id="3_t0ybu"]
+[ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/in_game/ore.tscn" id="4_1b6n0"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/icons/sound_icon.tscn" id="5_llcge"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {

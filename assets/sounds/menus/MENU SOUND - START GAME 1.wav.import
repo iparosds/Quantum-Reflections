@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bh78wckf6ybqp"
+path="res://.godot/imported/MENU SOUND - START GAME 1.wav-da00a3c5978ef5549423c9b2265ccdc8.sample"
+
+[deps]
+
+source_file="res://assets/sounds/menus/MENU SOUND - START GAME 1.wav"
+dest_files=["res://.godot/imported/MENU SOUND - START GAME 1.wav-da00a3c5978ef5549423c9b2265ccdc8.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

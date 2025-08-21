@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://3vn8y1jlk7vp"]
+
+[ext_resource type="Script" uid="uid://clldysvq5xi2b" path="res://scripts/ships/turret.gd" id="1_6yqcy"]
+[ext_resource type="Resource" uid="uid://byjt0mjhvkhyr" path="res://scripts/resources/projectile_basic.tres" id="2_rhjlg"]
+[ext_resource type="AudioStream" uid="uid://b7ayyambk0ixs" path="res://assets/sounds/in_game/TIRO SEM EXPLOSÃO.wav" id="3_e5mxp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0x0pm"]
+radius = 206.061
+
+[node name="Turret" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_6yqcy")
+projectile = ExtResource("2_rhjlg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_0x0pm")
+debug_color = Color(0, 0.6, 0.701961, 0.160784)
+
+[node name="Turret" type="Sprite2D" parent="."]
+position = Vector2(6.99999, -0.0122262)
+rotation = 0.0126715
+scale = Vector2(1.5, 1.5)
+
+[node name="ShootingPoint" type="Marker2D" parent="Turret"]
+unique_name_in_owner = true
+position = Vector2(1, 0.015)
+
+[node name="ShootingInterval" type="Timer" parent="."]
+wait_time = 0.2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_e5mxp")
+
+[connection signal="timeout" from="ShootingInterval" to="." method="_on_timer_timeout"]
