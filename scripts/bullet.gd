@@ -6,7 +6,7 @@ var direction
 var travelled_distance = 0
 var move_speed = 200
 const RANGE = 300
-@onready var game = get_node("/root/Game")
+@onready var level
 @onready var bullet_rotation = rotation
 
 func _ready():
@@ -23,7 +23,7 @@ func _physics_process(delta):
 		if move_speed != 0:
 			move_speed += 20
 			direction = global_position.direction_to(target.global_position)
-			if game.quantum == false:
+			if Singleton.level.quantum == false:
 				%Projectile.play("default")
 			else:
 				%Projectile.play("quantum")

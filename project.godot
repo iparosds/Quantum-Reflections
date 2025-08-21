@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Quantum Reflections"
-run/main_scene="uid://kqrwytbvwyno"
+run/main_scene="uid://bp6c6pfa4ynta"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Singleton="*res://scripts/Singleton.gd"
+Singleton="*res://scripts/singleton.gd"
 AudioPlayer="*res://scripts/audio_player.gd"
 
 [display]

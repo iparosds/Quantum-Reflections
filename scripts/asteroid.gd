@@ -1,14 +1,17 @@
 extends CharacterBody2D
 
+const SHIP_ATTRACTION = 100.0
+const ORE = preload("res://scenes/ore.tscn")
+
+@onready var player := Singleton.level.get_node("Player")
+
 var health = 100
 var moving = true
 var ore = false
-const SHIP_ATTRACTION = 100.0
 var asteroid_type
-@onready var game = get_node("/root/Game")
-@onready var player = get_node("/root/Game/Player")
-@onready var portal = get_node("/root/Game/Portal")
-const ORE = preload("res://scenes/ore.tscn")
+var level
+var portal
+
 
 func _ready():
 	var rand = round(randf_range(1,3))
@@ -22,14 +25,16 @@ func _ready():
 		asteroid_type = 3
 		$Asteroid.play("asteroid03")
 
+
 func on_portal():
 	queue_free()
 
+
 func _physics_process(_delta):
 	var direction = global_position.direction_to(player.global_position)
-	if game.portal_active == true:
-		direction = global_position.direction_to(portal.global_position)
-	if game.quantum == false:
+	if Singleton.level.portal_active == true:
+		direction = global_position.direction_to(Singleton.level.portal.global_position)
+	if Singleton.level.quantum == false:
 		if moving == true:
 			if asteroid_type == 1:
 				$Asteroid.play("asteroid01")
@@ -50,8 +55,10 @@ func _physics_process(_delta):
 	if moving == true:
 		move_and_slide()
 
+
 func player_collision():
 	asteroid_destruction()
+
 
 func asteroid_destruction():
 	moving = false
@@ -61,10 +68,12 @@ func asteroid_destruction():
 	$".".set_collision_layer_value(1, true)
 	$".".set_collision_layer_value(2, false)
 
+
 func add_new_ore():
 	var new_ore = ORE.instantiate()
 	new_ore.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", new_ore)
+
 
 func take_damage():
 	var damage = player.acceleration / 10

@@ -1,69 +1,110 @@
-class_name GuiManager
-extends Node2D
+class_name GuiManager extends Node2D
 
+# Constantes que definem grupos de botões.
+# Esses grupos são usados para organizar os botões por contexto
+# (menu principal, créditos, configurações, etc.).
 const MAIN_MENU_BUTTON_GROUP := "main_menu_button"
 const CREDITS_BUTTON_GROUP   := "credits_menu_button"
 const SETTINGS_BUTTON_GROUP  := "settings_menu_button"
 const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
+const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 
-# Layers
-@onready var main_menu_layer: CanvasLayer  = $MainMenu
-@onready var credits_layer: CanvasLayer    = $Credits
-@onready var settings_layer: CanvasLayer   = $SettingsMenu
+# Camadas principais da interface do jogo.
+# Cada camada é uma parte visual do HUD ou de menus.
+@onready var game_hud_layer: CanvasLayer    = $GameHud
+@onready var main_menu_layer: CanvasLayer   = $MainMenu
+@onready var credits_layer: CanvasLayer     = $Credits
+@onready var settings_layer: CanvasLayer    = $SettingsMenu
 @onready var input_settings_layer: CanvasLayer = $InputSettings
+@onready var game_over_screen: CanvasLayer  = $GameOverScreen
 
-# Sounds
+# Sons para interações de interface (hover, seleção, voltar).
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
 @onready var select_sound_player: AudioStreamPlayer = $Sounds/SelectSoundPlayer
 @onready var back_sound_player:   AudioStreamPlayer = $Sounds/BackSoundPlayer
 
-# Controles de Settings
+# Controles dentro do menu de configurações.
+# Inclui slider de volume e botão para acessar os controles.
 @onready var settings_volume_slider: HSlider   = $SettingsMenu/MarginContainer/ButtonsContainer/Volume
 @onready var settings_controls_btn: BaseButton = $SettingsMenu/MarginContainer/ButtonsContainer/ControlsButton
 
+# Elementos do HUD principal do jogo.
+# Exibem informações como XP, pontuação, tempo, portal ativo e status de god mode.
+@onready var hud_xp: ProgressBar = $GameHud/HudXP
+@onready var hud_score_label: Label = $GameHud/HudScoreLabel
+@onready var hud_timer_bar: ProgressBar = $GameHud/HudTimerBar
+@onready var hud_timer_text: Label = $GameHud/HudTimerText
+@onready var hud_portal_active: Label = $GameHud/HudPortalActive
+@onready var hud_god_mode: Label = $GameHud/HudGodMode
 
+# Elementos exibidos na tela de Game Over.
+@onready var game_over_label: Label = $GameOverScreen/ColorRect/GameOverLabel
+@onready var game_over_restart_button: Button = $GameOverScreen/GameOverRestartButton
+
+
+# ------------------------------------------------------------
+# Inicialização da interface.
+# - Configura Singleton
+# - Define process_mode para funcionar mesmo em pausa
+# - Define o estado inicial de cada camada
+# - Toca a música do menu principal
+# - Marca botões em grupos para controle posterior
+# - Conecta sinais genéricos de botões
+# ------------------------------------------------------------
 func _ready() -> void:
 	Singleton.gui_manager = self
-
+	
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	game_over_screen.process_mode = Node.PROCESS_MODE_ALWAYS
+	game_hud_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = false
+	
 	hover_sound_player.process_mode  = Node.PROCESS_MODE_ALWAYS
 	select_sound_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	back_sound_player.process_mode   = Node.PROCESS_MODE_ALWAYS
-
-	# Estado inicial
+	
 	main_menu_layer.visible  = true
 	credits_layer.visible    = false
 	settings_layer.visible   = false
 	input_settings_layer.visible = false
+	game_hud_layer.visible = false
+	game_over_screen.visible = false
+	
 	AudioPlayer._play_menu_music()
-
-	# Tag de grupos por camada
+	
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
 	_tag_buttons_in_tree(settings_layer,   SETTINGS_BUTTON_GROUP)
 	_tag_buttons_in_tree(input_settings_layer, INPUT_SETTINGS_BUTTON_GROUP)
-
-	# Conecta sinais genéricos para todos os botões
+	_tag_buttons_in_tree(game_over_screen, GAME_OVER_SCREEN_GROUP)
+	
 	_connect_button_signals_recursively(self)
 	_connect_signal_safe(settings_volume_slider, "value_changed", Callable(self, "_on_settings_volume_changed"))
 	_focus_first_button_in(main_menu_layer)
 
 
+# ------------------------------------------------------------
+# Captura entrada do usuário que não foi tratada em outro lugar.
+# Se a tecla "back" for pressionada enquanto está em créditos ou configurações,
+# retorna ao menu principal.
+# ------------------------------------------------------------
 func _unhandled_input(event: InputEvent) -> void:
-	# Tecla "back" volta ao MainMenu a partir de Settings/Credits
 	if event.is_action_pressed("back"):
 		if credits_layer.visible or settings_layer.visible:
 			_play_back_sound()
 			Singleton.open_main_menu()
 
-
-# Evita tentativa de conexoes de sinais simultaneos dos botoes
+# ------------------------------------------------------------
+# Conecta sinais de forma segura, evitando duplicação de conexões.
+# ------------------------------------------------------------
 func _connect_signal_safe(emitter: Object, signal_name: String, callable: Callable) -> void:
 	if not emitter.is_connected(signal_name, callable):
 		emitter.connect(signal_name, callable)
 
 
-#Conexões genéricas de botões
+# ------------------------------------------------------------
+# Conecta sinais genéricos de botões (hover, foco e clique) em toda a árvore de nós.
+# ------------------------------------------------------------
 func _connect_button_signals_recursively(parent_node: Node) -> void:
 	for ui_button in _collect_buttons_in_tree(parent_node):
 		_connect_signal_safe(ui_button, "mouse_entered", _on_any_button_mouse_entered.bind(ui_button))
@@ -71,14 +112,18 @@ func _connect_button_signals_recursively(parent_node: Node) -> void:
 		_connect_signal_safe(ui_button, "pressed",       _on_any_button_pressed.bind(ui_button))
 
 
+# ------------------------------------------------------------
+# Define o foco inicial no primeiro botão encontrado dentro de um nó.
+# ------------------------------------------------------------
 func _focus_first_button_in(root_node: Node) -> void:
 	var buttons_in_root := _collect_buttons_in_tree(root_node)
 	if buttons_in_root.size() > 0:
 		buttons_in_root[0].grab_focus()
 
 
-# Percorre recursivamente uma árvore de nós a partir de `root_node`
-# e coleta todos os nós que sejam do tipo BaseButton.
+# ------------------------------------------------------------
+# Coleta recursivamente todos os nós filhos que sejam botões (BaseButton).
+# ------------------------------------------------------------
 func _collect_buttons_in_tree(root_node: Node) -> Array[BaseButton]:
 	var collected_buttons: Array[BaseButton] = []
 	
@@ -91,20 +136,28 @@ func _collect_buttons_in_tree(root_node: Node) -> Array[BaseButton]:
 	return collected_buttons
 
 
-# Marca todos os botões encontrados dentro de `root_node` 
-# (via _collect_buttons_in_tree) com um grupo específico.
+# ------------------------------------------------------------
+# Marca todos os botões dentro de um nó com um grupo específico.
+# ------------------------------------------------------------
 func _tag_buttons_in_tree(root_node: Node, group_name: String) -> void:
 	for ui_button in _collect_buttons_in_tree(root_node):
 		if not ui_button.is_in_group(group_name):
 			ui_button.add_to_group(group_name)
 
 
-# Som / Foco
+# ------------------------------------------------------------
+# Evento disparado ao passar o mouse por cima de um botão.
+# Força o botão a receber foco.
+# ------------------------------------------------------------
 func _on_any_button_mouse_entered(hovered_button: BaseButton) -> void:
 	if hovered_button.focus_mode != Control.FOCUS_NONE:
 		hovered_button.grab_focus()
 
 
+# ------------------------------------------------------------
+# Evento disparado quando um botão recebe foco.
+# Toca o som de hover.
+# ------------------------------------------------------------
 func _on_any_button_focus_entered(_focused_button: BaseButton) -> void:
 	if hover_sound_player.playing:
 		hover_sound_player.stop()
@@ -112,6 +165,9 @@ func _on_any_button_focus_entered(_focused_button: BaseButton) -> void:
 	hover_sound_player.play()
 
 
+# ------------------------------------------------------------
+# Toca som de seleção ao pressionar botão.
+# ------------------------------------------------------------
 func _play_select_sound() -> void:
 	if select_sound_player.playing:
 		select_sound_player.stop()
@@ -119,6 +175,9 @@ func _play_select_sound() -> void:
 	select_sound_player.play()
 
 
+# ------------------------------------------------------------
+# Toca som de voltar ao pressionar botão.
+# ------------------------------------------------------------
 func _play_back_sound() -> void:
 	if back_sound_player.playing:
 		back_sound_player.stop()
@@ -126,9 +185,13 @@ func _play_back_sound() -> void:
 	back_sound_player.play()
 
 
+# ------------------------------------------------------------
+# Evento disparado quando qualquer botão é pressionado.
+# Verifica a qual grupo o botão pertence e chama o método correspondente.
+# ------------------------------------------------------------
 func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 	_play_select_sound()
-
+	
 	if pressed_button.is_in_group(MAIN_MENU_BUTTON_GROUP):
 		_on_main_menu_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(CREDITS_BUTTON_GROUP):
@@ -137,9 +200,11 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 		_on_settings_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(INPUT_SETTINGS_BUTTON_GROUP):
 		_on_input_settings_button_pressed(pressed_button)
+	elif pressed_button.is_in_group(GAME_OVER_SCREEN_GROUP):
+		_on_game_over_screen_button_pressed(pressed_button)
 
 
-# Main Menu
+# Ações de botões do menu principal.
 func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"NewGameButton":
@@ -158,7 +223,7 @@ func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.quit_game()
 
 
-#Credits
+# Ações de botões da tela de créditos.
 func _on_credits_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"Back":
@@ -166,7 +231,7 @@ func _on_credits_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_main_menu()
 
 
-# Settings
+# Ações de botões da tela de configurações.
 func _on_settings_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"ControlsButton":
@@ -176,11 +241,15 @@ func _on_settings_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_main_menu()
 
 
+# ------------------------------------------------------------
+# Chamado ao alterar o valor do slider de volume.
+# Define o volume global do jogo.
+# ------------------------------------------------------------
 func _on_settings_volume_changed(new_value_db: float) -> void:
 	Singleton.set_master_volume_db(new_value_db)
 
 
-# Input Settings
+# Ações de botões na tela de configurações de input.
 func _on_input_settings_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"BackToSettingsButton":
@@ -188,7 +257,15 @@ func _on_input_settings_button_pressed(pressed_button: BaseButton) -> void:
 			show_settings()
 
 
-# Singleton
+# Ações de botões da tela de Game Over.
+func _on_game_over_screen_button_pressed(pressed_button: BaseButton) -> void:
+	match pressed_button.name:
+		"GameOverRestartButton":
+			Singleton.restart_game()
+
+
+# Métodos chamados externamente via Singleton
+# Controlam a visibilidade das telas principais do jogo.
 func show_main_menu() -> void:
 	credits_layer.visible   = false
 	settings_layer.visible  = false

@@ -1,22 +1,25 @@
-class_name Turret
-extends Area2D
+class_name Turret extends Area2D
+
+const BULLET_1 = preload("res://scenes/bullet.tscn")
+const BULLET_2 = preload("res://scenes/bullet_2.tscn")
 
 @export var projectile : Projectile
 @export var projectiles_parent_group = "projectile_parent"
+
 var projectiles_node : Node
 var cooldown = false
-@onready var game = get_node("/root/Game")
-const BULLET_1 = preload("res://scenes/bullet.tscn")
-const BULLET_2 = preload("res://scenes/bullet_2.tscn")
 var current_bullet = 0;
+
 
 func try_shoot() -> bool:
 	push_error("Not implemented")
 	return false
 
+
 func _ready() -> void:
 	projectiles_node = get_tree().get_first_node_in_group(projectiles_parent_group)
 	assert(projectiles_node != null, "Projectiles node is required")
+
 
 func shoot(target_enemy):
 	$AudioStreamPlayer2D.play()
