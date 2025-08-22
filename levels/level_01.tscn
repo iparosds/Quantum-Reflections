@@ -50,10 +50,6 @@ position = Vector2(-6, -6)
 limit_smoothed = true
 position_smoothing_enabled = true
 
-[node name="AsteroidInterval" type="Timer" parent="."]
-wait_time = 0.42
-autostart = true
-
 [node name="Projectiles" type="Node2D" parent="." groups=["projectile_parent"]]
 
 [node name="Asteroids" type="Node2D" parent="." groups=["asteroids"]]
@@ -89,6 +85,5 @@ autostart = true
 
 [node name="SoundIcon" parent="." instance=ExtResource("5_llcge")]
 
-[connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
 [connection signal="body_exited" from="World" to="." method="_on_world_body_exited"]
 [connection signal="timeout" from="Time" to="." method="_on_time_timeout"]

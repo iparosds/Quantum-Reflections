@@ -8,6 +8,7 @@ const CREDITS_BUTTON_GROUP   := "credits_menu_button"
 const SETTINGS_BUTTON_GROUP  := "settings_menu_button"
 const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
+const PAUSE_MENU_GROUP := "pause_menu_button"
 
 # Camadas principais da interface do jogo.
 # Cada camada é uma parte visual do HUD ou de menus.
@@ -17,6 +18,7 @@ const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 @onready var settings_layer: CanvasLayer    = $SettingsMenu
 @onready var input_settings_layer: CanvasLayer = $InputSettings
 @onready var game_over_screen: CanvasLayer  = $GameOverScreen
+@onready var pause_menu_layer: CanvasLayer = $PauseMenu
 
 # Sons para interações de interface (hover, seleção, voltar).
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
@@ -41,6 +43,9 @@ const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 @onready var game_over_label: Label = $GameOverScreen/ColorRect/GameOverLabel
 @onready var game_over_restart_button: Button = $GameOverScreen/GameOverRestartButton
 
+var is_paused: bool = false
+var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
+
 
 # ------------------------------------------------------------
 # Inicialização da interface.
@@ -63,12 +68,17 @@ func _ready() -> void:
 	select_sound_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	back_sound_player.process_mode   = Node.PROCESS_MODE_ALWAYS
 	
+	settings_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	input_settings_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+
+	
 	main_menu_layer.visible  = true
 	credits_layer.visible    = false
 	settings_layer.visible   = false
 	input_settings_layer.visible = false
 	game_hud_layer.visible = false
 	game_over_screen.visible = false
+	pause_menu_layer.visible = false
 	
 	AudioPlayer._play_menu_music()
 	
@@ -77,22 +87,24 @@ func _ready() -> void:
 	_tag_buttons_in_tree(settings_layer,   SETTINGS_BUTTON_GROUP)
 	_tag_buttons_in_tree(input_settings_layer, INPUT_SETTINGS_BUTTON_GROUP)
 	_tag_buttons_in_tree(game_over_screen, GAME_OVER_SCREEN_GROUP)
+	_tag_buttons_in_tree(pause_menu_layer, PAUSE_MENU_GROUP)
 	
 	_connect_button_signals_recursively(self)
 	_connect_signal_safe(settings_volume_slider, "value_changed", Callable(self, "_on_settings_volume_changed"))
 	_focus_first_button_in(main_menu_layer)
 
 
-# ------------------------------------------------------------
-# Captura entrada do usuário que não foi tratada em outro lugar.
-# Se a tecla "back" for pressionada enquanto está em créditos ou configurações,
-# retorna ao menu principal.
-# ------------------------------------------------------------
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("back"):
-		if credits_layer.visible or settings_layer.visible:
+		if settings_layer.visible:
+			_play_back_sound()
+			settings_layer.visible = false
+			on_settings_back.call()
+			on_settings_back = Callable(Singleton, "open_main_menu")
+		elif credits_layer.visible:
 			_play_back_sound()
 			Singleton.open_main_menu()
+
 
 # ------------------------------------------------------------
 # Conecta sinais de forma segura, evitando duplicação de conexões.
@@ -202,6 +214,8 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 		_on_input_settings_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(GAME_OVER_SCREEN_GROUP):
 		_on_game_over_screen_button_pressed(pressed_button)
+	elif pressed_button.is_in_group(PAUSE_MENU_GROUP):
+		_on_pause_menu_button_pressed(pressed_button)
 
 
 # Ações de botões do menu principal.
@@ -220,7 +234,7 @@ func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 		"CreditsButton":
 			Singleton.open_credits()
 		"QuitButton":
-			Singleton.quit_game()
+			Singleton.quit_game_from_menu()
 
 
 # Ações de botões da tela de créditos.
@@ -231,14 +245,15 @@ func _on_credits_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_main_menu()
 
 
-# Ações de botões da tela de configurações.
 func _on_settings_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"ControlsButton":
 			Singleton.open_controls()
 		"Back":
 			_play_back_sound()
-			Singleton.open_main_menu()
+			settings_layer.visible = false
+			on_settings_back.call()
+			on_settings_back = Callable(Singleton, "open_main_menu")
 
 
 # ------------------------------------------------------------
@@ -264,6 +279,25 @@ func _on_game_over_screen_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.restart_game()
 
 
+# Ações de botões da tela de Pause.
+func _on_pause_menu_button_pressed(pressed_button: BaseButton) -> void:
+	match  pressed_button.name:
+		"ContinueGameButton":
+			Singleton.continue_game()
+		"RestartGameButton":
+			Singleton.restart_game()
+		"LoadGameButton":
+			pass
+		"SaveGameButton":
+			pass
+		"OpenSettingsButton":
+			Singleton.open_settings()
+		"QuitToMainMenuButton":
+			Singleton.open_main_menu()
+		"QuitToDesktopButton":
+			Singleton.quit_to_desktop_from_game()
+
+
 # Métodos chamados externamente via Singleton
 # Controlam a visibilidade das telas principais do jogo.
 func show_main_menu() -> void:
@@ -274,6 +308,9 @@ func show_main_menu() -> void:
 
 
 func show_settings() -> void:
+	if is_paused:
+		pause_menu_layer.visible = false
+	
 	main_menu_layer.visible = false
 	credits_layer.visible   = false
 	settings_layer.visible  = true
@@ -294,3 +331,35 @@ func show_input_settings() -> void:
 	settings_layer.visible    = false
 	input_settings_layer.visible = true
 	_focus_first_button_in(input_settings_layer)
+
+
+func show_pause_menu() -> void:
+	get_tree().paused = true
+	pause_menu_layer.visible = true
+	is_paused = true
+	_focus_first_button_in(pause_menu_layer)
+
+func hide_pause_menu() -> void:
+	get_tree().paused = false
+	pause_menu_layer.visible = false
+	is_paused = false
+
+
+# ------------------------------------------------------------
+# Esconde apenas o overlay do menu de pausa.
+# - Não altera o estado de pausa do jogo (get_tree().paused permanece como está)
+# - Não modifica a flag interna is_paused nem outras camadas/menus
+# - Útil quando você quer mostrar outra UI por cima (ex.: Settings) mantendo o jogo pausado
+# ------------------------------------------------------------
+func hide_pause_overlay_only() -> void:
+	pause_menu_layer.visible = false
+
+
+# ------------------------------------------------------------
+# Exibe apenas o overlay do menu de pausa.
+# - Não altera o estado de pausa do jogo (get_tree().paused permanece como está)
+# - Não modifica a flag interna is_paused nem outras camadas/menus
+# - Útil para retornar do Settings/Credits ao overlay de pausa, mantendo a partida congelada
+# ------------------------------------------------------------
+func show_pause_overlay_only() -> void:
+	pause_menu_layer.visible = true
