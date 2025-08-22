@@ -1,7 +1,7 @@
 class_name Level extends Node2D;
 
-const ASTEROID = preload("res://scenes/asteroid.tscn")
-const PORTAL = preload("res://scenes/portal.tscn")
+const ASTEROID = preload("res://scenes/in_game/asteroid.tscn")
+const PORTAL = preload("res://scenes/in_game/portal.tscn")
 
 @export var level_duration_seconds: float = 180.0
 @export var portal_duration_seconds: float = 20.0
