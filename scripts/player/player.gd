@@ -1,6 +1,6 @@
 class_name Player extends CharacterBody2D;
 
-const BLACK_HOLE = preload("res://scenes/in_game/black_hole.tscn")
+const BLACK_HOLE = preload("res://scenes/game/black_hole.tscn")
 const DAMAGE_RATE = 500.0;
 const MAX_ACCELERATION = 1000.0
 

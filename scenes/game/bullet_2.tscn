@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://djuxeo6sny8a7"]
 
-[ext_resource type="Script" uid="uid://btyk6jddr5hdq" path="res://scripts/in_game/bullet_2.gd" id="1_puaes"]
+[ext_resource type="Script" uid="uid://btyk6jddr5hdq" path="res://scripts/game/bullet_2.gd" id="1_puaes"]
 [ext_resource type="Texture2D" uid="uid://nespt8etwity" path="res://assets/sprites/levels_sprites/golpe giratõrio.png" id="2_k22b8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_txbk2"]

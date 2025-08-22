@@ -1,7 +1,7 @@
 class_name Turret extends Area2D
 
-const BULLET_1 = preload("res://scenes/in_game/bullet.tscn")
-const BULLET_2 = preload("res://scenes/in_game/bullet_2.tscn")
+const BULLET_1 = preload("res://scenes/game/bullet.tscn")
+const BULLET_2 = preload("res://scenes/game/bullet_2.tscn")
 
 @export var projectile : Projectile
 @export var projectiles_parent_group = "projectile_parent"

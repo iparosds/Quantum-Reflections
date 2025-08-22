@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
 var moving_speed = 0
-var player : Player
-var level
+var player : Player 
+var level 
 
 
 func _physics_process(delta):

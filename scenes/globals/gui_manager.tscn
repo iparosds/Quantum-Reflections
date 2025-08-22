@@ -1,11 +1,11 @@
 [gd_scene load_steps=38 format=3 uid="uid://kqrwytbvwyno"]
 
-[ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/managers/gui_manager.gd" id="1_01qsd"]
+[ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/fonts/PixelifySans-VariableFont_wght.ttf" id="2_8d174"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/menus_and_misc/bg menu.jpg" id="3_mrw3c"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/menus_and_misc/logo animado.png" id="4_rbxbw"]
 [ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons/buttons_theme.tres" id="5_w8ru2"]
-[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/icons/sound_icon.tscn" id="6_haemp"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/globals/sound_icon.tscn" id="6_haemp"]
 [ext_resource type="Texture2D" uid="uid://krnpsv5q7w60" path="res://assets/sprites/menus_and_misc/creditos2.png" id="7_dc7dl"]
 [ext_resource type="Script" uid="uid://c8nh1wpwg1qo2" path="res://scripts/menus/input_settings.gd" id="8_aae78"]
 [ext_resource type="PackedScene" uid="uid://duqt0xpu2vl7s" path="res://scenes/menus/input_button.tscn" id="9_yixji"]

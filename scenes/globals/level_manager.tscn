@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bp6c6pfa4ynta"]
+
+[ext_resource type="Script" uid="uid://ceftxtci3werw" path="res://scripts/globals/level_manager.gd" id="1_5eglo"]
+[ext_resource type="PackedScene" uid="uid://kqrwytbvwyno" path="res://scenes/globals/gui_manager.tscn" id="2_lbe5n"]
+
+[node name="LevelManager" type="Node2D"]
+script = ExtResource("1_5eglo")
+
+[node name="GuiManager" parent="." instance=ExtResource("2_lbe5n")]

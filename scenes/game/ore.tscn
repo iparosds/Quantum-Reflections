@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bphr8b6h5ymsf"]
 
-[ext_resource type="Script" uid="uid://ovm72vqueju3" path="res://scripts/in_game/ore.gd" id="1_qc37p"]
+[ext_resource type="Script" uid="uid://ovm72vqueju3" path="res://scripts/game/ore.gd" id="1_qc37p"]
 [ext_resource type="Texture2D" uid="uid://dtqj60jwhf2qj" path="res://assets/sprites/levels_sprites/minerio.png" id="2_5uca5"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_d5nk3"]
