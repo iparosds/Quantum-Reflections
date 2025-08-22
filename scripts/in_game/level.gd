@@ -1,6 +1,10 @@
 class_name Level extends Node2D;
 
-const ASTEROID = preload("res://scenes/in_game/asteroid.tscn")
+const ASTEROID = preload("res://scenes/asteroid.tscn")
+const PORTAL = preload("res://scenes/portal.tscn")
+
+@export var level_duration_seconds: float = 180.0
+@export var portal_duration_seconds: float = 20.0
 
 var game_paused = false;
 var quantum = false;
@@ -8,12 +12,37 @@ var god_mode = false;
 var portal_active = false;
 var score = 0;
 var quantum_roll = 0
-var portal_timer = 150.0
+var portal_timer: float = 0.0
+var portal_node: Node2D = null
 
 
 func _ready():
 	Singleton.level = self
 	AudioPlayer._play_level_music()
+	
+	###GPT####
+	# inicia o cronômetro com a duração configurada
+	portal_timer = level_duration_seconds
+	# garante que o HUD mostre o máximo correto desde o começo
+	Singleton.gui_manager.hud_timer_bar.max_value = level_duration_seconds
+
+
+#### GPT #####
+func _open_portal():
+	# Instancia o portal
+	portal_node = PORTAL.instantiate()
+	
+	# Escolha uma posição. Exemplos:
+	# portal_node.global_position = %PortalSpawn.global_position
+	# ou:
+	portal_node.global_position = %PathFollow2D.global_position
+	
+	add_child(portal_node)
+	portal_node.add_to_group("portal")  # útil para buscas
+	
+	# Avisa todos os asteroides qual é o alvo do portal
+	get_tree().call_group("asteroids", "on_portal_opened", portal_node)
+
 
 
 # ------------------------------------------------------------
@@ -21,7 +50,8 @@ func _ready():
 # ------------------------------------------------------------
 func win():
 	get_tree().paused = true
-	Singleton.gui_manager.game_hud_layer.visible = true
+	Singleton.gui_manager.hud_portal_active.visible = false
+	Singleton.gui_manager.game_over_screen.visible = true
 	Singleton.gui_manager.game_over_label.text = "You win!"
 
 
@@ -66,25 +96,29 @@ func _physics_process(delta):
 		else:
 			god_mode = false
 			Singleton.gui_manager.hud_god_mode.visible = false
-
+	
 	if quantum == true:
 		Engine.time_scale = 0.8
 		RenderingServer.set_default_clear_color(Color.hex(0x7c7ea1ff))
 	else:
 		Engine.time_scale = 1
 		RenderingServer.set_default_clear_color(Color.hex(0x2f213bff))
-
+	
 	portal_timer -= delta
 	var time_left = int(portal_timer)
-
+	
 	if time_left < 1:
 		if portal_active == false:
 			portal_active = true
-			portal_timer = 20.0
+			#portal_timer = 20.0
+			portal_timer = portal_duration_seconds ### GPT
 			Singleton.gui_manager.hud_portal_active.visible = true
 			Singleton.gui_manager.hud_timer_bar.get("theme_override_styles/fill").bg_color = Color.hex(0xb4b542ff)
+			_open_portal()  # <- instancie e anuncie o portal aqui
 		else:
 			Singleton.game_over()
+	
+	
 
 	var portal_minutes = 0
 	if time_left > 60:
@@ -99,11 +133,18 @@ func _physics_process(delta):
 	else:
 		Singleton.gui_manager.hud_timer_text.text = str(portal_minutes, ":", portal_seconds)
 
+	#if portal_active == true:
+		#Singleton.gui_manager.hud_timer_bar.max_value = 20
+	#else:
+		#Singleton.gui_manager.hud_timer_bar.max_value = 150
+	
+	### GPT ###
 	if portal_active == true:
-		Singleton.gui_manager.hud_timer_bar.max_value = 20
+		Singleton.gui_manager.hud_timer_bar.max_value = portal_duration_seconds
 	else:
-		Singleton.gui_manager.hud_timer_bar.max_value = 150
-
+		Singleton.gui_manager.hud_timer_bar.max_value = level_duration_seconds
+	
+	
 	Singleton.gui_manager.hud_timer_bar.value = int(portal_timer)
 
 
