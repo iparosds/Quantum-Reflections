@@ -9,7 +9,9 @@ const ICON_ON := preload("res://assets/sprites/sound-loud.svg")
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_update_icon(_is_master_muted())
+	
 
 
 func _on_sound_toggle_button_pressed() -> void:

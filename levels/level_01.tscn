@@ -1,13 +1,11 @@
-[gd_scene load_steps=16 format=4 uid="uid://bepgb8gyvqqc1"]
+[gd_scene load_steps=11 format=4 uid="uid://c165xjnqgru8j"]
 
-[ext_resource type="Script" uid="uid://k3dun2g1kqy" path="res://scripts/game.gd" id="1_ca608"]
-[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="2_yxpby"]
-[ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/font/PixelifySans-VariableFont_wght.ttf" id="4_coeoj"]
-[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="5_80oj7"]
-[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="5_sceap"]
-[ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="8_d7gnp"]
-[ext_resource type="PackedScene" uid="uid://c1wm8rtspnyjw" path="res://scenes/pause_menu.tscn" id="8_de88q"]
-[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/Sound Icon.tscn" id="8_gee14"]
+[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player.tscn" id="1_j60wy"]
+[ext_resource type="Script" uid="uid://bxxy4xisa1vhy" path="res://scripts/level.gd" id="1_q7ibo"]
+[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/portal.tscn" id="2_qgxqk"]
+[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/universe.png" id="3_t0ybu"]
+[ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/ore.tscn" id="4_1b6n0"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/sound_icon.tscn" id="5_llcge"]
 
 [sub_resource type="Curve2D" id="Curve2D_q82x3"]
 _data = {
@@ -15,17 +13,8 @@ _data = {
 }
 point_count = 21
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hkfl6"]
-bg_color = Color(0.486275, 0.494118, 0.631373, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hhj06"]
-bg_color = Color(0.184314, 0.129412, 0.231373, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q774v"]
-bg_color = Color(0.129412, 0.258824, 0.419608, 1)
-
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7l8sx"]
-texture = ExtResource("5_sceap")
+texture = ExtResource("3_t0ybu")
 texture_region_size = Vector2i(50, 50)
 0:0/0 = 0
 1:0/0 = 0
@@ -38,10 +27,10 @@ sources/0 = SubResource("TileSetAtlasSource_7l8sx")
 [sub_resource type="CircleShape2D" id="CircleShape2D_dgy74"]
 radius = 1026.0
 
-[node name="Game" type="Node2D"]
-script = ExtResource("1_ca608")
+[node name="Level" type="Node2D"]
+script = ExtResource("1_q7ibo")
 
-[node name="Player" parent="." instance=ExtResource("2_yxpby")]
+[node name="Player" parent="." instance=ExtResource("1_j60wy")]
 unique_name_in_owner = true
 position = Vector2(576, 324)
 scale = Vector2(1.5, 1.5)
@@ -61,114 +50,11 @@ position = Vector2(-6, -6)
 limit_smoothed = true
 position_smoothing_enabled = true
 
-[node name="AsteroidInterval" type="Timer" parent="."]
-wait_time = 0.42
-autostart = true
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="XP" type="ProgressBar" parent="UI"]
-offset_right = 1145.0
-offset_bottom = 13.0
-theme_override_styles/background = SubResource("StyleBoxFlat_hkfl6")
-theme_override_styles/fill = SubResource("StyleBoxFlat_hhj06")
-value = 16.12
-rounded = true
-show_percentage = false
-
-[node name="ScoreLabel" type="Label" parent="UI"]
-offset_left = 550.0
-offset_top = -4.0
-offset_right = 604.0
-offset_bottom = 19.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("4_coeoj")
-text = "0 ores."
-
-[node name="Timer" type="ProgressBar" parent="UI"]
-offset_top = 14.0
-offset_right = 1145.0
-offset_bottom = 28.0
-theme_override_styles/fill = SubResource("StyleBoxFlat_q774v")
-value = 100.0
-show_percentage = false
-
-[node name="Label" type="Label" parent="UI"]
-offset_left = 554.0
-offset_top = 11.0
-offset_right = 594.0
-offset_bottom = 34.0
-theme_override_fonts/font = ExtResource("4_coeoj")
-text = "10:00"
-
-[node name="PortalActive" type="Label" parent="UI"]
-visible = false
-offset_left = 526.0
-offset_top = 148.0
-offset_right = 627.0
-offset_bottom = 171.0
-text = "Portal active!"
-
-[node name="GodMode" type="Label" parent="UI"]
-visible = false
-offset_left = 520.0
-offset_top = 123.0
-offset_right = 633.0
-offset_bottom = 146.0
-text = "You are a God!"
-
-[node name="Pause" type="CanvasLayer" parent="."]
-visible = false
-
-[node name="PauseMenu" parent="Pause" instance=ExtResource("8_de88q")]
-offset_left = 3.0
-offset_top = 5.0
-offset_right = 3.0
-offset_bottom = 5.0
-
-[node name="GameOver" type="CanvasLayer" parent="."]
-unique_name_in_owner = true
-process_mode = 3
-visible = false
-
-[node name="ColorRect" type="ColorRect" parent="GameOver"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(1, 1, 1, 0.337255)
-
-[node name="Label" type="Label" parent="GameOver/ColorRect"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -166.5
-offset_top = -41.5
-offset_right = 166.5
-offset_bottom = 41.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 60
-text = "Game Over"
-
-[node name="Button" type="Button" parent="GameOver"]
-offset_left = 545.0
-offset_top = 381.0
-offset_right = 638.0
-offset_bottom = 412.0
-text = "Restart"
-
 [node name="Projectiles" type="Node2D" parent="." groups=["projectile_parent"]]
 
 [node name="Asteroids" type="Node2D" parent="." groups=["asteroids"]]
 
-[node name="Portal" parent="." instance=ExtResource("5_80oj7")]
+[node name="Portal" parent="." instance=ExtResource("2_qgxqk")]
 position = Vector2(577, 389)
 scale = Vector2(2, 2)
 
@@ -176,13 +62,13 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAcAAwAAAACAAAAAAAbAAwAAAACAAAAAAAaAOj/AAACAAAAAAD+/x4AAAACAAAAAAD5/wUAAAACAAAAAAAQAPL/AAACAAAAAAD6//H/AAADAAAAAAAGAAkAAAABAAAAAAAaAPf/AAABAAAAAAD//xMAAAACAAAAAADr//3/AAABAAAAAAAGAOP/AAACAAAAAADj/xQAAAAAAAAAAADt//P/AAACAAAAAAD1/+j/AAACAAAAAADy/+z/AAACAAAAAADm/wMAAAACAAAAAADl/wYAAAACAAAAAAAjAFMAAAAAAAAAAABiABQAAAAAAAAAAAAjANX/AAAAAAAAAAD//+H/AAABAAAAAAATANf/AAABAAAAAAAaANb/AAABAAAAAAAzANf/AAABAAAAAABCAN3/AAABAAAAAABEAN//AAABAAAAAABPAOb/AAABAAAAAABYAPH/AAABAAAAAABeAP3/AAABAAAAAABdAP//AAABAAAAAABgAAIAAAABAAAAAABiAA0AAAABAAAAAABiABkAAAABAAAAAABhAB0AAAABAAAAAABhACEAAAABAAAAAABhACQAAAABAAAAAABfACcAAAABAAAAAABcAC8AAAABAAAAAABXADgAAAABAAAAAABQAEEAAAABAAAAAABAAEwAAAABAAAAAABCAEsAAAABAAAAAAAuAFIAAAABAAAAAAAYAFIAAAABAAAAAAAeAFMAAAABAAAAAAAKAE4AAAABAAAAAAADAEsAAAABAAAAAAD4/0IAAAABAAAAAAD0/z0AAAABAAAAAAD0/z4AAAABAAAAAADs/zMAAAABAAAAAADm/yIAAAABAAAAAADm/yQAAAABAAAAAADn/ycAAAABAAAAAADl/w0AAAABAAAAAADk/xAAAAACAAAAAADl/wgAAAACAAAAAADo/wwAAAACAAAAAADl/wsAAAACAAAAAADn/xYAAAACAAAAAADk/xkAAAACAAAAAADo/x0AAAACAAAAAADl/x0AAAACAAAAAADo/ysAAAACAAAAAADp/ysAAAACAAAAAADv/zMAAAACAAAAAADv/zQAAAACAAAAAADy/zcAAAACAAAAAAD3/z8AAAACAAAAAADx/zoAAAADAAAAAADv/zgAAAACAAAAAABCAN//AAADAAAAAABYAPX/AAADAAAAAABfAAAAAAADAAAAAABPAOj/AAADAAAAAAAxANb/AAADAAAAAAAWANb/AAADAAAAAAADAN7/AAADAAAAAAD0/+r/AAADAAAAAADo////AAADAAAAAADo/yQAAAADAAAAAADr/zEAAAADAAAAAAD+/0cAAAADAAAAAAASAFEAAAADAAAAAAA4AE8AAAADAAAAAABNAEMAAAADAAAAAABaADQAAAADAAAAAABNAEAAAAACAAAAAABJAEIAAAACAAAAAAA8AE4AAAACAAAAAAA2AEwAAAACAAAAAAAsAFIAAAACAAAAAAAUAFEAAAACAAAAAAASAE4AAAACAAAAAAD8/0UAAAACAAAAAAAAAEYAAAACAAAAAAAAAEkAAAACAAAAAADz/zoAAAACAAAAAADp/yIAAAACAAAAAADp/ycAAAACAAAAAADm/xAAAAACAAAAAADn/wgAAAACAAAAAADl/xcAAAACAAAAAADp/wAAAAACAAAAAADq//v/AAACAAAAAADr//b/AAACAAAAAADw/+//AAACAAAAAAD0/+z/AAACAAAAAAD1/+v/AAACAAAAAAAAAN//AAACAAAAAAD8/+L/AAACAAAAAAD5/+X/AAACAAAAAAD5/+j/AAACAAAAAAAHANz/AAACAAAAAAAKANr/AAACAAAAAAAUANb/AAACAAAAAAAXANj/AAACAAAAAAAVANj/AAACAAAAAAAYANb/AAACAAAAAAAgANX/AAACAAAAAAAnANX/AAACAAAAAAAuANb/AAACAAAAAABAANz/AAACAAAAAABAANv/AAACAAAAAAA3ANj/AAACAAAAAAA8ANr/AAACAAAAAABKAOL/AAACAAAAAABUAO3/AAACAAAAAABMAOT/AAACAAAAAABLAOT/AAACAAAAAABLAOP/AAACAAAAAABaAPf/AAACAAAAAABcAPr/AAACAAAAAABaAPv/AAACAAAAAABhAAcAAAACAAAAAABfAAoAAAACAAAAAABhAAsAAAACAAAAAABiABEAAAACAAAAAABdACoAAAACAAAAAABdAC0AAAACAAAAAABYADUAAAACAAAAAABSADwAAAACAAAAAABSAD8AAAACAAAAAABHAEYAAAACAAAAAABGAEgAAAACAAAAAABEAEoAAAACAAAAAABKAEYAAAACAAAAAAAxAFEAAAACAAAAAAA0AFEAAAACAAAAAAA1AFEAAAACAAAAAAAqAFIAAAACAAAAAAAnAFMAAAACAAAAAAAbAFIAAAACAAAAAAA=")
 tile_set = SubResource("TileSet_5ghot")
 
-[node name="Ore" parent="." instance=ExtResource("8_d7gnp")]
+[node name="Ore" parent="." instance=ExtResource("4_1b6n0")]
 position = Vector2(577, 183)
 
-[node name="Ore3" parent="." instance=ExtResource("8_d7gnp")]
+[node name="Ore3" parent="." instance=ExtResource("4_1b6n0")]
 position = Vector2(787, 333)
 
-[node name="Ore2" parent="." instance=ExtResource("8_d7gnp")]
+[node name="Ore2" parent="." instance=ExtResource("4_1b6n0")]
 visible = false
 position = Vector2(500, 416)
 
@@ -197,9 +83,7 @@ shape = SubResource("CircleShape2D_dgy74")
 wait_time = 0.7
 autostart = true
 
-[node name="SoundIcon" parent="." instance=ExtResource("8_gee14")]
+[node name="SoundIcon" parent="." instance=ExtResource("5_llcge")]
 
-[connection signal="timeout" from="AsteroidInterval" to="." method="_on_timer_timeout"]
-[connection signal="pressed" from="GameOver/Button" to="." method="_on_button_pressed"]
 [connection signal="body_exited" from="World" to="." method="_on_world_body_exited"]
 [connection signal="timeout" from="Time" to="." method="_on_time_timeout"]
