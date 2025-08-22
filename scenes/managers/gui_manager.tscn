@@ -339,7 +339,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SoundIcon" parent="MainMenu" instance=ExtResource("6_haemp")]
-visible = false
 
 [node name="Credits" type="CanvasLayer" parent="."]
 visible = false
@@ -644,6 +643,103 @@ offset_top = 381.0
 offset_right = 638.0
 offset_bottom = 412.0
 text = "Restart"
+
+[node name="SoundIcon" parent="GameOverScreen" instance=ExtResource("6_haemp")]
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="TextureRect" type="TextureRect" parent="PauseMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_mrw3c")
+expand_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_bottom = 12
+
+[node name="SettingsLabel" type="Label" parent="PauseMenu/VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("2_8d174")
+text = "GAME PAUSED"
+
+[node name="ContinueGameButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../QuitToDesktopButton")
+theme = ExtResource("5_w8ru2")
+text = "Continue Game"
+
+[node name="RestartGameButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_w8ru2")
+text = "Restart Game"
+
+[node name="Spacer" type="Control" parent="PauseMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="LoadGameButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("5_w8ru2")
+disabled = true
+text = "Load Game"
+
+[node name="SaveGameButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("5_w8ru2")
+disabled = true
+text = "Save Game"
+
+[node name="Spacer2" type="Control" parent="PauseMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="OpenSettingsButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_w8ru2")
+text = "Settings"
+
+[node name="Spacer3" type="Control" parent="PauseMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="QuitToMainMenuButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_w8ru2")
+text = "Quit to Main Menu"
+
+[node name="QuitToDesktopButton" type="Button" parent="PauseMenu/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_bottom = NodePath("../ContinueGameButton")
+theme = ExtResource("5_w8ru2")
+text = "Quit to Desktop"
+
+[node name="SoundIcon" parent="PauseMenu" instance=ExtResource("6_haemp")]
 
 [node name="Sounds" type="Node" parent="."]
 
