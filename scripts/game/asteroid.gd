@@ -41,7 +41,7 @@ func _physics_process(_delta):
 		player = Singleton.level.get_node_or_null("Player")
 		if !is_instance_valid(player):
 			return
-		
+
 	var direction: Vector2
 
 	if Singleton.level.portal_active:
