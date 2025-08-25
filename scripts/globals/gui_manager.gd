@@ -9,7 +9,7 @@ const SETTINGS_BUTTON_GROUP  := "settings_menu_button"
 const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 const PAUSE_MENU_GROUP := "pause_menu_button"
-
+const LEVELS_MENU_GROUP := "level_menu_button"
 # Camadas principais da interface do jogo.
 # Cada camada é uma parte visual do HUD ou de menus.
 @onready var game_hud_layer: CanvasLayer    = $GameHud
@@ -19,6 +19,7 @@ const PAUSE_MENU_GROUP := "pause_menu_button"
 @onready var input_settings_layer: CanvasLayer = $InputSettings
 @onready var game_over_screen: CanvasLayer  = $GameOverScreen
 @onready var pause_menu_layer: CanvasLayer = $PauseMenu
+@onready var levels_menu_layer: CanvasLayer = $LevelsMenu
 
 # Sons para interações de interface (hover, seleção, voltar).
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
@@ -79,6 +80,7 @@ func _ready() -> void:
 	game_hud_layer.visible = false
 	game_over_screen.visible = false
 	pause_menu_layer.visible = false
+	levels_menu_layer.visible = false
 	
 	AudioPlayer._play_menu_music()
 	
@@ -88,6 +90,7 @@ func _ready() -> void:
 	_tag_buttons_in_tree(input_settings_layer, INPUT_SETTINGS_BUTTON_GROUP)
 	_tag_buttons_in_tree(game_over_screen, GAME_OVER_SCREEN_GROUP)
 	_tag_buttons_in_tree(pause_menu_layer, PAUSE_MENU_GROUP)
+	_tag_buttons_in_tree(levels_menu_layer, LEVELS_MENU_GROUP)
 	
 	_connect_button_signals_recursively(self)
 	_connect_signal_safe(settings_volume_slider, "value_changed", Callable(self, "_on_settings_volume_changed"))
@@ -216,13 +219,15 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 		_on_game_over_screen_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(PAUSE_MENU_GROUP):
 		_on_pause_menu_button_pressed(pressed_button)
+	elif pressed_button.is_in_group(LEVELS_MENU_GROUP):
+		_on_levels_menu_button_pressed(pressed_button)
 
 
 # Ações de botões do menu principal.
 func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"NewGameButton":
-			Singleton.start_game()
+			show_levels_menu()
 		"ContinueGameButton":
 			Singleton.continue_game()
 		"LoadGameButton":
@@ -298,6 +303,12 @@ func _on_pause_menu_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.quit_to_desktop_from_game()
 
 
+func _on_levels_menu_button_pressed(pressed_button : BaseButton) -> void:
+	match  pressed_button.name:
+		"BackToMainMenuButton":
+			pass
+
+
 # Métodos chamados externamente via Singleton
 # Controlam a visibilidade das telas principais do jogo.
 func show_main_menu() -> void:
@@ -363,3 +374,12 @@ func hide_pause_overlay_only() -> void:
 # ------------------------------------------------------------
 func show_pause_overlay_only() -> void:
 	pause_menu_layer.visible = true
+
+
+func show_levels_menu() -> void:
+	main_menu_layer.visible   = false
+	credits_layer.visible     = false
+	settings_layer.visible    = false
+	input_settings_layer.visible = false
+	levels_menu_layer.visible = true
+	_focus_first_button_in(levels_menu_layer)

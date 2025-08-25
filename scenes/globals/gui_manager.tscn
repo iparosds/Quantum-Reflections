@@ -164,6 +164,7 @@ bg_color = Color(0, 0, 0, 0)
 script = ExtResource("1_01qsd")
 
 [node name="GameHud" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="HudXP" type="ProgressBar" parent="GameHud"]
 offset_right = 1145.0
@@ -217,7 +218,6 @@ offset_bottom = 146.0
 text = "You are a God!"
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="TextureRect" type="TextureRect" parent="MainMenu"]
 anchors_preset = 15
@@ -338,8 +338,6 @@ label_settings = SubResource("LabelSettings_1tl11")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SoundIcon" parent="MainMenu" instance=ExtResource("6_haemp")]
-
 [node name="Credits" type="CanvasLayer" parent="."]
 visible = false
 
@@ -388,8 +386,6 @@ layout_mode = 2
 theme = ExtResource("5_w8ru2")
 text = "Back"
 flat = true
-
-[node name="SoundIcon" parent="Credits" instance=ExtResource("6_haemp")]
 
 [node name="SettingsMenu" type="CanvasLayer" parent="."]
 visible = false
@@ -484,8 +480,6 @@ text = "ESC to go to main menu"
 label_settings = SubResource("LabelSettings_55n0w")
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="SoundIcon" parent="SettingsMenu" instance=ExtResource("6_haemp")]
 
 [node name="InputSettings" type="CanvasLayer" parent="."]
 visible = false
@@ -607,8 +601,6 @@ theme = ExtResource("5_w8ru2")
 text = "Back to settings"
 flat = true
 
-[node name="SoundIcon" parent="InputSettings" instance=ExtResource("6_haemp")]
-
 [node name="GameOverScreen" type="CanvasLayer" parent="."]
 visible = false
 
@@ -643,8 +635,6 @@ offset_top = 381.0
 offset_right = 638.0
 offset_bottom = 412.0
 text = "Restart"
-
-[node name="SoundIcon" parent="GameOverScreen" instance=ExtResource("6_haemp")]
 
 [node name="PauseMenu" type="CanvasLayer" parent="."]
 visible = false
@@ -739,7 +729,53 @@ focus_neighbor_bottom = NodePath("../ContinueGameButton")
 theme = ExtResource("5_w8ru2")
 text = "Quit to Desktop"
 
-[node name="SoundIcon" parent="PauseMenu" instance=ExtResource("6_haemp")]
+[node name="LevelsMenu" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="LevelsMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_mrw3c")
+expand_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LevelsMenu"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="LevelsMenu/ScrollContainer"]
+layout_mode = 2
+
+[node name="LevelsContainer" type="VBoxContainer" parent="LevelsMenu/ScrollContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelsMenu"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BackToMainMenuButton" type="Button" parent="LevelsMenu/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_w8ru2")
+text = " Back To Main Menu "
+flat = true
 
 [node name="Sounds" type="Node" parent="."]
 
@@ -751,6 +787,8 @@ stream = ExtResource("11_4wjxq")
 
 [node name="BackSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("12_pme4d")
+
+[node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
 
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/SaveConfigButton" to="InputSettings/Control" method="_on_save_config_button_pressed"]
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]
