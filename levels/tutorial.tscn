@@ -1,0 +1,89 @@
+[gd_scene load_steps=11 format=4 uid="uid://dqdtsu4c4ww7r"]
+
+[ext_resource type="Script" uid="uid://bxxy4xisa1vhy" path="res://scripts/game/level.gd" id="1_aaho8"]
+[ext_resource type="PackedScene" uid="uid://exvs04d5gcyx" path="res://scenes/player/player.tscn" id="2_c633x"]
+[ext_resource type="PackedScene" uid="uid://ccx1134vavnom" path="res://scenes/game/portal.tscn" id="3_gdrka"]
+[ext_resource type="Texture2D" uid="uid://dl87h8t255y8e" path="res://assets/sprites/levels_sprites/universe.png" id="4_vvqp3"]
+[ext_resource type="PackedScene" uid="uid://bphr8b6h5ymsf" path="res://scenes/game/ore.tscn" id="5_bp3yb"]
+[ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/globals/sound_icon.tscn" id="6_jfmsd"]
+
+[sub_resource type="Curve2D" id="Curve2D_q82x3"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -475.155, -570.064, 0, 0, 0, 0, -359.03, -619.813, 0, 0, 0, 0, -17.6889, -676.244, 0, 0, 0, 0, 404.589, -587.142, 0, 0, 0, 0, 654.437, -411.91, 0, 0, 0, 0, 805.753, -150.547, 0, 0, 0, 0, 858.538, 78.1461, 0, 0, 0, 0, 805.753, 342.479, 0, 0, 0, 0, 650.918, 571.172, 0, 0, 0, 0, 327.171, 761.255, 0, 0, 0, 0, -38.8028, 829.566, 0, 0, 0, 0, -383.663, 755.315, 0, 0, 0, 0, -668.701, 600.873, 0, 0, 0, 0, -848.169, 381.09, 0, 0, 0, 0, -911.51, 140.517, 0, 0, 0, 0, -890.396, -114.906, 0, 0, 0, 0, -736.439, -362.904, 0, 0, 0, 0, -609.756, -492.101, 0, 0, 0, 0, -475.155, -570.064, 0, 0, 0, 0, -23.847, 62.5534, 0, 0, 0, 0, -18.5686, 75.176)
+}
+point_count = 21
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7l8sx"]
+texture = ExtResource("4_vvqp3")
+texture_region_size = Vector2i(50, 50)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_5ghot"]
+sources/0 = SubResource("TileSetAtlasSource_7l8sx")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dgy74"]
+radius = 1026.0
+
+[node name="Level" type="Node2D"]
+script = ExtResource("1_aaho8")
+
+[node name="Player" parent="." instance=ExtResource("2_c633x")]
+unique_name_in_owner = true
+position = Vector2(39, 366)
+scale = Vector2(1.5, 1.5)
+
+[node name="Path2D" type="Path2D" parent="Player"]
+position = Vector2(21.9153, -87.4963)
+scale = Vector2(1.03336, 1.22435)
+curve = SubResource("Curve2D_q82x3")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
+unique_name_in_owner = true
+position = Vector2(-475.155, -570.064)
+rotation = -0.404754
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(-6, -6)
+limit_smoothed = true
+position_smoothing_enabled = true
+
+[node name="Projectiles" type="Node2D" parent="." groups=["projectile_parent"]]
+
+[node name="Asteroids" type="Node2D" parent="." groups=["asteroids"]]
+
+[node name="Portal" parent="." instance=ExtResource("3_gdrka")]
+position = Vector2(152, 275)
+scale = Vector2(2, 2)
+script = null
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAcAAwAAAACAAAAAAAbAAwAAAACAAAAAAAaAOj/AAACAAAAAAD+/x4AAAACAAAAAAD5/wUAAAACAAAAAAAQAPL/AAACAAAAAAD6//H/AAADAAAAAAAGAAkAAAABAAAAAAAaAPf/AAABAAAAAAD//xMAAAACAAAAAADr//3/AAABAAAAAAAGAOP/AAACAAAAAADj/xQAAAAAAAAAAADt//P/AAACAAAAAAD1/+j/AAACAAAAAADy/+z/AAACAAAAAADm/wMAAAACAAAAAADl/wYAAAACAAAAAAAjAFMAAAAAAAAAAABiABQAAAAAAAAAAAAjANX/AAAAAAAAAAD//+H/AAABAAAAAAATANf/AAABAAAAAAAaANb/AAABAAAAAAAzANf/AAABAAAAAABCAN3/AAABAAAAAABEAN//AAABAAAAAABPAOb/AAABAAAAAABYAPH/AAABAAAAAABeAP3/AAABAAAAAABdAP//AAABAAAAAABgAAIAAAABAAAAAABiAA0AAAABAAAAAABiABkAAAABAAAAAABhAB0AAAABAAAAAABhACEAAAABAAAAAABhACQAAAABAAAAAABfACcAAAABAAAAAABcAC8AAAABAAAAAABXADgAAAABAAAAAABQAEEAAAABAAAAAABAAEwAAAABAAAAAABCAEsAAAABAAAAAAAuAFIAAAABAAAAAAAYAFIAAAABAAAAAAAeAFMAAAABAAAAAAAKAE4AAAABAAAAAAADAEsAAAABAAAAAAD4/0IAAAABAAAAAAD0/z0AAAABAAAAAAD0/z4AAAABAAAAAADs/zMAAAABAAAAAADm/yIAAAABAAAAAADm/yQAAAABAAAAAADn/ycAAAABAAAAAADl/w0AAAABAAAAAADk/xAAAAACAAAAAADl/wgAAAACAAAAAADo/wwAAAACAAAAAADl/wsAAAACAAAAAADn/xYAAAACAAAAAADk/xkAAAACAAAAAADo/x0AAAACAAAAAADl/x0AAAACAAAAAADo/ysAAAACAAAAAADp/ysAAAACAAAAAADv/zMAAAACAAAAAADv/zQAAAACAAAAAADy/zcAAAACAAAAAAD3/z8AAAACAAAAAADx/zoAAAADAAAAAADv/zgAAAACAAAAAABCAN//AAADAAAAAABYAPX/AAADAAAAAABfAAAAAAADAAAAAABPAOj/AAADAAAAAAAxANb/AAADAAAAAAAWANb/AAADAAAAAAADAN7/AAADAAAAAAD0/+r/AAADAAAAAADo////AAADAAAAAADo/yQAAAADAAAAAADr/zEAAAADAAAAAAD+/0cAAAADAAAAAAASAFEAAAADAAAAAAA4AE8AAAADAAAAAABNAEMAAAADAAAAAABaADQAAAADAAAAAABNAEAAAAACAAAAAABJAEIAAAACAAAAAAA8AE4AAAACAAAAAAA2AEwAAAACAAAAAAAsAFIAAAACAAAAAAAUAFEAAAACAAAAAAASAE4AAAACAAAAAAD8/0UAAAACAAAAAAAAAEYAAAACAAAAAAAAAEkAAAACAAAAAADz/zoAAAACAAAAAADp/yIAAAACAAAAAADp/ycAAAACAAAAAADm/xAAAAACAAAAAADn/wgAAAACAAAAAADl/xcAAAACAAAAAADp/wAAAAACAAAAAADq//v/AAACAAAAAADr//b/AAACAAAAAADw/+//AAACAAAAAAD0/+z/AAACAAAAAAD1/+v/AAACAAAAAAAAAN//AAACAAAAAAD8/+L/AAACAAAAAAD5/+X/AAACAAAAAAD5/+j/AAACAAAAAAAHANz/AAACAAAAAAAKANr/AAACAAAAAAAUANb/AAACAAAAAAAXANj/AAACAAAAAAAVANj/AAACAAAAAAAYANb/AAACAAAAAAAgANX/AAACAAAAAAAnANX/AAACAAAAAAAuANb/AAACAAAAAABAANz/AAACAAAAAABAANv/AAACAAAAAAA3ANj/AAACAAAAAAA8ANr/AAACAAAAAABKAOL/AAACAAAAAABUAO3/AAACAAAAAABMAOT/AAACAAAAAABLAOT/AAACAAAAAABLAOP/AAACAAAAAABaAPf/AAACAAAAAABcAPr/AAACAAAAAABaAPv/AAACAAAAAABhAAcAAAACAAAAAABfAAoAAAACAAAAAABhAAsAAAACAAAAAABiABEAAAACAAAAAABdACoAAAACAAAAAABdAC0AAAACAAAAAABYADUAAAACAAAAAABSADwAAAACAAAAAABSAD8AAAACAAAAAABHAEYAAAACAAAAAABGAEgAAAACAAAAAABEAEoAAAACAAAAAABKAEYAAAACAAAAAAAxAFEAAAACAAAAAAA0AFEAAAACAAAAAAA1AFEAAAACAAAAAAAqAFIAAAACAAAAAAAnAFMAAAACAAAAAAAbAFIAAAACAAAAAAA=")
+tile_set = SubResource("TileSet_5ghot")
+
+[node name="Ore" parent="." instance=ExtResource("5_bp3yb")]
+position = Vector2(577, 183)
+
+[node name="Ore3" parent="." instance=ExtResource("5_bp3yb")]
+position = Vector2(787, 333)
+
+[node name="Ore2" parent="." instance=ExtResource("5_bp3yb")]
+position = Vector2(500, 416)
+
+[node name="World" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World"]
+visible = false
+position = Vector2(563, 339)
+shape = SubResource("CircleShape2D_dgy74")
+
+[node name="Time" type="Timer" parent="."]
+wait_time = 0.7
+autostart = true
+
+[node name="SoundIcon" parent="." instance=ExtResource("6_jfmsd")]
+
+[connection signal="body_exited" from="World" to="." method="_on_world_body_exited"]
+[connection signal="timeout" from="Time" to="." method="_on_time_timeout"]

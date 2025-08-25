@@ -10,6 +10,7 @@ const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 const PAUSE_MENU_GROUP := "pause_menu_button"
 const LEVELS_MENU_GROUP := "level_menu_button"
+
 # Camadas principais da interface do jogo.
 # Cada camada é uma parte visual do HUD ou de menus.
 @onready var game_hud_layer: CanvasLayer    = $GameHud
@@ -43,6 +44,10 @@ const LEVELS_MENU_GROUP := "level_menu_button"
 # Elementos exibidos na tela de Game Over.
 @onready var game_over_label: Label = $GameOverScreen/ColorRect/GameOverLabel
 @onready var game_over_restart_button: Button = $GameOverScreen/GameOverRestartButton
+
+# Elementos do Level Menu
+@onready var levels_container: VBoxContainer = $LevelsMenu/ScrollContainer/LevelsContainer
+@onready var back_to_main_menu_button: Button = $LevelsMenu/VBoxContainer/BackToMainMenuButton
 
 var is_paused: bool = false
 var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
@@ -227,7 +232,7 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"NewGameButton":
-			show_levels_menu()
+			_show_levels_menu()
 		"ContinueGameButton":
 			Singleton.continue_game()
 		"LoadGameButton":
@@ -303,10 +308,72 @@ func _on_pause_menu_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.quit_to_desktop_from_game()
 
 
+# Ações de botões do menu de level
 func _on_levels_menu_button_pressed(pressed_button : BaseButton) -> void:
 	match  pressed_button.name:
 		"BackToMainMenuButton":
-			pass
+			Singleton.open_main_menu()
+
+
+# ------------------------------------------------------------
+# Exibe o menu de seleção de fases.
+#   - Esconde o Main Menu.
+#   - Limpa quaisquer botões de fases previamente gerados.
+#   - Regenera a lista de botões com base em Singleton.levels.
+#   - Mostra a camada de Levels e coloca foco no botão "Voltar".
+#   - Reseta o conteúdo de `levels_container`.
+# ------------------------------------------------------------
+func _show_levels_menu() -> void:
+	main_menu_layer.visible = false
+	
+	for levels in levels_container.get_children():
+		levels.queue_free()
+	
+	_generate_level_buttons()
+	
+	levels_menu_layer.visible = true
+	back_to_main_menu_button.grab_focus()
+
+
+# ------------------------------------------------------------
+# Gera dinamicamente os botões de níveis.
+#   - Limpa o container antes de gerar novos botões.
+#   - Verifica se o nível está desbloqueado.
+#   - Se desbloqueado: habilita o botão.
+#   - Se bloqueado: desabilita o botão e exibe apenas o rótulo.
+#   - Popula `levels_container` com novos botões.
+# ------------------------------------------------------------
+func _generate_level_buttons():
+	
+	for levels in levels_container.get_children():
+		levels.queue_free()
+	
+	var level_keys = Singleton.levels.keys()
+	#level_keys.sort()
+	
+	for level_id in level_keys:
+		var level_data = Singleton.levels[level_id]
+		var label = level_data["label"]
+		var _level_path = "res://levels/" + level_data["url"]
+		
+		var button = Button.new()
+		var level_is_unlocked = Singleton.level_is_unlocked(level_id)
+		
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		
+		if level_is_unlocked:
+			button.text = " " + label + " " 
+			button.disabled = false
+			button.pressed.connect(func():
+				levels_menu_layer.visible = false
+				Singleton.change_level(level_data["url"])
+				Singleton.start_game()
+			)
+		else:
+			button.text = label
+			button.disabled = true
+		
+		levels_container.add_child(button)
 
 
 # Métodos chamados externamente via Singleton
@@ -314,6 +381,7 @@ func _on_levels_menu_button_pressed(pressed_button : BaseButton) -> void:
 func show_main_menu() -> void:
 	credits_layer.visible   = false
 	settings_layer.visible  = false
+	levels_menu_layer.visible = false	
 	main_menu_layer.visible = true
 	_focus_first_button_in(main_menu_layer)
 
@@ -350,6 +418,7 @@ func show_pause_menu() -> void:
 	is_paused = true
 	_focus_first_button_in(pause_menu_layer)
 
+
 func hide_pause_menu() -> void:
 	get_tree().paused = false
 	pause_menu_layer.visible = false
@@ -374,12 +443,3 @@ func hide_pause_overlay_only() -> void:
 # ------------------------------------------------------------
 func show_pause_overlay_only() -> void:
 	pause_menu_layer.visible = true
-
-
-func show_levels_menu() -> void:
-	main_menu_layer.visible   = false
-	credits_layer.visible     = false
-	settings_layer.visible    = false
-	input_settings_layer.visible = false
-	levels_menu_layer.visible = true
-	_focus_first_button_in(levels_menu_layer)
