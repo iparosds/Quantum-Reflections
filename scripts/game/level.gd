@@ -20,29 +20,20 @@ func _ready():
 	Singleton.level = self
 	AudioPlayer._play_level_music()
 	
-	###GPT####
 	# inicia o cronômetro com a duração configurada
 	portal_timer = level_duration_seconds
-	# garante que o HUD mostre o máximo correto desde o começo
 	Singleton.gui_manager.hud_timer_bar.max_value = level_duration_seconds
 
 
-#### GPT #####
 func _open_portal():
-	# Instancia o portal
 	portal_node = PORTAL.instantiate()
 	
-	# Escolha uma posição. Exemplos:
-	# portal_node.global_position = %PortalSpawn.global_position
-	# ou:
 	portal_node.global_position = %PathFollow2D.global_position
 	
 	add_child(portal_node)
-	portal_node.add_to_group("portal")  # útil para buscas
+	portal_node.add_to_group("portal")
 	
-	# Avisa todos os asteroides qual é o alvo do portal
 	get_tree().call_group("asteroids", "on_portal_opened", portal_node)
-
 
 
 # ------------------------------------------------------------
@@ -110,40 +101,30 @@ func _physics_process(delta):
 	if time_left < 1:
 		if portal_active == false:
 			portal_active = true
-			#portal_timer = 20.0
 			portal_timer = portal_duration_seconds ### GPT
 			Singleton.gui_manager.hud_portal_active.visible = true
 			Singleton.gui_manager.hud_timer_bar.get("theme_override_styles/fill").bg_color = Color.hex(0xb4b542ff)
-			_open_portal()  # <- instancie e anuncie o portal aqui
+			_open_portal()
 		else:
 			Singleton.game_over()
 	
-	
-
 	var portal_minutes = 0
 	if time_left > 60:
 		portal_minutes = time_left/60
-
+	
 	var portal_seconds = time_left
 	if portal_minutes > 0:
 		portal_seconds = time_left - portal_minutes * 60
-
+	
 	if portal_seconds < 10:
 		Singleton.gui_manager.hud_timer_text.text = str(portal_minutes, ":0", portal_seconds)
 	else:
 		Singleton.gui_manager.hud_timer_text.text = str(portal_minutes, ":", portal_seconds)
-
-	#if portal_active == true:
-		#Singleton.gui_manager.hud_timer_bar.max_value = 20
-	#else:
-		#Singleton.gui_manager.hud_timer_bar.max_value = 150
 	
-	### GPT ###
 	if portal_active == true:
 		Singleton.gui_manager.hud_timer_bar.max_value = portal_duration_seconds
 	else:
 		Singleton.gui_manager.hud_timer_bar.max_value = level_duration_seconds
-	
 	
 	Singleton.gui_manager.hud_timer_bar.value = int(portal_timer)
 
@@ -156,7 +137,7 @@ func _physics_process(delta):
 func add_ore():
 	score += 1
 	Singleton.gui_manager.hud_score_label.text = str(score) + " ores"
-
+	
 	if score <= 10:
 		Singleton.gui_manager.hud_xp.max_value = 10
 		Singleton.gui_manager.hud_xp.value = score
@@ -205,7 +186,7 @@ func _on_world_body_exited(body: Node2D) -> void:
 func _on_time_timeout():
 	if quantum == true:
 		reset_quantum()
-
+	
 	spawn_asteroid() #10
 	if score > 5:
 		spawn_asteroid() #50
