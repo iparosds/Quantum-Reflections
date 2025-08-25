@@ -1,6 +1,6 @@
 [gd_scene load_steps=26 format=3 uid="uid://ccx1134vavnom"]
 
-[ext_resource type="Script" uid="uid://dexr5juaxkd1h" path="res://scripts/in_game/portal.gd" id="1_h8akq"]
+[ext_resource type="Script" uid="uid://dexr5juaxkd1h" path="res://scripts/game/portal.gd" id="1_h8akq"]
 [ext_resource type="Texture2D" uid="uid://fcrq35iunsb6" path="res://assets/sprites/levels_sprites/portal quantico.png" id="2_kdfi3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yse7t"]

@@ -1,9 +1,9 @@
 [gd_scene load_steps=16 format=3 uid="uid://exvs04d5gcyx"]
 
-[ext_resource type="Script" uid="uid://c4e322qt15yx2" path="res://scripts/ships/player.gd" id="1_xdt2u"]
+[ext_resource type="Script" uid="uid://c4e322qt15yx2" path="res://scripts/player/player.gd" id="1_xdt2u"]
 [ext_resource type="Texture2D" uid="uid://b7lv7hiaq1ntl" path="res://assets/sprites/levels_sprites/nave.png" id="2_7lkev"]
 [ext_resource type="Texture2D" uid="uid://dndi2isgftvkc" path="res://assets/sprites/quantum_sprites/nave.png" id="3_kqf54"]
-[ext_resource type="PackedScene" uid="uid://3vn8y1jlk7vp" path="res://scenes/ships/turret.tscn" id="3_w8iht"]
+[ext_resource type="PackedScene" uid="uid://3vn8y1jlk7vp" path="res://scenes/player/turret.tscn" id="3_w8iht"]
 [ext_resource type="AudioStream" uid="uid://cc8g2d8ra360l" path="res://assets/sounds/in_game/GAMEPLAY SONG MASTER.mp3" id="4_kxwta"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j1v7l"]

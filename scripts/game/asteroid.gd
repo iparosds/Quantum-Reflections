@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const SHIP_ATTRACTION = 100.0
-const ORE = preload("res://scenes/in_game/ore.tscn")
+const ORE = preload("res://scenes/game/ore.tscn")
 
 #@onready var player := Singleton.level.get_node("Player")
 

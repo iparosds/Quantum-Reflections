@@ -1,17 +1,17 @@
-class_name Level extends Node2D;
+class_name Level extends Node2D
 
-const ASTEROID = preload("res://scenes/in_game/asteroid.tscn")
-const PORTAL = preload("res://scenes/in_game/portal.tscn")
+const ASTEROID = preload("res://scenes/game/asteroid.tscn")
+const PORTAL = preload("res://scenes/game/portal.tscn")
 
 @export var level_duration_seconds: float = 180.0
 @export var portal_duration_seconds: float = 20.0
 
-var game_paused = false;
-var quantum = false;
-var god_mode = false;
-var portal_active = false;
+var game_paused = false
+var quantum = false
+var god_mode = false
+var portal_active = false
 var score = 0;
-var quantum_roll = 0
+var quantum_roll = 0	
 var portal_timer: float = 0.0
 var portal_node: Node2D = null
 
