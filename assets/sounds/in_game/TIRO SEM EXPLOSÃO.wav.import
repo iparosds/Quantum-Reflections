@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b7ayyambk0ixs"
+path="res://.godot/imported/TIRO SEM EXPLOSÃO.wav-146ee5d44622c7ca9f4ff33542dec1f5.sample"
+
+[deps]
+
+source_file="res://assets/sounds/in_game/TIRO SEM EXPLOSÃO.wav"
+dest_files=["res://.godot/imported/TIRO SEM EXPLOSÃO.wav-146ee5d44622c7ca9f4ff33542dec1f5.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

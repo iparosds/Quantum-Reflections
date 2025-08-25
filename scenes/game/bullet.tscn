@@ -1,0 +1,108 @@
+[gd_scene load_steps=14 format=3 uid="uid://cmse1wp3m74k0"]
+
+[ext_resource type="Script" uid="uid://cv8d11id8qinp" path="res://scripts/game/bullet.gd" id="1_bel33"]
+[ext_resource type="Texture2D" uid="uid://6mkay5ytpjqd" path="res://assets/sprites/levels_sprites/explosao nova.png" id="2_3r8ol"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpx0u"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(53, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qslqe"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(106, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwsfr"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(159, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wiupx"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(212, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3jlwg"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(265, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vnxm6"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(318, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ghous"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(371, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymnai"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(0, 0, 53, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_adtbf"]
+atlas = ExtResource("2_3r8ol")
+region = Rect2(53, 0, 53, 49)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jbvwe"]
+animations = [{
+"frames": [{
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_tpx0u")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_qslqe")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_kwsfr")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_wiupx")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_3jlwg")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_vnxm6")
+}, {
+"duration": 0.1,
+"texture": SubResource("AtlasTexture_ghous")
+}],
+"loop": false,
+"name": &"contact",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymnai")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_adtbf")
+}],
+"loop": true,
+"name": &"quantum",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qfyl0"]
+radius = 8.0
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_bel33")
+
+[node name="Projectile" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_jbvwe")
+animation = &"contact"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_qfyl0")
+
+[node name="Explosion" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="Explosion" to="." method="_on_explosion_timeout"]

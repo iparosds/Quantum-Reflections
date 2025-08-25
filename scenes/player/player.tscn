@@ -1,0 +1,149 @@
+[gd_scene load_steps=16 format=3 uid="uid://exvs04d5gcyx"]
+
+[ext_resource type="Script" uid="uid://c4e322qt15yx2" path="res://scripts/player/player.gd" id="1_xdt2u"]
+[ext_resource type="Texture2D" uid="uid://b7lv7hiaq1ntl" path="res://assets/sprites/levels_sprites/nave.png" id="2_7lkev"]
+[ext_resource type="Texture2D" uid="uid://dndi2isgftvkc" path="res://assets/sprites/quantum_sprites/nave.png" id="3_kqf54"]
+[ext_resource type="PackedScene" uid="uid://3vn8y1jlk7vp" path="res://scenes/player/turret.tscn" id="3_w8iht"]
+[ext_resource type="AudioStream" uid="uid://cc8g2d8ra360l" path="res://assets/sounds/in_game/GAMEPLAY SONG MASTER.mp3" id="4_kxwta"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j1v7l"]
+atlas = ExtResource("2_7lkev")
+region = Rect2(0, 0, 19, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ijpd"]
+atlas = ExtResource("3_kqf54")
+region = Rect2(0, 0, 19, 28)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h2k5b"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j1v7l")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ijpd")
+}],
+"loop": true,
+"name": &"quantum",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8n8ai"]
+radius = 5.0
+height = 28.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1k6gw"]
+radius = 7.0
+height = 32.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8adnd"]
+radius = 15.0
+height = 56.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1q5i"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5x0j0"]
+bg_color = Color(0.129412, 0.258824, 0.419608, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vijf"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 0.462745)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kbtyy"]
+bg_color = Color(0.705882, 0.709804, 0.258824, 1)
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 5
+script = ExtResource("1_xdt2u")
+
+[node name="Ship" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_h2k5b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_8n8ai")
+
+[node name="HurtBox" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(0, 1)
+shape = SubResource("CapsuleShape2D_1k6gw")
+debug_color = Color(0.80375, 0.323318, 0.67704, 0.42)
+
+[node name="CollectOre" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectOre"]
+shape = SubResource("CapsuleShape2D_8adnd")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+offset_left = -22.0
+offset_top = 21.0
+offset_right = 23.0
+offset_bottom = 25.0
+theme_override_styles/background = SubResource("StyleBoxFlat_x1q5i")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5x0j0")
+value = 100.0
+show_percentage = false
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+rotation = -0.00413576
+stream = ExtResource("4_kxwta")
+
+[node name="TurretN" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(4.76837e-07, -10)
+rotation = -1.57528
+
+[node name="TurretE" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+
+[node name="TurretS" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(0, 12)
+rotation = 1.5708
+
+[node name="TurretW" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+rotation = 3.14159
+
+[node name="TurretNE" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(1, -6)
+rotation = -0.785398
+
+[node name="TurretNW" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(-2.38419e-07, -5)
+rotation = -2.4567
+
+[node name="TurretSE" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(3, 9)
+rotation = -5.6348
+
+[node name="TurretSW" parent="." instance=ExtResource("3_w8iht")]
+unique_name_in_owner = true
+position = Vector2(-2, 8)
+rotation = -3.90398
+
+[node name="SpeedBar" type="ProgressBar" parent="."]
+unique_name_in_owner = true
+offset_left = -22.0
+offset_top = 25.0
+offset_right = 23.0
+offset_bottom = 29.0
+theme_override_styles/background = SubResource("StyleBoxFlat_4vijf")
+theme_override_styles/fill = SubResource("StyleBoxFlat_kbtyy")
+show_percentage = false

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="Projectile" load_steps=5 format=3 uid="uid://byjt0mjhvkhyr"]
+
+[ext_resource type="Texture2D" uid="uid://6mkay5ytpjqd" path="res://assets/sprites/levels_sprites/explosao nova.png" id="1_5mffd"]
+[ext_resource type="PackedScene" uid="uid://cmse1wp3m74k0" path="res://scenes/game/bullet.tscn" id="2_p2kh1"]
+[ext_resource type="Script" uid="uid://dpmjd085gbn8c" path="res://scripts/player/projectile.gd" id="3_n4gf5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lh00y"]
+atlas = ExtResource("1_5mffd")
+region = Rect2(0, 0, 53, 46)
+
+[resource]
+script = ExtResource("3_n4gf5")
+display_name = &"Basic"
+icon = SubResource("AtlasTexture_lh00y")
+scene = ExtResource("2_p2kh1")

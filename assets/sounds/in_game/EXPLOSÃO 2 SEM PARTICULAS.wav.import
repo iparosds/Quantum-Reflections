@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bg3a6bx85s7d3"
+path="res://.godot/imported/EXPLOSÃO 2 SEM PARTICULAS.wav-22c5e0696869eced7914a21214a9b205.sample"
+
+[deps]
+
+source_file="res://assets/sounds/in_game/EXPLOSÃO 2 SEM PARTICULAS.wav"
+dest_files=["res://.godot/imported/EXPLOSÃO 2 SEM PARTICULAS.wav-22c5e0696869eced7914a21214a9b205.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

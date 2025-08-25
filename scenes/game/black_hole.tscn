@@ -1,0 +1,127 @@
+[gd_scene load_steps=18 format=3 uid="uid://b41jjpavdldes"]
+
+[ext_resource type="Script" uid="uid://dmnw2jtbq7gmd" path="res://scripts/game/black_hole.gd" id="1_10fyn"]
+[ext_resource type="Texture2D" uid="uid://cdhax1x2tonm3" path="res://assets/sprites/levels_sprites/buraco negro.png" id="1_glvi2"]
+[ext_resource type="Texture2D" uid="uid://np04pydarl48" path="res://assets/sprites/quantum_sprites/buraco negro invertido.png" id="3_7ikdj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yp22"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(0, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hhwv7"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(64, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5v0e"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(128, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m48hv"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(192, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_70kag"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(256, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_62stn"]
+atlas = ExtResource("1_glvi2")
+region = Rect2(320, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u8r1r"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(0, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3tt5"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(64, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1agj"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(128, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hp1lp"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(192, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_itjhn"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(256, 0, 64, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f2dvn"]
+atlas = ExtResource("3_7ikdj")
+region = Rect2(320, 0, 64, 59)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4rwcr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yp22")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hhwv7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d5v0e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m48hv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_70kag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_62stn")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u8r1r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3tt5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1agj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hp1lp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_itjhn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f2dvn")
+}],
+"loop": true,
+"name": &"quantum",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ae7m5"]
+radius = 20.0998
+
+[node name="BlackHole" type="Area2D"]
+collision_mask = 3
+script = ExtResource("1_10fyn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4rwcr")
+autoplay = "default"
+frame_progress = 0.496867
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ae7m5")
+
+[node name="IncreaseSize" type="Timer" parent="."]
+autostart = true
+
+[node name="ActivateTimer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]
+[connection signal="timeout" from="IncreaseSize" to="." method="_on_increase_size_timeout"]
+[connection signal="timeout" from="ActivateTimer" to="." method="_on_activate_timer_timeout"]
