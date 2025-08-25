@@ -43,7 +43,7 @@ func _physics_process(_delta):
 			return
 		
 	var direction: Vector2
-	
+
 	if Singleton.level.portal_active:
 		if portal == null or !is_instance_valid(portal):
 			portal = get_tree().get_first_node_in_group("portal")
@@ -53,7 +53,7 @@ func _physics_process(_delta):
 			direction = global_position.direction_to(player.global_position)
 	else:
 		direction = global_position.direction_to(player.global_position)
-	
+
 	if Singleton.level.quantum == false:
 		if moving == true:
 			if asteroid_type == 1:
@@ -72,7 +72,7 @@ func _physics_process(_delta):
 				$Asteroid.play("asteroid02-quantum")
 			else:
 				$Asteroid.play("asteroid03-quantum")
-	
+
 	if moving == true:
 		move_and_slide()
 
@@ -101,7 +101,7 @@ func take_damage():
 	if damage < 10:
 		damage = 10
 	health -= damage
-	
+
 	if health <= 0:
 		asteroid_destruction()
 		add_new_ore()

@@ -111,11 +111,11 @@ func _physics_process(delta):
 	var portal_minutes = 0
 	if time_left > 60:
 		portal_minutes = time_left/60
-	
+
 	var portal_seconds = time_left
 	if portal_minutes > 0:
 		portal_seconds = time_left - portal_minutes * 60
-	
+
 	if portal_seconds < 10:
 		Singleton.gui_manager.hud_timer_text.text = str(portal_minutes, ":0", portal_seconds)
 	else:
@@ -137,7 +137,7 @@ func _physics_process(delta):
 func add_ore():
 	score += 1
 	Singleton.gui_manager.hud_score_label.text = str(score) + " ores"
-	
+
 	if score <= 10:
 		Singleton.gui_manager.hud_xp.max_value = 10
 		Singleton.gui_manager.hud_xp.value = score
@@ -186,7 +186,7 @@ func _on_world_body_exited(body: Node2D) -> void:
 func _on_time_timeout():
 	if quantum == true:
 		reset_quantum()
-	
+
 	spawn_asteroid() #10
 	if score > 5:
 		spawn_asteroid() #50
