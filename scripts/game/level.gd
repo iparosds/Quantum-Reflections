@@ -44,6 +44,9 @@ func win():
 	Singleton.gui_manager.hud_portal_active.visible = false
 	Singleton.gui_manager.game_over_screen.visible = true
 	Singleton.gui_manager.game_over_label.text = "You win!"
+	
+	if is_instance_valid(Singleton.settings_icon):
+		Singleton.settings_icon.visible = false
 
 
 # ------------------------------------------------------------

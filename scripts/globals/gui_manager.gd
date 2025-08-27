@@ -316,6 +316,9 @@ func show_settings() -> void:
 	settings_layer.visible  = true
 	input_settings_layer.visible = false
 	settings_controls_btn.grab_focus()
+	
+	if is_instance_valid(Singleton.settings_icon):
+		Singleton.settings_icon.visible = false
 
 
 func show_credits() -> void:
@@ -338,11 +341,17 @@ func show_pause_menu() -> void:
 	pause_menu_layer.visible = true
 	is_paused = true
 	_focus_first_button_in(pause_menu_layer)
+	
+	if is_instance_valid(Singleton.settings_icon):
+		Singleton.settings_icon.visible = false
 
 func hide_pause_menu() -> void:
 	get_tree().paused = false
 	pause_menu_layer.visible = false
 	is_paused = false
+	
+	if is_instance_valid(Singleton.settings_icon):
+		Singleton.settings_icon.visible = true
 
 
 # ------------------------------------------------------------

@@ -1,11 +1,13 @@
 extends Node2D
 
 @onready var closest_enemy := find_closest_enemy()
+const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")
 
 var gui_manager: GuiManager
 var level_manager: LevelManager
 var level : Level        
 var player : Player
+var settings_icon : SettingsIcon
 var quantum := false
 var closest_distance := 1000
 var current_level: String
@@ -58,11 +60,32 @@ func open_settings() -> void:
 	if gui_manager:
 		if gui_manager.is_paused:
 			gui_manager.on_settings_back = Callable(gui_manager, "show_pause_overlay_only")
-			gui_manager.hide_pause_overlay_only()  # esconde só o overlay; jogo continua pausado
+			gui_manager.hide_pause_overlay_only()
 		else:
 			gui_manager.on_settings_back = Callable(self, "open_main_menu")
 		
 		gui_manager.show_settings()
+
+
+# ------------------------------------------------------------
+# Abre a tela de Settings a partir do ícone in-game (sem passar pelo overlay do Pause).
+# 	- Garante que o jogo fique pausado.
+# 	- Define o callback de retorno do Settings para reabrir o Pause menu, 
+#		de forma que o botão “Back” do Settings volte ao Pause ao invés do Main Menu.
+# 	- Faz early-return se o gui_manager ainda não estiver disponível.
+# ------------------------------------------------------------
+func open_settings_from_icon() -> void:
+	if not gui_manager:
+		return
+	
+	get_tree().paused = true
+	gui_manager.is_paused = true
+	gui_manager.hide_pause_overlay_only()
+	
+	# quando o usuário apertar "Back" no Settings, volta para o Pause menu
+	gui_manager.on_settings_back = Callable(gui_manager, "show_pause_menu")
+	
+	gui_manager.show_settings()
 
 
 func open_credits() -> void:
@@ -96,6 +119,7 @@ func open_main_menu() -> void:
 	for node in get_tree().get_nodes_in_group("asteroid"):
 		if is_instance_valid(node):
 			node.queue_free()
+	
 	for node in get_tree().get_nodes_in_group("ore"):
 		if is_instance_valid(node):
 			node.queue_free()
@@ -184,6 +208,7 @@ func game_over():
 		gui_manager.game_over_screen.visible = true
 		gui_manager.game_over_label.text = "Game over!"
 		gui_manager.hud_portal_active.visible = false
+		settings_icon.visible = false
 
 
 # ---------------------
@@ -217,6 +242,14 @@ func change_level(load_level: String) -> void:
 	parent.add_child(new_level)
 	
 	level = new_level
+	
+	# remove ícone anterior (se existir) e cria um novo para este level
+	if is_instance_valid(settings_icon):
+		settings_icon.queue_free()
+
+	settings_icon = SETTINGS_ICON.instantiate()
+	settings_icon.process_mode = Node.PROCESS_MODE_ALWAYS
+	level.add_child(settings_icon)
 	
 	# Atualiza variáveis de controle do nível atual
 	current_level_path = level_path
