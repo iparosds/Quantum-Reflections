@@ -108,8 +108,11 @@ func _ready() -> void:
 	_connect_signal_safe(settings_master_volume_slider, "value_changed", Callable(self, "_on_settings_master_volume_changed"))
 	_connect_signal_safe(settings_music_volume_slider, "value_changed", Callable(self, "_on_settings_music_volume_changed"))
 	_connect_signal_safe(settings_sfx_volume_slider, "value_changed", Callable(self, "_on_settings_sfx_volume_changed"))
-
+	
 	_focus_first_button_in(main_menu_layer)
+	
+	Singleton._ensure_settings_icon(self)
+
 
 
 func _unhandled_input(event: InputEvent) -> void:
