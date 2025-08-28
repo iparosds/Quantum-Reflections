@@ -17,26 +17,30 @@ var portal_timer = 150.0
 
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
-	"level01": {
-		"path": "res://levels/level_01.tscn",
+	"tutorial": {
+		"label": "Tutorial",
+		"url": "tutorial.tscn",
+		"unblock": "_tutorial",
+	},
+	"level01" : {
+		"label": "Level 01",
+		"url": "level_01.tscn",
+		"unblock": "_level01",
 	},
 }
-
 
 # ---------------------
 # FUNÇÕES DE INTERFACE
 # ---------------------
 
-# Inicia o jogo carregando o nível padrão
+# Inicia o jogo carregando o nível selecionado
 func start_game() -> void:
 	get_tree().paused = false
 	if gui_manager:
 		gui_manager.main_menu_layer.visible = false
 		gui_manager.game_hud_layer.visible = true
 	
-	var default_id := "level01"
-	var path = levels[default_id]["path"]
-	change_level(path)
+	goto_level(current_level_path)
 
 
 func continue_game() -> void:
@@ -188,20 +192,86 @@ func game_over():
 # FUNÇÕES DE NÍVEL
 # ---------------------
 
-# Troca o nível atual por outro
+# Sempre retorna verdadeiro para liberar o nível de tutorial.
+func _tutorial() -> bool:
+	return true
+
+
+# ------------------------------------------------------------
+# Retorna verdadeiro quando as condições para liberar o Level 01
+# forem atendidas. No momento está sempre liberado.
+# ------------------------------------------------------------
+func _level01() -> bool:
+	return true
+
+
+# ------------------------------------------------------------
+# Verifica se um nível está desbloqueado.
+# - Busca os metadados do nível no dicionário `levels`
+# - Lê o nome do método de desbloqueio em `unblock`
+# - Chama dinamicamente o método correspondente
+# Retorna:
+#   true  -> nível liberado
+#   false -> bloqueado ou configuração inválida (sem método)
+# ------------------------------------------------------------
+func level_is_unlocked(level_id: String) -> bool:
+	var level_data: Dictionary = levels.get(level_id, {})  # nunca null
+	var method_name: String = str(level_data.get("unblock", ""))
+	return method_name != "" and has_method(method_name) and call(method_name)
+
+
+# ------------------------------------------------------------
+# Vai para um nível por ID lógico.
+#   - Obtém os dados do nível via `level_id`
+#   - Valida existência e regra de desbloqueio (`level_is_unlocked`)
+#   - Extrai o `url` (ou falha se estiver vazio)
+#   - Chama `change_level(url)` para carregar a cena
+# ------------------------------------------------------------
+func goto_level(level_or_path: String) -> void:
+	if level_or_path.begins_with("res://"):
+		var file_name := level_or_path.get_file()
+		change_level(file_name)
+		return
+	
+	if level_or_path.ends_with(".tscn"):
+		change_level(level_or_path)
+		return
+	
+	var level_data: Dictionary = levels.get(level_or_path, {})
+	if level_data.is_empty():
+		push_error("Nível desconhecido: %s" % level_or_path)
+		return
+	
+	if not level_is_unlocked(level_or_path):
+		push_warning("Nível bloqueado: %s" % level_or_path)
+		return
+	
+	var url: String = str(level_data.get("url", ""))
+	if url == "":
+		push_error("Nível %s sem 'url' definido" % level_or_path)
+		return
+	
+	change_level(url)
+
+
+# ------------------------------------------------------------
+# Carrega/troca o nível atual.
+# Parâmetro:
+#   load_level: pode ser um caminho completo "res://..." OU um nome de arquivo
+# Processo:
+#   - Resolve `level_path` (prefixa "res://levels/" quando necessário)
+#   - Valida existência do recurso e se é uma PackedScene
+#   - Instancia e anexa o novo Level ao nó pai apropriado
+#   - Libera o Level anterior com segurança
+#   - Atualiza `current_level_path` e `current_level` com base em `levels`
+# ------------------------------------------------------------
 func change_level(load_level: String) -> void:
 	var level_path: String = load_level if load_level.begins_with("res://") else "res://levels/%s" % load_level
 	
 	# Verifica se o arquivo do nível existe
-	if not ResourceLoader.exists(level_path):
-		push_error("Level não encontrado: %s" % level_path)
-		return
 	
 	# Carrega recurso do nível
 	var scene_res: PackedScene = ResourceLoader.load(level_path) as PackedScene
-	if scene_res == null:
-		push_error("Falha ao carregar: %s (não é PackedScene)" % level_path)
-		return
 	
 	# Instancia novo nível
 	var new_level: Level = scene_res.instantiate() as Level
@@ -219,14 +289,10 @@ func change_level(load_level: String) -> void:
 	# Atualiza variáveis de controle do nível atual
 	current_level_path = level_path
 	for id in levels.keys():
-		var path: String = ""
-		var url: String = ""
-		if levels[id].has("path"):
-			path = String(levels[id]["path"])
-		if levels[id].has("url"):
-			url = "res://levels/%s" % String(levels[id]["url"])
-		if path == level_path or url == level_path:
-			current_level = String(id)
+		var url := String(levels[id].get("url", ""))
+		var path := String(levels[id].get("path", ""))
+		if url == load_level or path == level_path:
+			current_level = id
 			break
 
 
