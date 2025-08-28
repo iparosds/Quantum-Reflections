@@ -29,8 +29,12 @@ const LEVELS_MENU_GROUP := "level_menu_button"
 
 # Controles dentro do menu de configurações.
 # Inclui slider de volume e botão para acessar os controles.
-@onready var settings_volume_slider: HSlider   = $SettingsMenu/MarginContainer/ButtonsContainer/Volume
+@onready var settings_master_volume_slider: HSlider   = $SettingsMenu/MarginContainer/ButtonsContainer/MasterVolumeSlider
+@onready var settings_music_volume_slider: HSlider = $SettingsMenu/MarginContainer/ButtonsContainer/MusicVolumeSlider
+@onready var settings_sfx_volume_slider: HSlider = $SettingsMenu/MarginContainer/ButtonsContainer/SFXVolumeSlider
 @onready var settings_controls_btn: BaseButton = $SettingsMenu/MarginContainer/ButtonsContainer/ControlsButton
+
+var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 
 # Elementos do HUD principal do jogo.
 # Exibem informações como XP, pontuação, tempo, portal ativo e status de god mode.
@@ -50,7 +54,6 @@ const LEVELS_MENU_GROUP := "level_menu_button"
 @onready var back_to_main_menu_button: Button = $LevelsMenu/VBoxContainer/BackToMainMenuButton
 
 var is_paused: bool = false
-var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 
 
 # ------------------------------------------------------------
@@ -64,6 +67,12 @@ var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 # ------------------------------------------------------------
 func _ready() -> void:
 	Singleton.gui_manager = self
+	
+	hover_sound_player.bus  = "SFX"
+	select_sound_player.bus = "SFX"
+	back_sound_player.bus   = "SFX"
+	
+	AudioPlayer._play_menu_music()
 	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	game_over_screen.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -87,8 +96,6 @@ func _ready() -> void:
 	pause_menu_layer.visible = false
 	levels_menu_layer.visible = false
 	
-	AudioPlayer._play_menu_music()
-	
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
 	_tag_buttons_in_tree(settings_layer,   SETTINGS_BUTTON_GROUP)
@@ -98,7 +105,10 @@ func _ready() -> void:
 	_tag_buttons_in_tree(levels_menu_layer, LEVELS_MENU_GROUP)
 	
 	_connect_button_signals_recursively(self)
-	_connect_signal_safe(settings_volume_slider, "value_changed", Callable(self, "_on_settings_volume_changed"))
+	_connect_signal_safe(settings_master_volume_slider, "value_changed", Callable(self, "_on_settings_master_volume_changed"))
+	_connect_signal_safe(settings_music_volume_slider, "value_changed", Callable(self, "_on_settings_music_volume_changed"))
+	_connect_signal_safe(settings_sfx_volume_slider, "value_changed", Callable(self, "_on_settings_sfx_volume_changed"))
+
 	_focus_first_button_in(main_menu_layer)
 
 
@@ -261,17 +271,26 @@ func _on_settings_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_controls()
 		"Back":
 			_play_back_sound()
+			AudioPlayer.save_volumes()
 			settings_layer.visible = false
 			on_settings_back.call()
 			on_settings_back = Callable(Singleton, "open_main_menu")
 
 
 # ------------------------------------------------------------
-# Chamado ao alterar o valor do slider de volume.
-# Define o volume global do jogo.
+# Chamados ao alterar o valor do slider de volume.
 # ------------------------------------------------------------
-func _on_settings_volume_changed(new_value_db: float) -> void:
-	Singleton.set_master_volume_db(new_value_db)
+func _on_settings_master_volume_changed(db: float) -> void:
+	AudioPlayer.set_master_volume_db(db)
+
+
+func _on_settings_music_volume_changed(db: float) -> void:
+	AudioPlayer.set_music_volume_db(db)
+
+
+func _on_settings_sfx_volume_changed(db: float) -> void:
+	AudioPlayer.set_sfx_volume_db(db)
+
 
 
 # Ações de botões na tela de configurações de input.
@@ -395,6 +414,11 @@ func show_settings() -> void:
 	settings_layer.visible  = true
 	input_settings_layer.visible = false
 	settings_controls_btn.grab_focus()
+	
+	# sincroniza sliders com os buses
+	settings_master_volume_slider.value = AudioPlayer.get_master_volume_db()
+	settings_music_volume_slider.value = AudioPlayer.get_music_volume_db()
+	settings_sfx_volume_slider.value   = AudioPlayer.get_sfx_volume_db()
 
 
 func show_credits() -> void:

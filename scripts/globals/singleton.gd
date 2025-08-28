@@ -48,6 +48,7 @@ func continue_game() -> void:
 		return
 	
 	gui_manager.hide_pause_menu()
+	AudioPlayer.on_pause_exited()
 
 
 func load_game() -> void:
@@ -117,11 +118,6 @@ func open_controls() -> void:
 		gui_manager.show_input_settings()
 
 
-# Ajusta o volume geral do jogo
-func set_master_volume_db(db_value: float) -> void:
-	AudioServer.set_bus_volume_db(0, db_value)
-
-
 func quit_game_from_menu() -> void:
 	get_tree().quit()
 
@@ -146,6 +142,7 @@ func toggle_pause() -> void:
 		gui_manager.hide_pause_menu()
 	else:
 		gui_manager.show_pause_menu()
+		AudioPlayer.on_pause_entered()
 
 
 # Reinicia a partida com teardown seguro e restaura o HUD.
@@ -169,6 +166,7 @@ func restart_game() -> void:
 	
 	get_tree().paused = false
 	start_game()
+	AudioPlayer.on_level_restart()
 	
 	if gui_manager and gui_manager.is_paused:
 		gui_manager.hide_pause_menu()
