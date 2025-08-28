@@ -108,8 +108,11 @@ func _ready() -> void:
 	_connect_signal_safe(settings_master_volume_slider, "value_changed", Callable(self, "_on_settings_master_volume_changed"))
 	_connect_signal_safe(settings_music_volume_slider, "value_changed", Callable(self, "_on_settings_music_volume_changed"))
 	_connect_signal_safe(settings_sfx_volume_slider, "value_changed", Callable(self, "_on_settings_sfx_volume_changed"))
-
+	
 	_focus_first_button_in(main_menu_layer)
+	
+	Singleton._ensure_settings_icon(self)
+
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -415,9 +418,6 @@ func show_settings() -> void:
 	input_settings_layer.visible = false
 	settings_controls_btn.grab_focus()
 	
-	if is_instance_valid(Singleton.settings_icon):
-		Singleton.settings_icon.visible = false
-
 	# sincroniza sliders com os buses
 	settings_master_volume_slider.value = AudioPlayer.get_master_volume_db()
 	settings_music_volume_slider.value = AudioPlayer.get_music_volume_db()
@@ -444,18 +444,12 @@ func show_pause_menu() -> void:
 	pause_menu_layer.visible = true
 	is_paused = true
 	_focus_first_button_in(pause_menu_layer)
-	
-	if is_instance_valid(Singleton.settings_icon):
-		Singleton.settings_icon.visible = false
 
 
 func hide_pause_menu() -> void:
 	get_tree().paused = false
 	pause_menu_layer.visible = false
 	is_paused = false
-	
-	if is_instance_valid(Singleton.settings_icon):
-		Singleton.settings_icon.visible = true
 
 
 # ------------------------------------------------------------

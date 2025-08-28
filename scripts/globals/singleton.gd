@@ -83,12 +83,17 @@ func open_settings_from_icon() -> void:
 	if not gui_manager:
 		return
 	
-	get_tree().paused = true
-	gui_manager.is_paused = true
-	gui_manager.hide_pause_overlay_only()
+	var in_game := is_instance_valid(level) and gui_manager.game_hud_layer.visible
 	
-	# quando o usuário apertar "Back" no Settings, volta para o Pause menu
-	gui_manager.on_settings_back = Callable(gui_manager, "show_pause_menu")
+	if in_game:
+		get_tree().paused = true
+		gui_manager.is_paused = true
+		gui_manager.hide_pause_overlay_only()
+		gui_manager.on_settings_back = Callable(self, "continue_game")
+		AudioPlayer.on_pause_entered()
+	else:
+		gui_manager.on_settings_back = Callable(gui_manager, "show_main_menu")
+		AudioPlayer._play_menu_music()
 	
 	gui_manager.show_settings()
 
@@ -133,6 +138,7 @@ func open_main_menu() -> void:
 		gui_manager.show_main_menu()
 		gui_manager.is_paused = false
 		AudioPlayer._play_menu_music()
+		_ensure_settings_icon(gui_manager)
 
 	get_tree().paused = false
 
@@ -311,13 +317,7 @@ func change_level(load_level: String) -> void:
 	
 	level = new_level
 	
-	# remove ícone anterior (se existir) e cria um novo para este level
-	if is_instance_valid(settings_icon):
-		settings_icon.queue_free()
-
-	settings_icon = SETTINGS_ICON.instantiate()
-	settings_icon.process_mode = Node.PROCESS_MODE_ALWAYS
-	level.add_child(settings_icon)
+	_ensure_settings_icon(level)
 	
 	# Atualiza variáveis de controle do nível atual
 	current_level_path = level_path
@@ -327,6 +327,28 @@ func change_level(load_level: String) -> void:
 		if url == load_level or path == level_path:
 			current_level = id
 			break
+
+
+# ------------------------------------------------------------
+# Garante a presença e o parent corretos do ícone de Settings.
+# Parâmetros:
+#   parent: Node que será o novo pai do ícone.
+# Comportamento:
+#   - Se o ícone ainda não existe, instancia-o, define PROCESS_MODE_ALWAYS
+#     (para responder mesmo com o jogo pausado) e o adiciona ao parent.
+#   - Se já existe mas está sob outro parent, realiza reparent seguro.
+#   - Garante que o ícone termine visível.
+# ------------------------------------------------------------
+func _ensure_settings_icon(parent: Node) -> void:
+	if not is_instance_valid(settings_icon):
+		settings_icon = SETTINGS_ICON.instantiate()
+		settings_icon.process_mode = Node.PROCESS_MODE_ALWAYS
+		parent.add_child(settings_icon)
+	else:
+		if settings_icon.get_parent() != parent:
+			settings_icon.get_parent().remove_child(settings_icon)
+			parent.add_child(settings_icon)
+	settings_icon.visible = true
 
 
 # ---------------------
