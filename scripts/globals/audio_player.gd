@@ -183,7 +183,31 @@ func save_volumes():
 # -----------------------------------------------------------------------------
 func load_volumes():
 	var config := ConfigFile.new()
-	if config.load("user://audio.config") == OK:
+	if config.load("user://audio.cfg") == OK:
 		set_master_volume_db(float(config.get_value("audio", "master_db", 0.0)))
 		set_music_volume_db(float(config.get_value("audio", "music_db", 0.0)))
 		set_sfx_volume_db(float(config.get_value("audio", "sfx_db", 0.0)))
+
+
+# -----------------------------------------------------------------------------
+# Faz um fade-out da trilha atual e para a reprodução ao final.
+# Comportamento:
+#   - Se nada estiver tocando (`playing == false`), sai imediatamente.
+#   - Cria um Tween que reduz `volume_db` gradualmente até −80 dB no tempo dado.
+#   - Aguarda o término do Tween, chama `stop()` e, por fim, restaura `volume_db`
+#     para 0 dB (para que a próxima faixa comece em volume normal).
+# Parâmetros:
+#   duration (float) ... Duração do fade-out em segundos (padrão: 0.8).
+# -----------------------------------------------------------------------------
+func fade_out_and_stop(duration: float = 0.8) -> void:
+	if not playing:
+		return
+	
+	var audio_tween := get_tree().create_tween()
+	audio_tween.tween_property(self, "volume_db", -80.0, duration)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	await audio_tween.finished
+	stop()
+	
+	volume_db = 0.0

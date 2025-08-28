@@ -217,6 +217,7 @@ func game_over():
 		gui_manager.game_over_label.text = "Game over!"
 		gui_manager.hud_portal_active.visible = false
 		settings_icon.visible = false
+		AudioPlayer._play_menu_music()
 
 
 # ---------------------
