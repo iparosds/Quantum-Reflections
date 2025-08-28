@@ -9,6 +9,7 @@ const SETTINGS_BUTTON_GROUP  := "settings_menu_button"
 const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 const PAUSE_MENU_GROUP := "pause_menu_button"
+const LEVELS_MENU_GROUP := "level_menu_button"
 
 # Camadas principais da interface do jogo.
 # Cada camada é uma parte visual do HUD ou de menus.
@@ -19,6 +20,7 @@ const PAUSE_MENU_GROUP := "pause_menu_button"
 @onready var input_settings_layer: CanvasLayer = $InputSettings
 @onready var game_over_screen: CanvasLayer  = $GameOverScreen
 @onready var pause_menu_layer: CanvasLayer = $PauseMenu
+@onready var levels_menu_layer: CanvasLayer = $LevelsMenu
 
 # Sons para interações de interface (hover, seleção, voltar).
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
@@ -27,8 +29,12 @@ const PAUSE_MENU_GROUP := "pause_menu_button"
 
 # Controles dentro do menu de configurações.
 # Inclui slider de volume e botão para acessar os controles.
-@onready var settings_volume_slider: HSlider   = $SettingsMenu/MarginContainer/ButtonsContainer/Volume
+@onready var settings_master_volume_slider: HSlider   = $SettingsMenu/MarginContainer/ButtonsContainer/MasterVolumeSlider
+@onready var settings_music_volume_slider: HSlider = $SettingsMenu/MarginContainer/ButtonsContainer/MusicVolumeSlider
+@onready var settings_sfx_volume_slider: HSlider = $SettingsMenu/MarginContainer/ButtonsContainer/SFXVolumeSlider
 @onready var settings_controls_btn: BaseButton = $SettingsMenu/MarginContainer/ButtonsContainer/ControlsButton
+
+var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 
 # Elementos do HUD principal do jogo.
 # Exibem informações como XP, pontuação, tempo, portal ativo e status de god mode.
@@ -43,8 +49,11 @@ const PAUSE_MENU_GROUP := "pause_menu_button"
 @onready var game_over_label: Label = $GameOverScreen/ColorRect/GameOverLabel
 @onready var game_over_restart_button: Button = $GameOverScreen/GameOverRestartButton
 
+# Elementos do Level Menu
+@onready var levels_container: VBoxContainer = $LevelsMenu/ScrollContainer/LevelsContainer
+@onready var back_to_main_menu_button: Button = $LevelsMenu/VBoxContainer/BackToMainMenuButton
+
 var is_paused: bool = false
-var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 
 
 # ------------------------------------------------------------
@@ -58,6 +67,12 @@ var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 # ------------------------------------------------------------
 func _ready() -> void:
 	Singleton.gui_manager = self
+	
+	hover_sound_player.bus  = "SFX"
+	select_sound_player.bus = "SFX"
+	back_sound_player.bus   = "SFX"
+	
+	AudioPlayer._play_menu_music()
 	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	game_over_screen.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -79,8 +94,7 @@ func _ready() -> void:
 	game_hud_layer.visible = false
 	game_over_screen.visible = false
 	pause_menu_layer.visible = false
-	
-	AudioPlayer._play_menu_music()
+	levels_menu_layer.visible = false
 	
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
@@ -88,9 +102,13 @@ func _ready() -> void:
 	_tag_buttons_in_tree(input_settings_layer, INPUT_SETTINGS_BUTTON_GROUP)
 	_tag_buttons_in_tree(game_over_screen, GAME_OVER_SCREEN_GROUP)
 	_tag_buttons_in_tree(pause_menu_layer, PAUSE_MENU_GROUP)
+	_tag_buttons_in_tree(levels_menu_layer, LEVELS_MENU_GROUP)
 	
 	_connect_button_signals_recursively(self)
-	_connect_signal_safe(settings_volume_slider, "value_changed", Callable(self, "_on_settings_volume_changed"))
+	_connect_signal_safe(settings_master_volume_slider, "value_changed", Callable(self, "_on_settings_master_volume_changed"))
+	_connect_signal_safe(settings_music_volume_slider, "value_changed", Callable(self, "_on_settings_music_volume_changed"))
+	_connect_signal_safe(settings_sfx_volume_slider, "value_changed", Callable(self, "_on_settings_sfx_volume_changed"))
+
 	_focus_first_button_in(main_menu_layer)
 
 
@@ -216,13 +234,15 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 		_on_game_over_screen_button_pressed(pressed_button)
 	elif pressed_button.is_in_group(PAUSE_MENU_GROUP):
 		_on_pause_menu_button_pressed(pressed_button)
+	elif pressed_button.is_in_group(LEVELS_MENU_GROUP):
+		_on_levels_menu_button_pressed(pressed_button)
 
 
 # Ações de botões do menu principal.
 func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"NewGameButton":
-			Singleton.start_game()
+			_show_levels_menu()
 		"ContinueGameButton":
 			Singleton.continue_game()
 		"LoadGameButton":
@@ -251,17 +271,26 @@ func _on_settings_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_controls()
 		"Back":
 			_play_back_sound()
+			AudioPlayer.save_volumes()
 			settings_layer.visible = false
 			on_settings_back.call()
 			on_settings_back = Callable(Singleton, "open_main_menu")
 
 
 # ------------------------------------------------------------
-# Chamado ao alterar o valor do slider de volume.
-# Define o volume global do jogo.
+# Chamados ao alterar o valor do slider de volume.
 # ------------------------------------------------------------
-func _on_settings_volume_changed(new_value_db: float) -> void:
-	Singleton.set_master_volume_db(new_value_db)
+func _on_settings_master_volume_changed(db: float) -> void:
+	AudioPlayer.set_master_volume_db(db)
+
+
+func _on_settings_music_volume_changed(db: float) -> void:
+	AudioPlayer.set_music_volume_db(db)
+
+
+func _on_settings_sfx_volume_changed(db: float) -> void:
+	AudioPlayer.set_sfx_volume_db(db)
+
 
 
 # Ações de botões na tela de configurações de input.
@@ -298,11 +327,80 @@ func _on_pause_menu_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.quit_to_desktop_from_game()
 
 
+# Ações de botões do menu de level
+func _on_levels_menu_button_pressed(pressed_button : BaseButton) -> void:
+	match  pressed_button.name:
+		"BackToMainMenuButton":
+			Singleton.open_main_menu()
+
+
+# ------------------------------------------------------------
+# Exibe o menu de seleção de fases.
+#   - Esconde o Main Menu.
+#   - Limpa quaisquer botões de fases previamente gerados.
+#   - Regenera a lista de botões com base em Singleton.levels.
+#   - Mostra a camada de Levels e coloca foco no botão "Voltar".
+#   - Reseta o conteúdo de `levels_container`.
+# ------------------------------------------------------------
+func _show_levels_menu() -> void:
+	main_menu_layer.visible = false
+	
+	for levels in levels_container.get_children():
+		levels.queue_free()
+	
+	_generate_level_buttons()
+	
+	levels_menu_layer.visible = true
+	back_to_main_menu_button.grab_focus()
+
+
+# ------------------------------------------------------------
+# Gera dinamicamente os botões de níveis.
+#   - Limpa o container antes de gerar novos botões.
+#   - Verifica se o nível está desbloqueado.
+#   - Se desbloqueado: habilita o botão.
+#   - Se bloqueado: desabilita o botão e exibe apenas o rótulo.
+#   - Popula `levels_container` com novos botões.
+# ------------------------------------------------------------
+func _generate_level_buttons():
+	
+	for levels in levels_container.get_children():
+		levels.queue_free()
+	
+	var level_keys = Singleton.levels.keys()
+	#level_keys.sort()
+	
+	for level_id in level_keys:
+		var level_data = Singleton.levels[level_id]
+		var label = level_data["label"]
+		var _level_path = "res://levels/" + level_data["url"]
+		
+		var button = Button.new()
+		var level_is_unlocked = Singleton.level_is_unlocked(level_id)
+		
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		
+		if level_is_unlocked:
+			button.text = " " + label + " " 
+			button.disabled = false
+			button.pressed.connect(func():
+				levels_menu_layer.visible = false
+				Singleton.change_level(level_data["url"])
+				Singleton.start_game()
+			)
+		else:
+			button.text = label
+			button.disabled = true
+		
+		levels_container.add_child(button)
+
+
 # Métodos chamados externamente via Singleton
 # Controlam a visibilidade das telas principais do jogo.
 func show_main_menu() -> void:
 	credits_layer.visible   = false
 	settings_layer.visible  = false
+	levels_menu_layer.visible = false	
 	main_menu_layer.visible = true
 	_focus_first_button_in(main_menu_layer)
 
@@ -319,6 +417,11 @@ func show_settings() -> void:
 	
 	if is_instance_valid(Singleton.settings_icon):
 		Singleton.settings_icon.visible = false
+
+	# sincroniza sliders com os buses
+	settings_master_volume_slider.value = AudioPlayer.get_master_volume_db()
+	settings_music_volume_slider.value = AudioPlayer.get_music_volume_db()
+	settings_sfx_volume_slider.value   = AudioPlayer.get_sfx_volume_db()
 
 
 func show_credits() -> void:
@@ -344,6 +447,7 @@ func show_pause_menu() -> void:
 	
 	if is_instance_valid(Singleton.settings_icon):
 		Singleton.settings_icon.visible = false
+
 
 func hide_pause_menu() -> void:
 	get_tree().paused = false

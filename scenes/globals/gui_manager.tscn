@@ -164,6 +164,7 @@ bg_color = Color(0, 0, 0, 0)
 script = ExtResource("1_01qsd")
 
 [node name="GameHud" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="HudXP" type="ProgressBar" parent="GameHud"]
 offset_right = 1145.0
@@ -338,8 +339,6 @@ label_settings = SubResource("LabelSettings_1tl11")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SoundIcon" parent="MainMenu" instance=ExtResource("6_haemp")]
-
 [node name="Credits" type="CanvasLayer" parent="."]
 visible = false
 
@@ -389,10 +388,7 @@ theme = ExtResource("5_w8ru2")
 text = "Back"
 flat = true
 
-[node name="SoundIcon" parent="Credits" instance=ExtResource("6_haemp")]
-
 [node name="SettingsMenu" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="TextureRect" type="TextureRect" parent="SettingsMenu"]
 anchors_preset = 15
@@ -430,7 +426,6 @@ autoplay = "default"
 [node name="ButtonsContainer" type="VBoxContainer" parent="SettingsMenu/MarginContainer"]
 custom_minimum_size = Vector2(94, 192)
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 theme = SubResource("Theme_qupqx")
@@ -442,28 +437,60 @@ theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
 theme_override_fonts/font = ExtResource("2_8d174")
 text = "Settings"
 
-[node name="VolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+[node name="MasterVolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
 theme_override_fonts/font = ExtResource("2_8d174")
 theme_override_font_sizes/font_size = 12
-text = "Volume"
+text = "Master"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Volume" type="HSlider" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+[node name="MasterVolumeSlider" type="HSlider" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
 layout_mode = 2
 size_flags_vertical = 4
 focus_neighbor_top = NodePath("../Back")
-focus_neighbor_bottom = NodePath("../ControlsButton")
+focus_neighbor_bottom = NodePath("../MusicVolumeSlider")
 min_value = -45.0
+max_value = 0.0
+
+[node name="MusicVolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme_override_fonts/font = ExtResource("2_8d174")
+theme_override_font_sizes/font_size = 12
+text = "Music"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MusicVolumeSlider" type="HSlider" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../MasterVolumeSlider")
+focus_neighbor_bottom = NodePath("../SFXVolumeSlider")
+min_value = -60.0
 max_value = -15.0
-step = 2.0
+value = -15.0
+
+[node name="SFXVolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.486275, 0.494118, 0.631373, 1)
+theme_override_fonts/font = ExtResource("2_8d174")
+theme_override_font_sizes/font_size = 12
+text = "SFX"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SFXVolumeSlider" type="HSlider" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../MusicVolumeSlider")
+focus_neighbor_bottom = NodePath("../ControlsButton")
+min_value = -60.0
+max_value = -15.0
 value = -15.0
 
 [node name="ControlsButton" type="Button" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
 layout_mode = 2
-focus_neighbor_top = NodePath("../Volume")
+focus_neighbor_top = NodePath("../MasterVolumeSlider")
 focus_neighbor_bottom = NodePath("../Back")
 theme = ExtResource("5_w8ru2")
 text = "Controls"
@@ -486,6 +513,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="SoundIcon" parent="SettingsMenu" instance=ExtResource("6_haemp")]
+visible = false
 
 [node name="InputSettings" type="CanvasLayer" parent="."]
 visible = false
@@ -607,8 +635,6 @@ theme = ExtResource("5_w8ru2")
 text = "Back to settings"
 flat = true
 
-[node name="SoundIcon" parent="InputSettings" instance=ExtResource("6_haemp")]
-
 [node name="GameOverScreen" type="CanvasLayer" parent="."]
 visible = false
 
@@ -643,8 +669,6 @@ offset_top = 381.0
 offset_right = 638.0
 offset_bottom = 412.0
 text = "Restart"
-
-[node name="SoundIcon" parent="GameOverScreen" instance=ExtResource("6_haemp")]
 
 [node name="PauseMenu" type="CanvasLayer" parent="."]
 visible = false
@@ -739,7 +763,75 @@ focus_neighbor_bottom = NodePath("../ContinueGameButton")
 theme = ExtResource("5_w8ru2")
 text = "Quit to Desktop"
 
-[node name="SoundIcon" parent="PauseMenu" instance=ExtResource("6_haemp")]
+[node name="LevelsMenu" type="CanvasLayer" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="LevelsMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_mrw3c")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="LevelsMenu"]
+offset_left = 512.0
+offset_top = 221.0
+offset_right = 631.0
+offset_bottom = 241.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("2_8d174")
+text = "CHOOSE A LEVEL"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LevelsMenu"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 435.0
+offset_top = 277.0
+offset_right = -435.0
+offset_bottom = -283.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.96)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+horizontal_scroll_mode = 0
+
+[node name="LevelsContainer" type="VBoxContainer" parent="LevelsMenu/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource("5_w8ru2")
+theme_override_constants/separation = 5
+
+[node name="TestButton" type="Button" parent="LevelsMenu/ScrollContainer/LevelsContainer"]
+layout_mode = 2
+text = "TESTE"
+
+[node name="TestButton2" type="Button" parent="LevelsMenu/ScrollContainer/LevelsContainer"]
+layout_mode = 2
+text = "TESTE"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelsMenu"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -59.0
+offset_top = -264.0
+offset_right = 59.0
+offset_bottom = -224.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BackToMainMenuButton" type="Button" parent="LevelsMenu/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("5_w8ru2")
+text = " Back To Main Menu "
+flat = true
 
 [node name="Sounds" type="Node" parent="."]
 
@@ -751,6 +843,8 @@ stream = ExtResource("11_4wjxq")
 
 [node name="BackSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("12_pme4d")
+
+[node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
 
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/SaveConfigButton" to="InputSettings/Control" method="_on_save_config_button_pressed"]
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]
