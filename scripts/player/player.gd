@@ -198,7 +198,11 @@ func start_black_hole_death(
 			collision_shape.disabled = true
 
 	# Nó visual que deve girar
-	var ship_visual: Node2D = get_node("Ship") as Node2D if has_node("Ship") else self
+	var ship_visual: Node2D = self
+	
+	if has_node("Ship"):
+		ship_visual = get_node("Ship") as Node2D
+
 
 	# Estado inicial
 	var initial_position := global_position
@@ -209,7 +213,13 @@ func start_black_hole_death(
 	var consume_tween := get_tree().create_tween()
 	consume_tween.tween_method(
 		Callable(self, "_black_hole_consume_step")
-			.bind(initial_position, black_hole_center, initial_rotation, initial_scale, float(total_spins), ship_visual),
+			.bind(
+				initial_position, 
+				black_hole_center, 
+				initial_rotation, 
+				initial_scale, 
+				float(total_spins), ship_visual
+			),
 		0.0, 1.0, consume_duration
 	)
 	

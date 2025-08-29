@@ -10,6 +10,7 @@ const BUS_SFX    := "SFX"
 # Posição onde a música do level foi pausada
 var _last_level_pos: float = 0.0
 var _current_track: String = ""
+var fade_tween: Tween = null
 
 
 # -----------------------------------------------------------------------------
@@ -78,6 +79,8 @@ func _play_music(music: AudioStream, volume: float = 0.0, from_pos: float = 0.0)
 	if stream == music and playing:
 		return
 	
+	_cancel_fade()
+	
 	stream = music
 	volume_db = volume
 	play(from_pos)
@@ -142,6 +145,9 @@ func on_pause_exited() -> void:
 # -----------------------------------------------------------------------------
 func on_level_restart() -> void:
 	_last_level_pos = 0.0
+	
+	_cancel_fade()
+	
 	stop()
 	_play_level_music(false)
 
@@ -203,11 +209,38 @@ func fade_out_and_stop(duration: float = 0.8) -> void:
 	if not playing:
 		return
 	
-	var audio_tween := get_tree().create_tween()
-	audio_tween.tween_property(self, "volume_db", -80.0, duration)\
+	_cancel_fade()
+	
+	var stream_at_start: AudioStream = stream
+	
+	fade_tween = get_tree().create_tween()
+	fade_tween.tween_property(self, "volume_db", -80.0, duration)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	
-	await audio_tween.finished
-	stop()
+	fade_tween.finished.connect(func ():
+		fade_tween = null
+		
+		if stream == stream_at_start:
+			stop()
+			volume_db = 0.0
+		else:
+			volume_db = 0.0
+	)
+
+
+# -----------------------------------------------------------------------------
+# Cancela qualquer fade-out em andamento.
+# Comportamento:
+#   - Se existir um Tween válido em `fade_tween`, mata-o imediatamente.
+#   - Limpa a referência interna (`fade_tween = null`).
+#   - Restaura `volume_db` para 0 dB (volume normal).
+# Uso:
+#   - Chamado antes de iniciar uma nova música ou reinício de nível
+#     para garantir que fades antigos não afetem a faixa atual.
+# -----------------------------------------------------------------------------
+func _cancel_fade() -> void:
+	if is_instance_valid(fade_tween):
+		fade_tween.kill()
 	
+	fade_tween = null
 	volume_db = 0.0

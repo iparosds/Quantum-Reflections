@@ -192,10 +192,14 @@ func restart_game() -> void:
 	
 	if gui_manager:
 		gui_manager.hud_portal_active.visible = false
-		gui_manager.hud_timer_bar.get("theme_override_styles/fill").bg_color = Color(0.129, 0.259, 0.42)
+		gui_manager.hud_timer_bar.get(
+			"theme_override_styles/fill"
+		).bg_color = Color(0.129, 0.259, 0.42)
 	
 	get_tree().paused = false
 	start_game()
+	
+	AudioPlayer._play_level_music()
 	AudioPlayer.on_level_restart()
 	
 	if gui_manager and gui_manager.is_paused:
@@ -217,6 +221,8 @@ func game_over():
 		gui_manager.game_over_label.text = "Game over!"
 		gui_manager.hud_portal_active.visible = false
 		settings_icon.visible = false
+		
+		AudioPlayer.stop_music() 
 		AudioPlayer._play_menu_music()
 
 
@@ -298,8 +304,13 @@ func goto_level(level_or_path: String) -> void:
 #   - Atualiza `current_level_path` e `current_level` com base em `levels`
 # ------------------------------------------------------------
 func change_level(load_level: String) -> void:
-	var level_path: String = load_level if load_level.begins_with("res://") else "res://levels/%s" % load_level
+	var level_path: String
 	
+	if load_level.begins_with("res://"):
+		level_path = load_level
+	else:
+		level_path = "res://levels/%s" % load_level
+		
 	# Verifica se o arquivo do nível existe
 	
 	# Carrega recurso do nível
