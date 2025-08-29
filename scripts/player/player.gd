@@ -172,7 +172,11 @@ func _physics_process(delta):
 #   - consume_duration (float, seg): duração total da animação de sucção.
 #   - total_spins (float): quantas voltas completas o visual da nave dará.
 # -----------------------------------------------------------------------------
-func start_black_hole_death(black_hole_center: Vector2, consume_duration : float = 3.0, total_spins : float = 8.0) -> void:
+func start_black_hole_death(
+	black_hole_center: Vector2,
+	consume_duration : float = 1.5,
+	total_spins : float = 13.0
+) -> void:
 	if dying_to_black_hole:
 		return
 	
