@@ -16,6 +16,7 @@ var score = 0
 var god_mode = false
 var quantum_roll = 0
 var portal_timer = 150.0
+var tutorial_dialogue := preload("res://dialogues/tutorial_dialogue.dialogue")
 
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
@@ -43,6 +44,9 @@ func start_game() -> void:
 		gui_manager.game_hud_layer.visible = true
 	
 	goto_level(current_level_path)
+	
+	DialogueManager.show_dialogue_balloon(tutorial_dialogue, "start")
+
 
 
 func continue_game() -> void:
