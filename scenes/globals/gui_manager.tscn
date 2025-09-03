@@ -164,7 +164,6 @@ bg_color = Color(0, 0, 0, 0)
 script = ExtResource("1_01qsd")
 
 [node name="GameHud" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="HudXP" type="ProgressBar" parent="GameHud"]
 offset_right = 1145.0
@@ -216,6 +215,25 @@ offset_top = 123.0
 offset_right = 633.0
 offset_bottom = 146.0
 text = "You are a God!"
+
+[node name="LevelUpNotificationLabel" type="Label" parent="GameHud"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -52.5
+offset_top = -17.0
+offset_right = 52.5
+offset_bottom = 17.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "Level UP!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
 visible = false
@@ -389,6 +407,7 @@ text = "Back"
 flat = true
 
 [node name="SettingsMenu" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="TextureRect" type="TextureRect" parent="SettingsMenu"]
 anchors_preset = 15
@@ -764,6 +783,7 @@ theme = ExtResource("5_w8ru2")
 text = "Quit to Desktop"
 
 [node name="LevelsMenu" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="TextureRect" type="TextureRect" parent="LevelsMenu"]
 anchors_preset = 15

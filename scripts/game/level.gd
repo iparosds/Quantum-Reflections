@@ -8,7 +8,6 @@ const PORTAL = preload("res://scenes/game/portal.tscn")
 
 var game_paused = false
 var quantum = false
-var god_mode = false
 var portal_active = false
 var score = 0;
 var quantum_roll = 0	
@@ -84,12 +83,8 @@ func reset_quantum():
 # ------------------------------------------------------------
 func _physics_process(delta):
 	if Input.is_action_just_released("god"):
-		if god_mode == false:
-			god_mode = true
-			Singleton.gui_manager.hud_god_mode.visible = true
-		else:
-			god_mode = false
-			Singleton.gui_manager.hud_god_mode.visible = false
+		Singleton.god_mode = not Singleton.god_mode
+		Singleton.gui_manager.hud_god_mode.visible = Singleton.god_mode
 	
 	if quantum == true:
 		Engine.time_scale = 0.8
