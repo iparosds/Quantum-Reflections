@@ -4,18 +4,6 @@ const BLACK_HOLE = preload("res://scenes/game/black_hole.tscn")
 const DAMAGE_RATE = 500.0
 const MAX_ACCELERATION = 1000.0
 
-# Mapa de direção -> nó da turret
-# thresholds para “ligar” cada turret conforme o score
-const TURRET_THRESHOLDS: Dictionary = {
-	"W":  10,
-	"S":  50,
-	"N":  100,
-	"NW": 200,
-	"SE": 400,
-	"NE": 600,
-	"SW": 800,
-}
-
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
 	"E":  %TurretE,
@@ -256,10 +244,12 @@ func _physics_process(delta):
 			mob.queue_free()
 	
 	if health <= 0.0:
-		health = 100
+		health = 100.0
 		Singleton.level.quantum = true
+		
 		var new_black_hole = BLACK_HOLE.instantiate()
 		new_black_hole.position = position
+		
 		Singleton.level.add_child(new_black_hole)
 		health_depleted.emit()
 	
@@ -290,6 +280,8 @@ func start_black_hole_death(
 	consume_duration : float = 1.5,
 	total_spins : float = 13.0
 ) -> void:
+	if Singleton.god_mode:
+		return
 	if dying_to_black_hole:
 		return
 	
