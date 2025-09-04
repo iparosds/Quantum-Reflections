@@ -7,6 +7,8 @@ extends CanvasLayer
 ## The action to use to skip typing the dialogue
 @export var skip_action: StringName = &"ui_cancel"
 
+@export var mutation_hide_delay: float = 3.5
+
 ## The dialogue resource
 var resource: DialogueResource
 
@@ -24,14 +26,18 @@ var locals: Dictionary = {}
 
 var _locale: String = TranslationServer.get_locale()
 
+## Se true, linhas sem responses/time avançam automaticamente
+## assim que a próxima linha printável estiver disponível.
+var advance_after_blocking_mutation: bool = false
+
+
 ## The current line
 var dialogue_line: DialogueLine:
 	set(value):
-		if value:
-			dialogue_line = value
+		dialogue_line = value
+		if dialogue_line:
 			apply_dialogue_line()
 		else:
-			# The dialogue has finished so close the balloon
 			queue_free()
 	get:
 		return dialogue_line
@@ -122,9 +128,13 @@ func apply_dialogue_line() -> void:
 		await get_tree().create_timer(time).timeout
 		next(dialogue_line.next_id)
 	else:
-		is_waiting_for_input = true
-		balloon.focus_mode = Control.FOCUS_ALL
-		balloon.grab_focus()
+		if advance_after_blocking_mutation:
+			var next_line := await resource.get_next_dialogue_line(dialogue_line.next_id, temporary_game_states)
+			self.dialogue_line = next_line
+		else:
+			is_waiting_for_input = true
+			balloon.focus_mode = Control.FOCUS_ALL
+			balloon.grab_focus()
 
 
 ## Go to the next line
@@ -144,7 +154,7 @@ func _on_mutation_cooldown_timeout() -> void:
 func _on_mutated(_mutation: Dictionary) -> void:
 	is_waiting_for_input = false
 	will_hide_balloon = true
-	mutation_cooldown.start(0.1)
+	mutation_cooldown.start(mutation_hide_delay)
 
 
 func _on_balloon_gui_input(event: InputEvent) -> void:

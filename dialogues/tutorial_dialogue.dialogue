@@ -1,11 +1,26 @@
 ~ start
-Nathan: [[Hi|Hello|Howdy]], this is some dialogue.
-Nathan: Here are some choices.
-- First one
-	Nathan: You picked the first one.
-- Second one
-	Nathan: You picked the second one.
-- Start again => start
-- End the conversation => END
-Nathan: For more information see the online documentation.
+Tutorial: Segure [wave]** W **[/wave] para acelerar.
+do Singleton._wait_action("move_up")
+=> after_up
+
+~ after_up
+Tutorial: Bom! Agora segure [wave]** S **[/wave] para frear/parar.
+do Singleton._wait_action("move_down")
+=> after_down
+
+~ after_down
+Tutorial: Ótimo! Agora gire com [wave]** A **[/wave] ou [wave]** D **[/wave].
+do Singleton._wait_any_action(["move_left","move_right"])
+=> after_rotate
+
+~ after_rotate
+Tutorial: Perfeito. Por fim, pressione [wave]** TAB **[/wave] para ganhar aceleração extra.
+do Singleton._wait_action("boost")
+=> after_boost
+
+~ after_boost
+Tutorial: Excelente! Tutorial de movimento concluído.
+do wait(0.09)
 => END
+
+~ END

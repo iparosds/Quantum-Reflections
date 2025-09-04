@@ -23,7 +23,7 @@ DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
 [dialogue_manager]
 
-runtime/balloon_path="res://scenes/game/tutorial_dialogue_baloon.tscn"
+runtime/balloon_path="res://scenes/game/tutorial_dialogue_balloon.tscn"
 
 [display]
 

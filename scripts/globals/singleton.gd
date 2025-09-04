@@ -2,10 +2,11 @@ extends Node2D
 
 @onready var closest_enemy := find_closest_enemy()
 const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")
+const TUTORIAL_DIALOGUE := preload("res://dialogues/tutorial_dialogue.dialogue")
 
 var gui_manager: GuiManager
 var level_manager: LevelManager
-var level : Level        
+var level : Level
 var player : Player
 var settings_icon : SettingsIcon
 var quantum := false
@@ -16,7 +17,7 @@ var score = 0
 var god_mode = false
 var quantum_roll = 0
 var portal_timer = 150.0
-var tutorial_dialogue := preload("res://dialogues/tutorial_dialogue.dialogue")
+var _tutorial_running := false
 
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
@@ -32,6 +33,8 @@ var levels: Dictionary = {
 	},
 }
 
+signal action_pressed(action_name)
+
 # ---------------------
 # FUNÇÕES DE INTERFACE
 # ---------------------
@@ -45,8 +48,57 @@ func start_game() -> void:
 	
 	goto_level(current_level_path)
 	
-	DialogueManager.show_dialogue_balloon(tutorial_dialogue, "start")
+	# Só inicia o tutorial no nível "tutorial"
+	if current_level == "tutorial" or current_level_path.ends_with("tutorial.tscn"):
+		start_tutorial()
 
+
+# Inicia o tutorial do jogo.
+# - Garante que só seja iniciado uma vez por sessão.
+# - Cria e exibe o balão de diálogo configurado para o tutorial.
+# - Ajusta o balão para avançar automaticamente após mutações bloqueantes
+#   	(como _wait_action), permitindo que o fluxo dependa apenas do input do jogador.
+func start_tutorial() -> void:
+	if _tutorial_running:
+		return
+	_tutorial_running = true
+	var dialogue_balloon = DialogueManager.show_dialogue_balloon(TUTORIAL_DIALOGUE, "start")
+	
+	if dialogue_balloon and dialogue_balloon.has_method("set"):
+		dialogue_balloon.advance_after_blocking_mutation = true
+
+
+# Aguarda até que o jogador pressione a ação especificada.
+# - Recebe o nome da ação (string definida no InputMap).
+# - Suspende a execução até que a ação seja pressionada.
+# - Retorna automaticamente após a primeira ocorrência.
+func _wait_action(action_name) -> void:
+	var a = await action_pressed
+	if a == action_name:
+		return
+	await _wait_action(action_name)
+
+
+# Aguarda até que o jogador pressione qualquer ação de uma lista.
+# - Recebe um Array de strings com nomes de ações (InputMap).
+# - Suspende a execução até que uma das ações seja pressionada.
+# - Retorna na primeira ação válida detectada.
+func _wait_any_action(action_names: Array) -> void:
+	var a = await action_pressed
+	if action_names.has(a):
+		return
+	await _wait_any_action(action_names)
+
+
+# Captura entradas globais do jogador e emite o sinal `action_pressed`.
+# - Detecta se o evento foi pressionado (sem repetição/echo).
+# - Para cada ação definida no InputMap, verifica se corresponde ao evento.
+# - Emite o sinal com o nome da ação (String) quando detectada.
+func _input(event: InputEvent) -> void:
+	if event.is_pressed() and not event.is_echo():
+		for action in InputMap.get_actions():
+			if event.is_action_pressed(action):
+				action_pressed.emit(String(action))
 
 
 func continue_game() -> void:
@@ -322,6 +374,9 @@ func change_level(load_level: String) -> void:
 	level = new_level
 	
 	_ensure_settings_icon(level)
+	
+	# reset do estado de tutorial ao trocar de fase
+	_tutorial_running = false
 	
 	# Atualiza variáveis de controle do nível atual
 	current_level_path = level_path
