@@ -42,5 +42,18 @@ Portal: When the timer reaches zero, the portal will open and asteroids will be 
 do wait(1.0)
 Portal: Your goal is to enter the portal before time runs out — otherwise, you will be destroyed.
 do wait(1.5)
+=> asteroids_belt
 
+~ asteroids_belt
+Asteroid Belt: If you move into the asteroid belt at the edge of the level, you'll be teleported to the opposite side of the screen.
+do wait(1.5)
+=> menus
+
+~ menus
+Menus: In the bottom-right corner, you can toggle sound and access the settings by clicking one of the icons.
+do wait(1.0)
+Menus: You can also press Esc to pause the game and open the menu.
+do wait(1.5)
 => END
+
+~ END
