@@ -20,6 +20,11 @@ do Singleton._wait_action("boost")
 
 ~ after_boost
 Tutorial: Excellent! Movement tutorial completed.
-do wait(2.5)
+do wait(1.5)
+=> turrets
+
+~ turrets
+Tutorial: Turrets will activate automatically when an asteroid approaches.
+do wait(1.5)
 
 => END
