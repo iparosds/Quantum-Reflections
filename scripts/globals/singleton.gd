@@ -73,8 +73,8 @@ func start_tutorial() -> void:
 # - Suspende a execução até que a ação seja pressionada.
 # - Retorna automaticamente após a primeira ocorrência.
 func _wait_action(action_name) -> void:
-	var a = await action_pressed
-	if a == action_name:
+	var action = await action_pressed
+	if action == action_name:
 		return
 	await _wait_action(action_name)
 
@@ -84,8 +84,8 @@ func _wait_action(action_name) -> void:
 # - Suspende a execução até que uma das ações seja pressionada.
 # - Retorna na primeira ação válida detectada.
 func _wait_any_action(action_names: Array) -> void:
-	var a = await action_pressed
-	if action_names.has(a):
+	var action = await action_pressed
+	if action_names.has(action):
 		return
 	await _wait_any_action(action_names)
 
