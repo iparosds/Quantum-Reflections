@@ -1,0 +1,59 @@
+~ start
+Tutorial: Hold [wave]** W **[/wave] to accelerate.
+do Singleton._wait_action("move_up")
+=> after_up
+
+~ after_up
+Tutorial: Good! Now hold [wave]** S **[/wave] to brake/stop.
+do Singleton._wait_action("move_down")
+=> after_down
+
+~ after_down
+Tutorial: Great! Now turn with [wave]** A **[/wave] or [wave]** D **[/wave].
+do Singleton._wait_any_action(["move_left","move_right"])
+=> after_rotate
+
+~ after_rotate
+Tutorial: Perfect. Finally, press [wave]** TAB **[/wave] to gain extra boost.
+do Singleton._wait_action("boost")
+=> after_boost
+
+~ after_boost
+Tutorial: Excellent! Movement tutorial completed.
+do wait(1.5)
+=> turrets
+
+~ turrets
+Turrets: Turrets will activate automatically when an asteroid approaches.
+do wait(1.5)
+=> black_hole
+
+~ black_hole
+Black holes: When your HP reaches zero, a black hole will open.  
+do wait(1.0)
+Black holes: You will be taken to the quantum world, where elements behave in reverse.  
+do wait(1.0)
+Black holes: Your HP will be restored, and after some time you will return to the normal dimension.  
+do wait(1.5)
+=> portal
+
+~ portal
+Portal: When the timer reaches zero, the portal will open and asteroids will be pulled toward it.
+do wait(1.0)
+Portal: Your goal is to enter the portal before time runs out — otherwise, you will be destroyed.
+do wait(1.5)
+=> asteroids_belt
+
+~ asteroids_belt
+Asteroid Belt: If you move into the asteroid belt at the edge of the level, you'll be teleported to the opposite side of the screen.
+do wait(1.5)
+=> menus
+
+~ menus
+Menus: In the bottom-right corner, you can toggle sound and access the settings by clicking one of the icons.
+do wait(1.0)
+Menus: You can also press Esc to pause the game and open the menu.
+do wait(1.5)
+=> END
+
+~ END
