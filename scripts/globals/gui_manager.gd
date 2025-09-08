@@ -115,7 +115,6 @@ func _ready() -> void:
 	Singleton._ensure_settings_icon(self)
 
 
-
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("back"):
 		if settings_layer.visible:
@@ -126,6 +125,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif credits_layer.visible:
 			_play_back_sound()
 			Singleton.open_main_menu()
+		return
+	
+	if event.is_action_pressed("pause"):
+		# ignora se estamos em Main Menu ou Game Over
+		if main_menu_layer.visible or game_over_screen.visible:
+			return
+
+		if is_paused:
+			# fecha overlays por cima do pause, se houver
+			if settings_layer.visible: settings_layer.visible = false
+			if input_settings_layer.visible: input_settings_layer.visible = false
+			if credits_layer.visible: credits_layer.visible = false
+			hide_pause_menu()
+			AudioPlayer.on_pause_exited()
+		else:
+			show_pause_menu()
+			AudioPlayer.on_pause_entered()
 
 
 # ------------------------------------------------------------
