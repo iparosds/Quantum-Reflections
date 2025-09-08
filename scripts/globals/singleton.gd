@@ -23,7 +23,7 @@ var active_balloons: Array = []
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
 	"tutorial": {
-		"label": "Tutorial",
+		"label": "Tutorial (under construction)",
 		"url": "tutorial.tscn",
 		"unblock": "_tutorial",
 	},
@@ -322,7 +322,7 @@ func game_over():
 
 # Sempre retorna verdadeiro para liberar o nível de tutorial.
 func _tutorial() -> bool:
-	return true
+	return false
 
 
 # ------------------------------------------------------------
