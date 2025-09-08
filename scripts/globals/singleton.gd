@@ -18,6 +18,7 @@ var god_mode = false
 var quantum_roll = 0
 var portal_timer = 150.0
 var _tutorial_running := false
+var active_balloons: Array = []
 
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
@@ -63,7 +64,8 @@ func start_tutorial() -> void:
 		return
 	_tutorial_running = true
 	var dialogue_balloon = DialogueManager.show_dialogue_balloon(TUTORIAL_DIALOGUE, "start")
-	
+	_register_balloon(dialogue_balloon)
+
 	if dialogue_balloon and dialogue_balloon.has_method("set"):
 		dialogue_balloon.advance_after_blocking_mutation = true
 
@@ -99,6 +101,36 @@ func _input(event: InputEvent) -> void:
 		for action in InputMap.get_actions():
 			if event.is_action_pressed(action):
 				action_pressed.emit(String(action))
+
+
+func _register_balloon(balloon: Node) -> void:
+	if not is_instance_valid(balloon):
+		return
+	
+	active_balloons.append(balloon)
+	
+	# Marca em um grupo para fallback
+	if not balloon.is_in_group("dialogue_balloon"):
+		balloon.add_to_group("dialogue_balloon")
+	
+	# Quando o balão sair da árvore, removemos da lista
+	var reference := balloon
+	balloon.tree_exited.connect(func():
+		active_balloons.erase(reference))
+
+
+func _close_all_dialogue_balloons() -> void:
+	# Fecha os que rastreamos explicitamente
+	for balloon in active_balloons.duplicate():
+		if is_instance_valid(balloon):
+			balloon.queue_free()
+	
+	active_balloons.clear()
+	
+	# Fallback: se houver quaisquer outros com o grupo, fecha também
+	for balloon in get_tree().get_nodes_in_group("dialogue_balloon"):
+		if is_instance_valid(balloon):
+			balloon.queue_free()
 
 
 func continue_game() -> void:
@@ -267,6 +299,8 @@ func reset_game_state():
 
 
 func game_over():
+	_close_all_dialogue_balloons()
+	
 	if god_mode == false:
 		get_tree().paused = true
 		gui_manager.game_over_screen.visible = true
