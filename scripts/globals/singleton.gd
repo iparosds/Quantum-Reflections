@@ -298,7 +298,7 @@ func restart_game() -> void:
 func reset_game_state():
 	if gui_manager:
 		score = 0
-		gui_manager.hud_score_label.text = "0 ores"
+		gui_manager.hud_score_label.text = ""
 		gui_manager.hud_xp.value = 0
 
 
