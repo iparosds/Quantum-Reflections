@@ -60,12 +60,14 @@ func _ready():
 			turret.current_bullet = 0
 	
 	if is_instance_valid(turrets["E"]):
-		turrets["E"].current_bullet = 1
+		turrets["E"].current_bullet = 2
 	
 	call_deferred("_init_level_progress")
 	 
+	# Muda manualmente os multiplicadores de dano das armas. Essa logica sera feita por selecao no level up.
 	if PlayerUpgrades != null:
 		PlayerUpgrades.active_weapon_1_level = 2
+		PlayerUpgrades.active_weapon_2_level = 2
 		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
 			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
 
