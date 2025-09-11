@@ -96,23 +96,27 @@ func add_new_ore():
 	get_tree().current_scene.call_deferred("add_child", new_ore)
 
 
-func take_damage(amount: float = 0.0) -> void:
-	var damage := amount
-	
-	# Fallback para o modelo antigo caso não mandem amount (ex.: outros lugares do jogo)
-	if damage <= 0.0:
-		# antigo: baseado na velocidade do player
+func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
+	var damage := 0.0
+
+	if amount >= 0.0:
+		damage = amount
+		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+	else:
+		# Dano base pela velocidade do player
+		var base := MIN_DAMAGE
 		if is_instance_valid(player):
-			damage = float(player.acceleration) / 10.0
-		else:
-			damage = MIN_DAMAGE
-	if damage < MIN_DAMAGE:
-		damage = MIN_DAMAGE
-	#print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
-	
+			base = max(MIN_DAMAGE, float(player.acceleration) / 10.0)
+
+		# combinação base + multiplicador
+		damage = base * max(0.0, multiplier)
+		
+		# Se quiser SOMAR em vez de multiplicar, troque a linha acima por:
+		#damage = base + (multiplier)
+		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+
 	health -= damage
 	#print("[Asteroid] hp_after=", health)
-	
 	if health <= 0.0:
 		asteroid_destruction()
 		add_new_ore()

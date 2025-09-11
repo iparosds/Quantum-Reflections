@@ -74,6 +74,8 @@ func _ready():
 		PlayerUpgrades.active_weapon_2_level = 2
 		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
 			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
+		#print("[TEST] W2 level=", PlayerUpgrades.active_weapon_2_level,
+			#" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
 	
 	if get_tree().root.has_node("PlayerUpgrades"):
 		PlayerUpgrades.passive_shield_level = 5 # + 25% de health
