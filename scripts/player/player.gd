@@ -39,6 +39,7 @@ var rotating_right = false
 var rotating_left = false
 var level
 var dying_to_black_hole := false
+var max_health: float = 100.0
 
 signal health_depleted
 
@@ -64,12 +65,27 @@ func _ready():
 	
 	call_deferred("_init_level_progress")
 	 
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
+	
 	# Muda manualmente os multiplicadores de dano das armas. Essa logica sera feita por selecao no level up.
 	if PlayerUpgrades != null:
 		PlayerUpgrades.active_weapon_1_level = 2
 		PlayerUpgrades.active_weapon_2_level = 2
 		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
 			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
+	
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.passive_shield_level = 5 # + 25% de health
+		
+		_on_upgrades_changed()
+	
+	
+	_apply_health_from_upgrades(true, true)
+
+
+func _on_upgrades_changed() -> void:
+	_apply_health_from_upgrades()
 
 
 func is_player():
@@ -244,6 +260,9 @@ func _physics_process(delta):
 				Singleton.display_number(damage, position, "#2f213b")
 			else:
 				Singleton.display_number(damage, position, "#7c7ea1")
+			
+			print_rich("[HP] ", snapped(health, 0.1), "/", max_health)
+			
 			mob.player_collision()
 	
 	var overlapping_ores = %CollectOre.get_overlapping_bodies()
@@ -253,7 +272,7 @@ func _physics_process(delta):
 			mob.queue_free()
 	
 	if health <= 0.0:
-		health = 100.0
+		health = max_health
 		Singleton.level.quantum = true
 		
 		var new_black_hole = BLACK_HOLE.instantiate()
@@ -403,3 +422,40 @@ func _disable_all_turrets() -> void:
 				var shoot_timer := turret.get_node("ShootingInterval") as Timer
 				if shoot_timer:
 					shoot_timer.stop()
+
+
+func _get_max_health() -> float:
+	var maxh := 100.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		maxh = PlayerUpgrades.get_effective_health() # base(100) * (1 + shield_bonus)
+	return maxh
+
+
+func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) -> void:
+	var new_max := _get_max_health()
+	var old_max := max_health
+	max_health = new_max
+
+	# ajusta o HP atual
+	if preserve_ratio:
+		var ratio := 0.0
+		if old_max > 0.0:
+			ratio = health / old_max
+		if heal_to_full:
+			health = new_max
+		else:
+			health = clamp(ratio * new_max, 0.0, new_max)
+	else:
+		if health > new_max:
+			health = new_max
+
+	# sincroniza a barra
+	if %ProgressBar:
+		%ProgressBar.max_value = new_max
+
+	# log de debug
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_shield_bonus()
+	
+	print("[HEALTH] bonus=", bonus, " max=", new_max, " current=", health)

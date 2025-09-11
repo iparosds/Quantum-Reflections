@@ -8,13 +8,19 @@ const BULLET_2_SCENE: PackedScene = preload("res://scenes/game/bullet_2.tscn")
 const MAX_LEVEL: int = 5
 
 # Trilhas de upgrade disponíveis
-enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2}
+enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2, PASSIVE_SHIELD}
 # IDs dos projéteis (casam com o que o turret.gd espera em current_bullet)
 enum WeaponId { BULLET_1 = 1, BULLET_2 = 2 }
+
+# Bases
+var base_health: float = 100.0
+var base_damage_rate: float = 500.0
+var base_max_acceleration: float = 1000.0
 
 # Nível atual da Arma Ativa
 var active_weapon_1_level: int = 0
 var active_weapon_2_level: int = 0
+var passive_shield_level: int = 0
 
 
 # ---------------------------
@@ -26,6 +32,8 @@ func apply_upgrade(track: UpgradeTrack) -> void:
 			active_weapon_1_level = min(active_weapon_1_level + 1, MAX_LEVEL)
 		UpgradeTrack.ACTIVE_WEAPON_2:
 			active_weapon_2_level = min(active_weapon_2_level + 1, MAX_LEVEL)
+		UpgradeTrack.PASSIVE_SHIELD:
+			passive_shield_level = min(passive_shield_level + 1, MAX_LEVEL)
 
 
 # Multiplicador de dano para o slot (1 → Bullet.tscn, 2 → Bullet_2.tscn)
@@ -70,21 +78,35 @@ func get_weapon_scene_for_id(weapon_id: int) -> PackedScene:
 		return BULLET_1_SCENE  # fallback
 
 
-# (Opcional) salvar/carregar só o que importa pra #55
+# PASSIVAS (bônus percentual 0.0 .. 0.25)
+func get_shield_bonus() -> float:
+	return min(passive_shield_level * 0.05, 0.25)
+
+
+func get_effective_health() -> float:
+	return base_health * (1.0 + get_shield_bonus())
+
+
+# ---------------------------
+# SERIALIZAÇÃO (save/load)
+# ---------------------------
 func to_dictionary() -> Dictionary:
 	return {
 		"active_weapon_1_level": active_weapon_1_level,
 		"active_weapon_2_level": active_weapon_2_level,
+		"passive_shield_level": passive_shield_level,
 	}
 
 
 func from_dictionary(data: Dictionary) -> void:
 	active_weapon_1_level = int(data.get("active_weapon_1_level", active_weapon_1_level))
 	active_weapon_2_level = int(data.get("active_weapon_2_level", active_weapon_2_level))
+	passive_shield_level = int(data.get("passive_shield_level", passive_shield_level))
 	stats_updated.emit()
 
 
 func reset() -> void:
 	active_weapon_1_level = 0
 	active_weapon_2_level = 0
+	passive_shield_level = 0
 	stats_updated.emit()
