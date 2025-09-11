@@ -63,6 +63,11 @@ func _ready():
 		turrets["E"].current_bullet = 1
 	
 	call_deferred("_init_level_progress")
+	 
+	if PlayerUpgrades != null:
+		PlayerUpgrades.active_weapon_1_level = 2
+		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
+			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
 
 
 func is_player():
@@ -162,7 +167,9 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
-				turret_node.current_bullet = 1
+				#turret_node.current_bullet = 1
+				if turret_node.current_bullet == 0:
+					turret_node.current_bullet = 1
 		
 		if (
 			notify
@@ -218,7 +225,7 @@ func _physics_process(delta):
 		%Ship.rotation += (1000-(acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
 		%Ship.rotation -= (1000-(acceleration/2))/10000.0
-		
+	
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		position += direction2 * (acceleration/2) * delta

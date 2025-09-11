@@ -1,6 +1,6 @@
 class_name Turret extends Area2D
 
-const BULLET_1 = preload("res://scenes/game/bullet.tscn")
+const BULLET_1 = PlayerUpgrades.BULLET_1_SCENE
 const BULLET_2 = preload("res://scenes/game/bullet_2.tscn")
 
 @export var projectile : Projectile
@@ -23,17 +23,36 @@ func _ready() -> void:
 
 func shoot(target_enemy):
 	$AudioStreamPlayer2D.play()
-	var new_bullet = projectile.scene.instantiate()
+
+	var new_bullet: Node
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
 	else:
 		new_bullet = BULLET_2.instantiate()
-	#new_bullet.global_position = %ShootingPoint.global_position
+
 	new_bullet.position = %ShootingPoint.position
 	new_bullet.rotation = %ShootingPoint.rotation
 	new_bullet.target = target_enemy
+
+	# >>> INJETAR MULTIPLICADOR (pego do PlayerStats)
+	if PlayerUpgrades != null:
+		var mult := 1.0
+		# 1 = Bullet.tscn, 2 = Bullet_2.tscn
+		if current_bullet == 1:
+			mult = PlayerUpgrades.get_active_damage_multiplier(1)
+		else:
+			mult = PlayerUpgrades.get_active_damage_multiplier(2)
+		
+		if new_bullet.has_method("set"):
+			new_bullet.damage_multiplier = mult
+		
+		#print("[Turret] firing bullet_id=", current_bullet, " mult=", mult)
+	
+	# Opcional: também pode injetar um base_damage específico por arma/nível
+	# new_bullet.base_damage = 10.0
+	
 	%ShootingPoint.add_child(new_bullet)
-	#projectiles_node.add_child(new_bullet)
+
 
 func _physics_process(_delta):
 	if cooldown == false && current_bullet != 0:

@@ -8,7 +8,6 @@ var gui_manager: GuiManager
 var level_manager: LevelManager
 var level : Level
 var player : Player
-var player_stats : PlayerStats
 var settings_icon : SettingsIcon
 var quantum := false
 var closest_distance := 1000

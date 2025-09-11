@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Singleton="*res://scripts/globals/singleton.gd"
+PlayerUpgrades="*res://scripts/player/player_upgrades.gd"
 AudioPlayer="*res://scripts/globals/audio_player.gd"
 DialogueManager="*res://addons/dialogue_manager/dialogue_manager.gd"
 
