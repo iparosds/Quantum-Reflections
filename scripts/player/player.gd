@@ -77,15 +77,18 @@ func _ready():
 	
 	if get_tree().root.has_node("PlayerUpgrades"):
 		PlayerUpgrades.passive_shield_level = 5 # + 25% de health
+		PlayerUpgrades.passive_speed_level = 5  # 25% → cap = 1250
 		
 		_on_upgrades_changed()
 	
 	
 	_apply_health_from_upgrades(true, true)
+	_apply_speed_from_upgrades()
 
 
 func _on_upgrades_changed() -> void:
 	_apply_health_from_upgrades()
+	_apply_speed_from_upgrades()
 
 
 func is_player():
@@ -206,6 +209,8 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 func _physics_process(delta):
 	_update_level_from_score(Singleton.level.get_score())
 	
+	var cap := _get_speed_cap()
+	
 	if Singleton.quantum == false:
 		%Ship.play("default")
 	else:
@@ -219,9 +224,9 @@ func _physics_process(delta):
 		boosting = false
 	if Input.is_action_just_pressed("boost"):
 		boosting = true
-	if accelelariting == true && stopping == false && acceleration < 1000:
+	if accelelariting == true && stopping == false && acceleration < cap:
 		acceleration += 1
-	if boosting == true && stopping == false && acceleration < 990:
+	if boosting == true && stopping == false && acceleration < (cap - 10.0):
 		acceleration += 5
 	if Input.is_action_just_released("move_down"):
 		stopping = false
@@ -240,9 +245,12 @@ func _physics_process(delta):
 	if Input.is_action_just_released("move_left"):
 		rotating_left = false
 	if rotating_right == true && boosting == false:
-		%Ship.rotation += (1000-(acceleration/2))/10000.0
+		%Ship.rotation += (cap - (acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
-		%Ship.rotation -= (1000-(acceleration/2))/10000.0
+		%Ship.rotation -= (cap - (acceleration/2))/10000.0
+	
+	if acceleration > cap:
+		acceleration = cap
 	
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
@@ -459,3 +467,20 @@ func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) 
 		bonus = PlayerUpgrades.get_shield_bonus()
 	
 	print("[HEALTH] bonus=", bonus, " max=", new_max, " current=", health)
+
+
+func _get_speed_cap() -> float:
+	var cap := MAX_ACCELERATION
+	if get_tree().root.has_node("PlayerUpgrades"):
+		cap = PlayerUpgrades.get_effective_max_acceleration()
+	return cap
+
+
+func _apply_speed_from_upgrades() -> void:
+	var cap := _get_speed_cap()
+	if %SpeedBar:
+		%SpeedBar.max_value = cap / 10.0
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_speed_bonus()
+	print("[SPEED] bonus=", bonus, " cap=", cap)
