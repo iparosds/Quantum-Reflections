@@ -22,6 +22,8 @@ func _ready():
 	# inicia o cronômetro com a duração configurada
 	portal_timer = level_duration_seconds
 	Singleton.gui_manager.hud_timer_bar.max_value = level_duration_seconds
+	
+	_update_xp_label_text()
 
 
 func _open_portal():
@@ -134,8 +136,7 @@ func _physics_process(delta):
 # ------------------------------------------------------------
 func add_ore():
 	score += 1
-	Singleton.gui_manager.hud_score_label.text = str(score) + " ores"
-
+	
 	if score <= 10:
 		Singleton.gui_manager.hud_xp.max_value = 10
 		Singleton.gui_manager.hud_xp.value = score
@@ -145,7 +146,7 @@ func add_ore():
 	elif score > 50 && score <= 100:
 		Singleton.gui_manager.hud_xp.max_value = 100
 		Singleton.gui_manager.hud_xp.value = score - 50
-	elif score > 100 && score <=200:
+	elif score > 100 && score <= 200:
 		Singleton.gui_manager.hud_xp.max_value = 200
 		Singleton.gui_manager.hud_xp.value = score - 100
 	elif score > 200 && score <= 400:
@@ -157,6 +158,43 @@ func add_ore():
 	elif score > 600 && score < 800:
 		Singleton.gui_manager.hud_xp.max_value = 800
 		Singleton.gui_manager.hud_xp.value = score - 600
+	
+	_update_xp_label_text()
+
+
+# ------------------------------------------------------------
+# Atualiza o texto do HUD de XP exibido ao jogador.
+# - Usa os thresholds definidos em Player.PLAYER_LEVELS (min_score).
+# - Determina o nível atual com base na pontuação total do jogador.
+# - Caso o jogador já tenha alcançado o último nível configurado,
+#   exibe "Max level reached".
+# ------------------------------------------------------------
+func _update_xp_label_text() -> void:
+	var level_thresholds: Array[int] = []
+	for level_defined in Player.PLAYER_LEVELS:
+		level_thresholds.append(int(level_defined["min_score"]))
+	
+	level_thresholds.sort()
+	
+	var total_points = score
+	var current_level_index := 0
+	
+	for level in range(level_thresholds.size()):
+		if total_points >= level_thresholds[level]:
+			current_level_index = level
+		else:
+			break
+	
+	var level_number := current_level_index + 1
+	var is_last := current_level_index >= level_thresholds.size() - 1
+	
+	if is_last:
+		Singleton.gui_manager.hud_score_label.text = "Max level reached"
+	else:
+		var next_required := level_thresholds[current_level_index + 1]
+		Singleton.gui_manager.hud_score_label.text = "Level %d: %d of %d to next level" % [
+			level_number, total_points, next_required
+		]
 
 
 # Fornece leitura da pontuação atual.
