@@ -1,4 +1,4 @@
-extends Area2D
+class_name Portal extends Area2D
 
 var level
 

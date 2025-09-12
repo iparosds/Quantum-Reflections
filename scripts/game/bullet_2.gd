@@ -1,4 +1,4 @@
-extends Area2D
+class_name Bullet2 extends Area2D
 
 var target
 var direction

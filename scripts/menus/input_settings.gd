@@ -1,4 +1,4 @@
-extends Control
+class_name InputSettings extends Control
 
 const SAVE_PATH := "user://input_settings.cfg"
 const CONFIG_SECTION_INPUT := "input"

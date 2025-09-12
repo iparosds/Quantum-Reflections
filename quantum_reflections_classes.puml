@@ -1,0 +1,60 @@
+@startuml
+
+class Asteroid {
+    -SHIP_ATTRACTION: float
+    -ORE: PackedScene
+    -health: int
+    -moving: bool
+    -ore: bool
+    -asteroid_type: int
+    -level: int
+    -player: Node2D
+    -portal: Node2D
+    -_ready(): void
+    -on_portal_opened(p: Node2D): void
+    -on_portal(): void
+    -_physics_process(delta: float): void
+    +player_collision(): void
+    +asteroid_destruction(): void
+    +add_new_ore(): void
+    +take_damage(): void
+    -_on_asteroid_explosion_timeout(): void
+    -_on_asteroid_life_timeout(): void
+}
+
+class Player {
+    -BLACK_HOLE: PackedScene
+    -DAMAGE_RATE: int
+    -MAX_ACCELERATION: float
+    -turrets: Dictionary
+    -PLAYER_LEVELS: Array
+    -current_level_index: int
+    -health: float
+    -acceleration: float
+    -accelelariting: bool
+    -boosting: bool
+    -stopping: bool
+    -rotating_right: bool
+    -rotating_left: bool
+    -level: int
+    -dying_to_black_hole: bool
+    -health_depleted: Signal
+    -_ready(): void
+    +is_player(): bool
+    +world_limit(size: float): void
+    +portal(): void
+    -_init_level_progress(): void
+    -_update_level_from_score(score: int): void
+    -_level_for_score(score: int): int
+    -_apply_level_up_to(target_level_index: int, notify: bool): void
+    -_physics_process(delta: float): void
+    +start_black_hole_death(black_hole_center: Vector2, consume_duration : float, total_spins : float): void
+    -_black_hole_consume_step(progress: float, initial_position: Vector2, black_hole_center: Vector2, initial_rotation: float, initial_scale: Vector2, total_spins: float, ship_visual: Node2D): void
+    -_camera_focus_to_point(black_hole_center: Vector2, consume_duration: float): void
+    -_disable_all_turrets(): void
+}
+
+Player::DAMAGE_RATE --> Asteroid::take_damage : Damages
+Asteroid::player_collision --> Player::health : Damages
+
+@enduml

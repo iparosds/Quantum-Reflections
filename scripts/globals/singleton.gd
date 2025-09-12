@@ -1,4 +1,4 @@
-extends Node2D
+class_name GlobalSingleton extends Node2D
 
 @onready var closest_enemy := find_closest_enemy()
 const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")

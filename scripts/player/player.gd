@@ -1,8 +1,8 @@
 class_name Player extends CharacterBody2D
 
-const BLACK_HOLE = preload("res://scenes/game/black_hole.tscn")
-const DAMAGE_RATE = 500.0
-const MAX_ACCELERATION = 1000.0
+const BLACK_HOLE : PackedScene = preload("res://scenes/game/black_hole.tscn")
+const DAMAGE_RATE : float = 500.0
+const MAX_ACCELERATION : float = 1000.0
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -29,16 +29,16 @@ const PLAYER_LEVELS := [
 ]
 
 # Estado de progressão
-var current_level_index: int = -1
-var health = 100.0
-var acceleration = 0.0
-var accelelariting = false
-var boosting = false
-var stopping = false
-var rotating_right = false
-var rotating_left = false
-var level
-var dying_to_black_hole := false
+var current_level_index : int = -1
+var health : float = 100.0
+var acceleration : float = 0.0
+var accelelariting : bool = false
+var boosting : bool = false
+var stopping : bool = false
+var rotating_right : bool = false
+var rotating_left : bool = false
+var level : int = 0
+var dying_to_black_hole : bool = false
 
 signal health_depleted
 
@@ -52,7 +52,7 @@ signal health_depleted
 #   após o término do `_ready()` do Level, evitando problemas de ordem
 #   de inicialização entre Player e Level.
 # ------------------------------------------------------------
-func _ready():
+func _ready() -> void:
 	Singleton.player = self
 	
 	for turret in turrets.values():
@@ -65,11 +65,11 @@ func _ready():
 	call_deferred("_init_level_progress")
 
 
-func is_player():
+func is_player() -> bool:
 	return true
 
 
-func world_limit(size):
+func world_limit(size: float) -> void:
 	var player_position = global_position
 	var vx = 563 - player_position.x
 	var vy = 339 - player_position.y
@@ -86,7 +86,7 @@ func world_limit(size):
 #   	redefine seu `current_bullet` para um valor aleatório (1 ou 2).
 # 	- Essa rotação cria variedade no comportamento das turrets
 #   	após a interação com o portal.
-func portal():
+func portal() -> void:
 	for turret in turrets.values():
 		if is_instance_valid(turret) and turret.current_bullet != 0:
 			turret.current_bullet = randi_range(1, 2)
@@ -178,7 +178,7 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 			Singleton.gui_manager.show_level_up_notice(message)
 
 
-func _physics_process(delta):
+func _physics_process(delta : float) -> void:
 	_update_level_from_score(Singleton.level.get_score())
 	
 	if Singleton.quantum == false:

@@ -1,4 +1,4 @@
-extends Area2D
+class_name BlackHole extends Area2D
 
 var activated := false
 var player_on_black_hole := false
