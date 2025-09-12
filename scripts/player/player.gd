@@ -39,6 +39,7 @@ var rotating_right = false
 var rotating_left = false
 var level
 var dying_to_black_hole := false
+var max_health: float = 100.0
 
 signal health_depleted
 
@@ -60,9 +61,36 @@ func _ready():
 			turret.current_bullet = 0
 	
 	if is_instance_valid(turrets["E"]):
-		turrets["E"].current_bullet = 1
+		turrets["E"].current_bullet = 2
 	
 	call_deferred("_init_level_progress")
+	 
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
+	
+	# Muda manualmente os multiplicadores de dano das armas. Essa logica sera feita por selecao no level up.
+	if PlayerUpgrades != null:
+		PlayerUpgrades.active_weapon_1_level = 2
+		PlayerUpgrades.active_weapon_2_level = 2
+		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
+			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
+		#print("[TEST] W2 level=", PlayerUpgrades.active_weapon_2_level,
+			#" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
+	
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.passive_shield_level = 5 # + 25% de health
+		PlayerUpgrades.passive_speed_level = 5  # 25% → cap = 1250
+		
+		_on_upgrades_changed()
+	
+	
+	_apply_health_from_upgrades(true, true)
+	_apply_speed_from_upgrades()
+
+
+func _on_upgrades_changed() -> void:
+	_apply_health_from_upgrades()
+	_apply_speed_from_upgrades()
 
 
 func is_player():
@@ -162,7 +190,9 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
-				turret_node.current_bullet = 1
+				#turret_node.current_bullet = 1
+				if turret_node.current_bullet == 0:
+					turret_node.current_bullet = 1
 		
 		if (
 			notify
@@ -181,6 +211,8 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 func _physics_process(delta):
 	_update_level_from_score(Singleton.level.get_score())
 	
+	var cap := _get_speed_cap()
+	
 	if Singleton.quantum == false:
 		%Ship.play("default")
 	else:
@@ -194,9 +226,9 @@ func _physics_process(delta):
 		boosting = false
 	if Input.is_action_just_pressed("boost"):
 		boosting = true
-	if accelelariting == true && stopping == false && acceleration < 1000:
+	if accelelariting == true && stopping == false && acceleration < cap:
 		acceleration += 1
-	if boosting == true && stopping == false && acceleration < 990:
+	if boosting == true && stopping == false && acceleration < (cap - 10.0):
 		acceleration += 5
 	if Input.is_action_just_released("move_down"):
 		stopping = false
@@ -215,10 +247,13 @@ func _physics_process(delta):
 	if Input.is_action_just_released("move_left"):
 		rotating_left = false
 	if rotating_right == true && boosting == false:
-		%Ship.rotation += (1000-(acceleration/2))/10000.0
+		%Ship.rotation += (cap - (acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
-		%Ship.rotation -= (1000-(acceleration/2))/10000.0
-		
+		%Ship.rotation -= (cap - (acceleration/2))/10000.0
+	
+	if acceleration > cap:
+		acceleration = cap
+	
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		position += direction2 * (acceleration/2) * delta
@@ -235,6 +270,9 @@ func _physics_process(delta):
 				Singleton.display_number(damage, position, "#2f213b")
 			else:
 				Singleton.display_number(damage, position, "#7c7ea1")
+			
+			print_rich("[HP] ", snapped(health, 0.1), "/", max_health)
+			
 			mob.player_collision()
 	
 	var overlapping_ores = %CollectOre.get_overlapping_bodies()
@@ -244,7 +282,7 @@ func _physics_process(delta):
 			mob.queue_free()
 	
 	if health <= 0.0:
-		health = 100.0
+		health = max_health
 		Singleton.level.quantum = true
 		
 		var new_black_hole = BLACK_HOLE.instantiate()
@@ -394,3 +432,57 @@ func _disable_all_turrets() -> void:
 				var shoot_timer := turret.get_node("ShootingInterval") as Timer
 				if shoot_timer:
 					shoot_timer.stop()
+
+
+func _get_max_health() -> float:
+	var maxh := 100.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		maxh = PlayerUpgrades.get_effective_health() # base(100) * (1 + shield_bonus)
+	return maxh
+
+
+func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) -> void:
+	var new_max := _get_max_health()
+	var old_max := max_health
+	max_health = new_max
+
+	# ajusta o HP atual
+	if preserve_ratio:
+		var ratio := 0.0
+		if old_max > 0.0:
+			ratio = health / old_max
+		if heal_to_full:
+			health = new_max
+		else:
+			health = clamp(ratio * new_max, 0.0, new_max)
+	else:
+		if health > new_max:
+			health = new_max
+
+	# sincroniza a barra
+	if %ProgressBar:
+		%ProgressBar.max_value = new_max
+
+	# log de debug
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_shield_bonus()
+	
+	print("[HEALTH] bonus=", bonus, " max=", new_max, " current=", health)
+
+
+func _get_speed_cap() -> float:
+	var cap := MAX_ACCELERATION
+	if get_tree().root.has_node("PlayerUpgrades"):
+		cap = PlayerUpgrades.get_effective_max_acceleration()
+	return cap
+
+
+func _apply_speed_from_upgrades() -> void:
+	var cap := _get_speed_cap()
+	if %SpeedBar:
+		%SpeedBar.max_value = cap / 10.0
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_speed_bonus()
+	print("[SPEED] bonus=", bonus, " cap=", cap)

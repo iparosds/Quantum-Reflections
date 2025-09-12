@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 const SHIP_ATTRACTION = 100.0
 const ORE = preload("res://scenes/game/ore.tscn")
-
+const MIN_DAMAGE := 10.0
 
 var health = 100
 var moving = true
@@ -96,17 +96,32 @@ func add_new_ore():
 	get_tree().current_scene.call_deferred("add_child", new_ore)
 
 
-func take_damage():
-	var damage = player.acceleration / 10
-	if damage < 10:
-		damage = 10
-	health -= damage
+func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
+	var damage := 0.0
 
-	if health <= 0:
+	if amount >= 0.0:
+		damage = amount
+		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+	else:
+		# Dano base pela velocidade do player
+		var base := MIN_DAMAGE
+		if is_instance_valid(player):
+			base = max(MIN_DAMAGE, float(player.acceleration) / 10.0)
+
+		# combinação base + multiplicador
+		damage = base * max(0.0, multiplier)
+		
+		# Se quiser SOMAR em vez de multiplicar, troque a linha acima por:
+		#damage = base + (multiplier)
+		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+
+	health -= damage
+	#print("[Asteroid] hp_after=", health)
+	if health <= 0.0:
 		asteroid_destruction()
 		add_new_ore()
 	else:
-		Singleton.display_number(damage, $DamageText.global_position, '#b4b542')
+		Singleton.display_number(damage, $DamageText.global_position, "#b4b542")
 
 
 func _on_asteroid_explosion_timeout() -> void:
