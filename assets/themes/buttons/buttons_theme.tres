@@ -5,7 +5,7 @@
 [resource]
 default_font = ExtResource("1_7fs2b")
 Button/colors/font_color = Color(0.639216, 0.631373, 0.494118, 1)
-Button/colors/font_disabled_color = Color(0.639216, 0.631373, 0.494118, 1)
+Button/colors/font_disabled_color = Color(0.26, 0.25701, 0.2002, 1)
 Button/colors/font_focus_color = Color(0.639216, 0.631373, 0.494118, 1)
 Button/colors/font_hover_color = Color(0.639216, 0.631373, 0.494118, 1)
 Button/colors/font_hover_pressed_color = Color(0.639216, 0.631373, 0.494118, 1)
