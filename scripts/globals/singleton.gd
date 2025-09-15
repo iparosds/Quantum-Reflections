@@ -9,6 +9,7 @@ var level_manager: LevelManager
 var level : Level
 var player : Player
 var settings_icon : SettingsIcon
+var upgrades_card : UpgradesCard
 var quantum := false
 var closest_distance := 1000
 var current_level: String

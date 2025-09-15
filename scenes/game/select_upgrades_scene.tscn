@@ -1,0 +1,70 @@
+[gd_scene load_steps=8 format=3 uid="uid://bm6d5h4uxvq7x"]
+
+[ext_resource type="PackedScene" uid="uid://dlnwlgmogbp6t" path="res://scenes/game/upgrades_card.tscn" id="1_hsbbg"]
+[ext_resource type="Script" uid="uid://bkcch10uaeoqy" path="res://scripts/game/select_upgrades_scene.gd" id="1_oqc3f"]
+[ext_resource type="Script" uid="uid://cm63ym6x0qcb5" path="res://scripts/game/upgrades_card.gd" id="2_ue5f2"]
+[ext_resource type="Texture2D" uid="uid://b3m52u6qpfgij" path="res://assets/sprites/levels_sprites/projectile.png" id="3_ue5f2"]
+[ext_resource type="Texture2D" uid="uid://nespt8etwity" path="res://assets/sprites/levels_sprites/golpe giratõrio.png" id="4_ggbu3"]
+[ext_resource type="Texture2D" uid="uid://b60r3ywngvxtm" path="res://assets/sprites/levels_sprites/explode_asteroide.png" id="5_oqc3f"]
+[ext_resource type="Texture2D" uid="uid://uqthv8wgom7p" path="res://assets/sprites/levels_sprites/explosao02.png" id="6_o3gnm"]
+
+[node name="SelectUpgrades" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oqc3f")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.257112, 0.257112, 0.257112, 0.392157)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+
+[node name="UpgradesCardPanel" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
+layout_mode = 2
+script = ExtResource("2_ue5f2")
+icon = ExtResource("3_ue5f2")
+description = "+50% Damage"
+
+[node name="UpgradesCardPanel2" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
+layout_mode = 2
+script = ExtResource("2_ue5f2")
+icon = ExtResource("4_ggbu3")
+description = "+50% Damage"
+upgrade = 1
+
+[node name="UpgradesCardPanel3" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
+layout_mode = 2
+script = ExtResource("2_ue5f2")
+icon = ExtResource("5_oqc3f")
+description = "+5% Shield"
+upgrade = 2
+
+[node name="UpgradesCardPanel4" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
+layout_mode = 2
+script = ExtResource("2_ue5f2")
+icon = ExtResource("6_o3gnm")
+description = "+5% Speed"
+upgrade = 3
