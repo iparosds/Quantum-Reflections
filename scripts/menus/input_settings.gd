@@ -5,7 +5,8 @@ const CONFIG_SECTION_INPUT := "input"
 
 @onready var input_button_scene := preload("res://scenes/menus/input_button.tscn")
 @onready var action_list: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ActionList
-@onready var save_config_button: Button = $PanelContainer/MarginContainer/VBoxContainer/SaveConfigButton
+@onready var reset_button: Button = $PanelContainer/MarginContainer/VBoxContainer/ResetButton
+@onready var back_to_settings_button: Button = $PanelContainer/MarginContainer/VBoxContainer/BackToSettingsButton
 
 var is_remapping: bool = false
 var action_to_remap: String = ""
@@ -26,12 +27,12 @@ var input_actions := {
 
 
 func _ready() -> void:
-	save_config_button.grab_focus()
+	reset_button.grab_focus()
 	_load_input_map()
 	_create_action_list()
 
 
-func _on_save_config_button_pressed() -> void:
+func _on_back_to_settings_button_pressed() -> void:
 	_save_input_map()
 
 
