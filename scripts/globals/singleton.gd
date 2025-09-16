@@ -247,22 +247,6 @@ func quit_to_desktop_from_game() -> void:
 	get_tree().quit()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"):
-		toggle_pause()
-
-
-func toggle_pause() -> void:
-	if gui_manager.main_menu_layer.visible || gui_manager.game_over_screen.visible:
-		return
-	
-	if gui_manager.is_paused:
-		gui_manager.hide_pause_menu()
-	else:
-		gui_manager.show_pause_menu()
-		AudioPlayer.on_pause_entered()
-
-
 # Reinicia a partida com teardown seguro e restaura o HUD.
 func restart_game() -> void:
 	if current_level_path == null or current_level_path == "":
