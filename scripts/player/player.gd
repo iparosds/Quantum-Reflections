@@ -137,10 +137,17 @@ func _init_level_progress() -> void:
 func _update_level_from_score(score: int) -> void:
 	var target_index := _level_for_score(score)
 	
+	if current_level_index < 0:
+		_apply_level_up_to(target_index, false)
+		current_level_index = target_index
+		return
+	
 	if target_index > current_level_index:
 		_apply_level_up_to(target_index, true)
 		current_level_index = target_index
-		_open_upgrade_picker()
+		
+		if target_index >= 1:
+			_open_upgrade_picker()
 
 
 # ------------------------------------------------------------
@@ -427,7 +434,6 @@ func _disable_all_turrets() -> void:
 
 
 func _get_max_health() -> float:
-	var max_health := 100.0
 	if get_tree().root.has_node("PlayerUpgrades"):
 		max_health = PlayerUpgrades.get_effective_health()
 	return max_health
