@@ -20,7 +20,6 @@ var input_actions := {
 	"move_left": "Move left",
 	"pause": "Pause",
 	"enter": "Enter",
-	"back": "Back",
 	"boost": "Boost",
 	"god": "God",
 }

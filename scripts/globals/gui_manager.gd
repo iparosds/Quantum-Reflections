@@ -116,17 +116,6 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("back"):
-		if settings_layer.visible:
-			_play_back_sound()
-			settings_layer.visible = false
-			on_settings_back.call()
-			on_settings_back = Callable(Singleton, "open_main_menu")
-		elif credits_layer.visible:
-			_play_back_sound()
-			Singleton.open_main_menu()
-		return
-	
 	if event.is_action_pressed("pause"):
 		# ignora se estamos em Main Menu ou Game Over
 		if main_menu_layer.visible or game_over_screen.visible:
