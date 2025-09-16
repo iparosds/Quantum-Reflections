@@ -591,6 +591,12 @@ theme_override_fonts/font = ExtResource("2_8d174")
 theme_override_font_sizes/font_size = 24
 text = "Controls"
 
+[node name="ControlsLabel2" type="Label" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_8d174")
+text = "Click in the controls to edit."
+
 [node name="Spacer" type="Control" parent="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
