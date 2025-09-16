@@ -68,22 +68,6 @@ func _ready():
 	if get_tree().root.has_node("PlayerUpgrades"):
 		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
 	
-	# Muda manualmente os multiplicadores de dano das armas. Essa logica sera feita por selecao no level up.
-	if PlayerUpgrades != null:
-		PlayerUpgrades.active_weapon_1_level = 2
-		PlayerUpgrades.active_weapon_2_level = 2
-		#print("[TEST] W1 level=", PlayerUpgrades.active_weapon_1_level,
-			#" mult=", PlayerUpgrades.get_active_damage_multiplier(1))
-		#print("[TEST] W2 level=", PlayerUpgrades.active_weapon_2_level,
-			#" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
-	
-	if get_tree().root.has_node("PlayerUpgrades"):
-		PlayerUpgrades.passive_shield_level = 5 # + 25% de health
-		PlayerUpgrades.passive_speed_level = 5  # 25% → cap = 1250
-		
-		_on_upgrades_changed()
-	
-	
 	_apply_health_from_upgrades(true, true)
 	_apply_speed_from_upgrades()
 
@@ -91,6 +75,13 @@ func _ready():
 func _on_upgrades_changed() -> void:
 	_apply_health_from_upgrades()
 	_apply_speed_from_upgrades()
+	
+	# DEBUG: ver multiplicadores atuais sempre que um upgrade é aplicado
+	if PlayerUpgrades:
+		print("[UPGR] W1 L=", PlayerUpgrades.active_weapon_1_level,
+			" mult=", PlayerUpgrades.get_active_damage_multiplier(1),
+			" | W2 L=", PlayerUpgrades.active_weapon_2_level,
+			" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
 
 
 func is_player():
@@ -149,6 +140,7 @@ func _update_level_from_score(score: int) -> void:
 	if target_index > current_level_index:
 		_apply_level_up_to(target_index, true)
 		current_level_index = target_index
+		_open_upgrade_picker()
 
 
 # ------------------------------------------------------------
@@ -435,17 +427,17 @@ func _disable_all_turrets() -> void:
 
 
 func _get_max_health() -> float:
-	var maxh := 100.0
+	var max_health := 100.0
 	if get_tree().root.has_node("PlayerUpgrades"):
-		maxh = PlayerUpgrades.get_effective_health() # base(100) * (1 + shield_bonus)
-	return maxh
+		max_health = PlayerUpgrades.get_effective_health()
+	return max_health
 
 
 func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) -> void:
 	var new_max := _get_max_health()
 	var old_max := max_health
 	max_health = new_max
-
+	
 	# ajusta o HP atual
 	if preserve_ratio:
 		var ratio := 0.0
@@ -458,11 +450,11 @@ func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) 
 	else:
 		if health > new_max:
 			health = new_max
-
+	
 	# sincroniza a barra
 	if %ProgressBar:
 		%ProgressBar.max_value = new_max
-
+	
 	# log de debug
 	var bonus := 0.0
 	if get_tree().root.has_node("PlayerUpgrades"):
@@ -486,3 +478,12 @@ func _apply_speed_from_upgrades() -> void:
 	if get_tree().root.has_node("PlayerUpgrades"):
 		bonus = PlayerUpgrades.get_speed_bonus()
 	print("[SPEED] bonus=", bonus, " cap=", cap)
+
+
+func _open_upgrade_picker() -> void:
+	if is_instance_valid(Singleton.gui_manager) and Singleton.gui_manager.has_method("open_upgrades_picker"):
+		Singleton.gui_manager.open_upgrades_picker()
+	else:
+		var ui := preload("res://scenes/game/select_upgrades_scene.tscn").instantiate()
+		get_tree().root.add_child(ui)
+		get_tree().paused = true

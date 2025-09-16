@@ -165,7 +165,6 @@ bg_color = Color(0, 0, 0, 0)
 script = ExtResource("1_01qsd")
 
 [node name="GameHud" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="HudXP" type="ProgressBar" parent="GameHud"]
 offset_right = 1145.0
@@ -856,6 +855,7 @@ text = " Back To Main Menu "
 flat = true
 
 [node name="UpgradesMenu" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="SelectUpgrades" parent="UpgradesMenu" instance=ExtResource("10_3da3r")]
 

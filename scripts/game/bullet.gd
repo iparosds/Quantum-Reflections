@@ -46,3 +46,7 @@ func _on_body_entered(body):
 
 func _on_explosion_timeout() -> void:
 	queue_free()
+
+
+func set_damage_multiplier(multiplier: float) -> void:
+	damage_multiplier = multiplier

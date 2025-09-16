@@ -52,7 +52,7 @@ func get_active_damage_multiplier(slot: int) -> float:
 	if level <= 0:
 		return 1.0
 	# nível 1 = 1.0x; cada nível adicional soma +0.5 (máx 3.0x no nível 5)
-	return 1.0 + 0.5 * float(level - 1)
+	return min(1.0 + 0.5 * level, 3.0)
 
 
 # Versão por "id" do projétil (1 ou 2)

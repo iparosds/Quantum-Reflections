@@ -9,7 +9,6 @@ var level_manager: LevelManager
 var level : Level
 var player : Player
 var settings_icon : SettingsIcon
-var upgrades_card : UpgradesCard
 var quantum := false
 var closest_distance := 1000
 var current_level: String
@@ -271,6 +270,8 @@ func restart_game() -> void:
 	
 	get_tree().paused = true
 	
+	_reset_all_bonuses_and_hide_picker()
+	
 	if gui_manager:
 		gui_manager.game_over_screen.visible = false
 	
@@ -305,6 +306,8 @@ func reset_game_state():
 
 func game_over():
 	_close_all_dialogue_balloons()
+	
+	_reset_all_bonuses_and_hide_picker()
 	
 	if god_mode == false:
 		get_tree().paused = true
@@ -503,3 +506,15 @@ func find_closest_enemy() -> Object:
 # Chamado a cada frame para atualizar o inimigo mais próximo
 func _process(_delta: float) -> void:
 	closest_enemy = find_closest_enemy()
+
+
+func _reset_all_bonuses_and_hide_picker() -> void:
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.reset()
+	
+	# esconde o overlay de upgrades, se estiver aberto
+	if is_instance_valid(gui_manager) and is_instance_valid(gui_manager.upgrades_menu):
+		gui_manager.upgrades_menu.visible = false
+		var picker := gui_manager.upgrades_menu.get_node_or_null("SelectUpgrades")
+		if picker:
+			picker.visible = false

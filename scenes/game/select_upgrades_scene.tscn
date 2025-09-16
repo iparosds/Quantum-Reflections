@@ -4,9 +4,9 @@
 [ext_resource type="Script" uid="uid://bkcch10uaeoqy" path="res://scripts/game/select_upgrades_scene.gd" id="1_oqc3f"]
 [ext_resource type="Script" uid="uid://cm63ym6x0qcb5" path="res://scripts/game/upgrades_card.gd" id="2_ue5f2"]
 [ext_resource type="Texture2D" uid="uid://b3m52u6qpfgij" path="res://assets/sprites/levels_sprites/projectile.png" id="3_ue5f2"]
-[ext_resource type="Texture2D" uid="uid://nespt8etwity" path="res://assets/sprites/levels_sprites/golpe giratõrio.png" id="4_ggbu3"]
-[ext_resource type="Texture2D" uid="uid://b60r3ywngvxtm" path="res://assets/sprites/levels_sprites/explode_asteroide.png" id="5_oqc3f"]
-[ext_resource type="Texture2D" uid="uid://uqthv8wgom7p" path="res://assets/sprites/levels_sprites/explosao02.png" id="6_o3gnm"]
+[ext_resource type="Texture2D" uid="uid://drlku570m4xp1" path="res://assets/sprites/levels_sprites/turret.png" id="4_ggbu3"]
+[ext_resource type="Texture2D" uid="uid://ripgyitk8gr0" path="res://assets/sprites/icons/shield-minimalistic-svgrepo-com (1).svg" id="6_oqc3f"]
+[ext_resource type="Texture2D" uid="uid://bc6h5ffy64jvv" path="res://assets/sprites/icons/speed-skiing-svgrepo-com.svg" id="7_o3gnm"]
 
 [node name="SelectUpgrades" type="Control"]
 process_mode = 3
@@ -45,26 +45,26 @@ theme_override_constants/separation = 50
 [node name="UpgradesCardPanel" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
+title = "Weapon 1"
 icon = ExtResource("3_ue5f2")
-description = "+50% Damage"
 
 [node name="UpgradesCardPanel2" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-icon = ExtResource("4_ggbu3")
-description = "+50% Damage"
 upgrade = 1
+title = "Weapon 2"
+icon = ExtResource("4_ggbu3")
 
 [node name="UpgradesCardPanel3" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-icon = ExtResource("5_oqc3f")
-description = "+5% Shield"
 upgrade = 2
+title = "+5% Shield"
+icon = ExtResource("6_oqc3f")
 
 [node name="UpgradesCardPanel4" parent="HBoxContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-icon = ExtResource("6_o3gnm")
-description = "+5% Speed"
 upgrade = 3
+title = "+5% Speed"
+icon = ExtResource("7_o3gnm")

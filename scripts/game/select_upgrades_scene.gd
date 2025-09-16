@@ -2,22 +2,33 @@ extends Control
 
 @onready var upgrade_card_container: HBoxContainer = $HBoxContainer
 
+signal closed(track: int)
+
 
 func _ready() -> void:
-	get_tree().paused = true
-	for node in upgrade_card_container.get_children():
-		Singleton.upgrades_card.upgrade_selected.connect(_quit)
-
-
-func _input(event: InputEvent) -> void:
-	var mousePosition = get_global_mouse_position()
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	
-	if event is InputEventMouseButton and event.button_index == 1 and event.is_pressed():
-		for node in upgrade_card_container.get_children():
-			if node.get_global_rect().has_point(mousePosition):
-				Singleton.upgrades_card.apply_upgrade()
+	# Conecta todos os cards ao handler local
+	for node in upgrade_card_container.get_children():
+		if node.has_signal("chosen"):
+			node.chosen.connect(_on_card_chosen)
+	
+	# AINDA VAI SER IMPLEMENTADO CORRETAMENTE
+	#_populate_random(3)
 
 
-func _quit():
-	get_tree().paused = false
-	queue_free()
+func _on_card_chosen(track: int) -> void:
+	closed.emit(track)
+
+
+func _populate_random(count := 3) -> void:
+	var all := [
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1,
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2,
+		PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD,
+		PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED,
+	]
+	all.shuffle()
+	var cards := upgrade_card_container.get_children()
+	for i in range(min(count, cards.size())):
+		cards[i].upgrade = all[i]

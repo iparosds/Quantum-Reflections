@@ -4,14 +4,13 @@ const SHIP_ATTRACTION = 100.0
 const ORE = preload("res://scenes/game/ore.tscn")
 const MIN_DAMAGE := 10.0
 
+@onready var player: Node2D = Singleton.level.get_node_or_null("Player")
+
 var health = 100
 var moving = true
 var ore = false
 var asteroid_type
 var level
-
-
-@onready var player: Node2D = Singleton.level.get_node_or_null("Player")
 var portal: Node2D = null
 
 
@@ -41,9 +40,9 @@ func _physics_process(_delta):
 		player = Singleton.level.get_node_or_null("Player")
 		if !is_instance_valid(player):
 			return
-
+	
 	var direction: Vector2
-
+	
 	if Singleton.level.portal_active:
 		if portal == null or !is_instance_valid(portal):
 			portal = get_tree().get_first_node_in_group("portal")
@@ -53,7 +52,7 @@ func _physics_process(_delta):
 			direction = global_position.direction_to(player.global_position)
 	else:
 		direction = global_position.direction_to(player.global_position)
-
+	
 	if Singleton.level.quantum == false:
 		if moving == true:
 			if asteroid_type == 1:
@@ -72,7 +71,7 @@ func _physics_process(_delta):
 				$Asteroid.play("asteroid02-quantum")
 			else:
 				$Asteroid.play("asteroid03-quantum")
-
+	
 	if moving == true:
 		move_and_slide()
 
@@ -98,10 +97,10 @@ func add_new_ore():
 
 func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
 	var damage := 0.0
-
+	
 	if amount >= 0.0:
 		damage = amount
-		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+		# print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
 	else:
 		# Dano base pela velocidade do player
 		var base := MIN_DAMAGE
@@ -113,10 +112,10 @@ func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
 		
 		# Se quiser SOMAR em vez de multiplicar, troque a linha acima por:
 		#damage = base + (multiplier)
-		print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+		# print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
 
 	health -= damage
-	#print("[Asteroid] hp_after=", health)
+	# print("[Asteroid] hp_after=", health)
 	if health <= 0.0:
 		asteroid_destruction()
 		add_new_ore()

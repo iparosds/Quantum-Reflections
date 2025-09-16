@@ -31,3 +31,7 @@ func _on_body_entered(body):
 		# -1.0 : "calcula o base pela velocidade", e enviamos o multiplicador
 		body.take_damage(-1.0, damage_multiplier)
 	queue_free()
+
+
+func set_damage_multiplier(multiplier: float) -> void:
+	damage_multiplier = multiplier
