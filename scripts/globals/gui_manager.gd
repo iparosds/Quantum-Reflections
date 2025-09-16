@@ -537,8 +537,18 @@ func open_upgrades_picker() -> void:
 	get_tree().paused = true
 
 
-func _on_upgrades_picker_closed(_track: int) -> void:
+func _on_upgrades_picker_closed(track: int) -> void:
 	get_tree().paused = false
+	
+	if is_instance_valid(Singleton.player):
+		match track:
+			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1:
+				Singleton.player.set_selected_weapon(1)
+			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2:
+				Singleton.player.set_selected_weapon(2)
+			PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD, PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED:
+				pass
+	
 	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
 	if picker:
 		picker.visible = false

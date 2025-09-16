@@ -302,6 +302,9 @@ func reset_game_state():
 		score = 0
 		gui_manager.hud_score_label.text = "0 ores"
 		gui_manager.hud_xp.value = 0
+	
+	if is_instance_valid(player):
+		player.set_selected_weapon(1)
 
 
 func game_over():

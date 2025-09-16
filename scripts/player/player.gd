@@ -40,6 +40,7 @@ var rotating_left = false
 var level
 var dying_to_black_hole := false
 var max_health: float = 100.0
+var selected_weapon_id: int = 1
 
 signal health_depleted
 
@@ -59,9 +60,6 @@ func _ready():
 	for turret in turrets.values():
 		if is_instance_valid(turret):
 			turret.current_bullet = 0
-	
-	if is_instance_valid(turrets["E"]):
-		turrets["E"].current_bullet = 2
 	
 	call_deferred("_init_level_progress")
 	 
@@ -189,9 +187,8 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
-				#turret_node.current_bullet = 1
 				if turret_node.current_bullet == 0:
-					turret_node.current_bullet = 1
+					turret_node.current_bullet = selected_weapon_id
 		
 		if (
 			notify
@@ -493,3 +490,14 @@ func _open_upgrade_picker() -> void:
 		var ui := preload("res://scenes/game/select_upgrades_scene.tscn").instantiate()
 		get_tree().root.add_child(ui)
 		get_tree().paused = true
+
+
+func set_selected_weapon(weapon_id: int) -> void:
+	selected_weapon_id = clamp(weapon_id, 1, 2)
+	_set_all_active_turrets_bullet(selected_weapon_id)
+
+
+func _set_all_active_turrets_bullet(bullet_id: int) -> void:
+	for turret in turrets.values():
+		if is_instance_valid(turret) and turret.current_bullet != 0:
+			turret.current_bullet = bullet_id
