@@ -1,5 +1,9 @@
 class_name BlackHole extends Area2D
 
+const WARNING_NEAR_RADIUS := 380.0
+const WARNING_FAR_RADIUS  := 460.0
+
+var warning_sent := false
 var activated := false
 var player_on_black_hole := false
 var size := 1
@@ -43,6 +47,26 @@ func _on_body_entered(body: Node2D) -> void:
 # -----------------------------------------------------------------------------
 func _physics_process(_delta: float) -> void:
 	$AnimatedSprite2D.play( "default" if not Singleton.level.quantum else "quantum" )
+	
+	# Aviso de proximidade
+	if is_instance_valid(Singleton.player) and is_instance_valid(Singleton.gui_manager):
+		var distance := global_position.distance_to(Singleton.player.global_position)
+		
+		# Liga quando entrar na zona "perto"
+		if (distance <= WARNING_NEAR_RADIUS) and not warning_sent:
+			warning_sent = true
+			Singleton.gui_manager.notify_black_hole_warning(true)
+
+		# Desliga só quando sair da zona "longe"
+		elif (distance >= WARNING_FAR_RADIUS) and warning_sent:
+			warning_sent = false
+			Singleton.gui_manager.notify_black_hole_warning(false)
+
+
+func _exit_tree() -> void:
+	if warning_sent and is_instance_valid(Singleton.gui_manager):
+		Singleton.gui_manager.notify_black_hole_warning(false)
+	warning_sent = false
 
 
 # -----------------------------------------------------------------------------
