@@ -476,7 +476,8 @@ size_flags_vertical = 4
 focus_neighbor_top = NodePath("../Back")
 focus_neighbor_bottom = NodePath("../MusicVolumeSlider")
 min_value = -45.0
-max_value = 0.0
+max_value = -3.0
+value = -3.0
 
 [node name="MusicVolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
 layout_mode = 2
@@ -493,7 +494,7 @@ focus_neighbor_top = NodePath("../MasterVolumeSlider")
 focus_neighbor_bottom = NodePath("../SFXVolumeSlider")
 min_value = -60.0
 max_value = -15.0
-value = -15.0
+value = -24.0
 
 [node name="SFXVolumeLabel" type="Label" parent="SettingsMenu/MarginContainer/ButtonsContainer"]
 layout_mode = 2
@@ -509,7 +510,7 @@ layout_mode = 2
 focus_neighbor_top = NodePath("../MusicVolumeSlider")
 focus_neighbor_bottom = NodePath("../ControlsButton")
 min_value = -60.0
-max_value = -15.0
+max_value = -10.0
 value = -15.0
 
 [node name="ControlsButton" type="Button" parent="SettingsMenu/MarginContainer/ButtonsContainer"]

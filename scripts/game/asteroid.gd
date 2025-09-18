@@ -26,6 +26,10 @@ func _ready():
 	if rand == 3:
 		asteroid_type = 3
 		$Asteroid.play("asteroid03")
+	
+	if has_node("AudioStreamPlayer2D"):
+		var explosion_player := $AudioStreamPlayer2D
+		explosion_player.bus = "SFX"
 
 
 func on_portal_opened(p: Node2D) -> void:
@@ -85,6 +89,9 @@ func asteroid_destruction() -> void:
 	moving = false
 	$Asteroid.play("explosion")
 	$AsteroidExplosion.start()
+	
+	$AudioStreamPlayer2D.bus = "SFX"
+	$AudioStreamPlayer2D.volume_db = -6.0 # ajuste só da explosão, se quiser
 	$AudioStreamPlayer2D.play()
 	$".".set_collision_layer_value(1, true)
 	$".".set_collision_layer_value(2, false)

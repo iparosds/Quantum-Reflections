@@ -7,152 +7,153 @@ const BUS_MASTER := "Master"
 const BUS_MUSIC  := "Music"
 const BUS_SFX    := "SFX"
 
-# Posição onde a música do level foi pausada
-var _last_level_pos: float = 0.0
-var _current_track: String = ""
-var fade_tween: Tween = null
+# -----------------------------------------------------------------------------
+# Configurações do agregador de SFX (tiros)
+# -----------------------------------------------------------------------------
+const SFX_POOL_SIZE: int = 4
+const SHOT_GROUPING_WINDOW_SECONDS: float = 0.04  # Janela para agrupar "mesmo disparo"
+const SHOT_START_JITTER_SECONDS: float = 0.0      # 0–0.02 para desincronizar início
+const BASE_SHOT_VOLUME_DB: float = 8.0           # Volume base de cada tiro
+const DEFAULT_SHOT_EXTRA_GAIN_DB: float = 6.0  # ajuste fino só do tiro
 
 
+# Pool de players SFX (não-posicionais) e histórico de disparos
+var _sfx_players_pool: Array[AudioStreamPlayer] = []
+var _recent_shot_timestamps_seconds: Array[float] = []
+
 # -----------------------------------------------------------------------------
-# Inicializa o player de música:
-# - Envia este AudioStreamPlayer para o bus "Music"
-# - Mantém o processamento mesmo com o jogo pausado
-# - Garante que as trilhas (menu/level) estejam com loop habilitado
-# - Carrega e aplica volumes salvos (Master/Music/SFX)
-# - Conecta um fallback para reiniciar a faixa quando terminar (se o recurso não estiver em loop)
+# Estado de música
 # -----------------------------------------------------------------------------
+var _last_level_music_position_seconds: float = 0.0
+var _current_music_track_label: String = ""  # "menu" | "level"
+var _music_fadeout_tween: Tween = null
+
+
+
 func _ready() -> void:
+	# Este AudioStreamPlayer toca música (bus Music).
 	bus = BUS_MUSIC
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	
-	_enable_looping() 
-	load_volumes()
+	_enable_music_looping_on_known_tracks()
+	_load_persisted_bus_volumes()
 	
-	# fallback: se por algum motivo o loop do stream não estiver ativo, reinicia ao terminar
-	if not is_connected("finished", Callable(self, "_on_finished")):
-		connect("finished", Callable(self, "_on_finished"))
+	# Reconexão segura do callback de término de música
+	if not is_connected("finished", Callable(self, "_on_music_playback_finished")):
+		connect("finished", Callable(self, "_on_music_playback_finished"))
+	
+	_initialize_sfx_players_pool()
 
 
-# -----------------------------------------------------------------------------
-# Habilita loop nas duas trilhas conhecidas deste player (menu e level).
-# Obs: isso altera as propriedades do recurso em runtime (não persiste no arquivo).
-# -----------------------------------------------------------------------------
-func _enable_looping() -> void:
-	_force_stream_loop(MENU_MUSIC)
-	_force_stream_loop(LEVEL_MUSIC)
+# =============================================================================
+# Música: preparação e loop
+# =============================================================================
+func _enable_music_looping_on_known_tracks() -> void:
+	_force_stream_loop_on_resource(MENU_MUSIC)
+	_force_stream_loop_on_resource(LEVEL_MUSIC)
 
 
-# -----------------------------------------------------------------------------
-# Força um AudioStream específico a tocar em loop, respeitando o tipo do recurso.
-# - WAV: define loop_mode = LOOP_FORWARD
-# - OGG/MP3: define loop = true
-# Parâmetros:
-#   stream (AudioStream): recurso de áudio a ajustar
-# -----------------------------------------------------------------------------
-func _force_stream_loop(stream: AudioStream) -> void:
-	if stream is AudioStreamMP3:
-		stream.loop = true
-	elif stream is AudioStreamOggVorbis:
-		stream.loop = true
-	elif stream is AudioStreamWAV:
-		stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+func _force_stream_loop_on_resource(audio_stream: AudioStream) -> void:
+	if audio_stream is AudioStreamMP3:
+		(audio_stream as AudioStreamMP3).loop = true
+	elif audio_stream is AudioStreamOggVorbis:
+		(audio_stream as AudioStreamOggVorbis).loop = true
+	elif audio_stream is AudioStreamWAV:
+		(audio_stream as AudioStreamWAV).loop_mode = AudioStreamWAV.LOOP_FORWARD
 
 
-# -----------------------------------------------------------------------------
-# Fallback chamado quando a reprodução termina.
-# Se a trilha atual for a de menu/level e não estiver em loop, reinicia do 0.
-# -----------------------------------------------------------------------------
-func _on_finished() -> void:
+func _on_music_playback_finished() -> void:
+	# Fallback: se, por qualquer motivo, a faixa não estiver em loop, reinicia.
 	if stream == MENU_MUSIC or stream == LEVEL_MUSIC:
 		play(0.0)
 
 
-# -----------------------------------------------------------------------------
-# Toca um AudioStream com volume e posição inicial opcionais.
-# Evita reiniciar se o mesmo stream já estiver tocando.
-# Parâmetros:
-#   music (AudioStream): faixa a tocar
-#   volume (float): volume em dB (0.0 = unidade)
-#   from_pos (float): posição inicial em segundos
-# -----------------------------------------------------------------------------
-func _play_music(music: AudioStream, volume: float = 0.0, from_pos: float = 0.0) -> void:
-	if stream == music and playing:
+# =============================================================================
+# Música: controle de reprodução
+# =============================================================================
+func _play_music_stream(music_stream: AudioStream, start_volume_db: float = 0.0, start_position_seconds: float = 0.0) -> void:
+	if stream == music_stream and playing:
 		return
 	
-	_cancel_fade()
+	_cancel_music_fade_out_if_running()
 	
-	stream = music
-	volume_db = volume
-	play(from_pos)
+	stream = music_stream
+	volume_db = start_volume_db
+	play(start_position_seconds)
 
 
-# -----------------------------------------------------------------------------
-# Inicia a música do menu.
-# Se estava tocando a música do level, salva a posição para retomar depois.
-# -----------------------------------------------------------------------------
 func _play_menu_music() -> void:
-	if _current_track == "level" and playing:
-		_last_level_pos = get_playback_position()
+	if _current_music_track_label == "level" and playing:
+		_last_level_music_position_seconds = get_playback_position()
 	
-	_current_track = "menu"
-	_play_music(MENU_MUSIC)
+	_current_music_track_label = "menu"
+	_play_music_stream(MENU_MUSIC)
 
 
-# -----------------------------------------------------------------------------
-# Inicia a música do level.
-# Se resume=true, começa da última posição salva; caso contrário, do início.
-# Parâmetros:
-#   resume (bool): retomar de onde parou (padrão: true)
-# -----------------------------------------------------------------------------
-func _play_level_music(resume: bool = true) -> void:
-	_current_track = "level"
-	var start_pos := _last_level_pos if resume else 0.0
-	_play_music(LEVEL_MUSIC, 0.0, start_pos)
+func _play_level_music(resume_from_last_position: bool = true) -> void:
+	_current_music_track_label = "level"
+	var start_pos := _last_level_music_position_seconds if resume_from_last_position else 0.0
+	_play_music_stream(LEVEL_MUSIC, 0.0, start_pos)
 
 
 func stop_music() -> void:
 	stop()
 
 
-# -----------------------------------------------------------------------------
-# Se a trilha atual for a do level, salva a posição de reprodução e para.
-# -----------------------------------------------------------------------------
 func remember_level_position_and_stop() -> void:
-	if _current_track == "level" and playing:
-		_last_level_pos = get_playback_position()
-	
+	if _current_music_track_label == "level" and playing:
+		_last_level_music_position_seconds = get_playback_position()
 	stop()
 
 
-# -----------------------------------------------------------------------------
-# Handler para quando o jogo entra no pause:
-# - Salva a posição do level (se aplicável) e para
-# - Troca para a música de menu
-# -----------------------------------------------------------------------------
 func on_pause_entered() -> void:
 	remember_level_position_and_stop()
 	_play_menu_music()
-
 
 
 func on_pause_exited() -> void:
 	_play_level_music(true)
 
 
-# -----------------------------------------------------------------------------
-# Handler para restart do level:
-# - Zera a posição salva e reinicia a música do level do começo
-# -----------------------------------------------------------------------------
 func on_level_restart() -> void:
-	_last_level_pos = 0.0
-	
-	_cancel_fade()
-	
+	_last_level_music_position_seconds = 0.0
+	_cancel_music_fade_out_if_running()
 	stop()
 	_play_level_music(false)
 
 
-# ---------- Volumes (Master / Music / SFX) ----------
+# =============================================================================
+# Música: fade-out
+# =============================================================================
+func fade_out_and_stop(duration_seconds: float = 0.8) -> void:
+	if not playing:
+		return
+	
+	_cancel_music_fade_out_if_running()
+	var stream_at_start: AudioStream = stream
+	
+	_music_fadeout_tween = get_tree().create_tween()
+	_music_fadeout_tween.tween_property(self, "volume_db", -80.0, duration_seconds)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	
+	_music_fadeout_tween.finished.connect(func ():
+		_music_fadeout_tween = null
+		if stream == stream_at_start:
+			stop()
+		volume_db = 0.0
+	)
+
+
+func _cancel_music_fade_out_if_running() -> void:
+	if is_instance_valid(_music_fadeout_tween):
+		_music_fadeout_tween.kill()
+	_music_fadeout_tween = null
+	volume_db = 0.0
+
+
+# =============================================================================
+# Volumes persistidos (buses)
+# =============================================================================
 func set_master_volume_db(db: float) -> void:
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(BUS_MASTER), db)
 
@@ -172,10 +173,7 @@ func get_sfx_volume_db() -> float:
 	return AudioServer.get_bus_volume_db(AudioServer.get_bus_index(BUS_SFX))
 
 
-# -----------------------------------------------------------------------------
-# Salva os volumes atuais (Master/Music/SFX) em user://audio.cfg.
-# -----------------------------------------------------------------------------
-func save_volumes():
+func save_volumes() -> void:
 	var config := ConfigFile.new()
 	config.set_value("audio", "master_db", get_master_volume_db())
 	config.set_value("audio", "music_db",  get_music_volume_db())
@@ -183,11 +181,7 @@ func save_volumes():
 	config.save("user://audio.cfg")
 
 
-# -----------------------------------------------------------------------------
-# Carrega e aplica volumes de user://audio.cfg (se existir).
-# Usa 0.0 dB como padrão quando não houver valor salvo.
-# -----------------------------------------------------------------------------
-func load_volumes():
+func _load_persisted_bus_volumes() -> void:
 	var config := ConfigFile.new()
 	if config.load("user://audio.cfg") == OK:
 		set_master_volume_db(float(config.get_value("audio", "master_db", 0.0)))
@@ -195,52 +189,80 @@ func load_volumes():
 		set_sfx_volume_db(float(config.get_value("audio", "sfx_db", 0.0)))
 
 
-# -----------------------------------------------------------------------------
-# Faz um fade-out da trilha atual e para a reprodução ao final.
-# Comportamento:
-#   - Se nada estiver tocando (`playing == false`), sai imediatamente.
-#   - Cria um Tween que reduz `volume_db` gradualmente até −80 dB no tempo dado.
-#   - Aguarda o término do Tween, chama `stop()` e, por fim, restaura `volume_db`
-#     para 0 dB (para que a próxima faixa comece em volume normal).
-# Parâmetros:
-#   duration (float) ... Duração do fade-out em segundos (padrão: 0.8).
-# -----------------------------------------------------------------------------
-func fade_out_and_stop(duration: float = 0.8) -> void:
-	if not playing:
-		return
-	
-	_cancel_fade()
-	
-	var stream_at_start: AudioStream = stream
-	
-	fade_tween = get_tree().create_tween()
-	fade_tween.tween_property(self, "volume_db", -80.0, duration)\
-		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	
-	fade_tween.finished.connect(func ():
-		fade_tween = null
-		
-		if stream == stream_at_start:
-			stop()
-			volume_db = 0.0
-		else:
-			volume_db = 0.0
+# =============================================================================
+# Agregador de SFX (tiros)
+# =============================================================================
+func _initialize_sfx_players_pool() -> void:
+	for pool_index in range(SFX_POOL_SIZE):
+		var sfx_player: AudioStreamPlayer = AudioStreamPlayer.new()
+		sfx_player.bus = BUS_SFX
+		sfx_player.volume_db = BASE_SHOT_VOLUME_DB
+		add_child(sfx_player)
+		_sfx_players_pool.append(sfx_player)
+
+
+func _acquire_available_sfx_player() -> AudioStreamPlayer:
+	for sfx_player in _sfx_players_pool:
+		if not sfx_player.playing:
+			return sfx_player
+	# Se todos ocupados, reutiliza o primeiro (polifonia limitada)
+	return _sfx_players_pool[0]
+
+
+func _count_and_prune_recent_shots_in_window() -> int:
+	var now_seconds := _get_now_seconds()
+	_recent_shot_timestamps_seconds = _recent_shot_timestamps_seconds.filter(
+		func(timestamp_seconds): return now_seconds - timestamp_seconds <= SHOT_GROUPING_WINDOW_SECONDS
 	)
+	return _recent_shot_timestamps_seconds.size()
+
+
+# --- API pública para tiros ---------------------------------------------------
+# debounce_enabled = true  => 1 som por janela (os demais são suprimidos)
+# debounce_enabled = false => permite vários, com compensação de ganho automática
+# permite dizer "quanto" subir só o tiro
+func play_shot_sound_with_debounce(
+	shot_stream: AudioStream,
+	debounce_enabled: bool = true,
+	extra_gain_db: float = DEFAULT_SHOT_EXTRA_GAIN_DB
+) -> void:
+	if shot_stream == null:
+		return
+	var now_seconds := _get_now_seconds()
+	var shots_already_in_window := _count_and_prune_recent_shots_in_window()
+	if debounce_enabled and shots_already_in_window > 0:
+		return
+	var loudness_compensation_db := 0.0
+	if not debounce_enabled:
+		loudness_compensation_db = -20.0 * _log10(float(shots_already_in_window + 1))
+		loudness_compensation_db = clamp(loudness_compensation_db, -12.0, 0.0)
+	var chosen_sfx_player := _acquire_available_sfx_player()
+	chosen_sfx_player.stop()
+	chosen_sfx_player.stream = shot_stream
+	chosen_sfx_player.pitch_scale = randf_range(0.97, 1.03)
+	# >>> só o tiro fica mais alto aqui:
+	chosen_sfx_player.volume_db = BASE_SHOT_VOLUME_DB + extra_gain_db + loudness_compensation_db
+	if SHOT_START_JITTER_SECONDS > 0.0:
+		var random_start_delay := randf_range(0.0, SHOT_START_JITTER_SECONDS)
+		await get_tree().create_timer(random_start_delay).timeout
+	chosen_sfx_player.play()
+	_recent_shot_timestamps_seconds.append(now_seconds)
 
 
 # -----------------------------------------------------------------------------
-# Cancela qualquer fade-out em andamento.
-# Comportamento:
-#   - Se existir um Tween válido em `fade_tween`, mata-o imediatamente.
-#   - Limpa a referência interna (`fade_tween = null`).
-#   - Restaura `volume_db` para 0 dB (volume normal).
-# Uso:
-#   - Chamado antes de iniciar uma nova música ou reinício de nível
-#     para garantir que fades antigos não afetem a faixa atual.
+# Alias de compatibilidade (antigo nome usado nas turrets)
 # -----------------------------------------------------------------------------
-func _cancel_fade() -> void:
-	if is_instance_valid(fade_tween):
-		fade_tween.kill()
-	
-	fade_tween = null
-	volume_db = 0.0
+func play_shot(stream: AudioStream, debounce: bool = true, extra_gain_db: float = DEFAULT_SHOT_EXTRA_GAIN_DB) -> void:
+	play_shot_sound_with_debounce(stream, debounce, extra_gain_db)
+
+
+# =============================================================================
+# Utilidades internas
+# =============================================================================
+static func _log10(x: float) -> float:
+	# GDScript não tem log10 nativo; converte via ln(x)/ln(10)
+	return log(x) / log(10.0)
+
+
+static func _get_now_seconds() -> float:
+	return Time.get_ticks_msec() / 1000.0
