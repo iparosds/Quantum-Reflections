@@ -6,6 +6,11 @@ const PORTAL = preload("res://scenes/game/portal.tscn")
 @export var level_duration_seconds: float = 180.0
 @export var portal_duration_seconds: float = 20.0
 
+# Margem mínima entre o centro do portal e o centro de um BlackHole,
+# além do raio dele + "meio tamanho" do portal.
+@export var portal_safe_margin: float = 30.0
+@export var portal_half_size: float = 5.0
+
 var game_paused = false
 var quantum = false
 var portal_active = false
@@ -26,10 +31,84 @@ func _ready():
 	_update_xp_label_text()
 
 
+# -------------------------
+# UTIL: tenta inferir o "raio" efetivo do BlackHole
+# -------------------------
+func _black_hole_radius(black_hole: Node2D) -> float:
+	var fallback := 64.0 # caso não exista CollisionShape2D/CircleShape2D
+	if not is_instance_valid(black_hole):
+		return fallback
+	
+	if black_hole.has_node("CollisionShape2D"):
+		var collision_shape := black_hole.get_node("CollisionShape2D")
+		if collision_shape is CollisionShape2D and (collision_shape as CollisionShape2D).shape is CircleShape2D:
+			var circle := ((collision_shape as CollisionShape2D).shape as CircleShape2D)
+			# considera o scale do BlackHole
+			return circle.radius * black_hole.scale.x
+	return fallback
+
+
+# -------------------------
+# Checa se posição é segura (não “em cima” de um buraco negro)
+# -------------------------
+func _is_safe_portal_position(position: Vector2) -> bool:
+	var black_holes := get_tree().get_nodes_in_group("black_holes")
+	for black_hole in black_holes:
+		if not (black_hole is Node2D):
+			continue
+		var min_separation := _black_hole_radius(black_hole) + portal_half_size + portal_safe_margin
+		if position.distance_to((black_hole as Node2D).global_position) < min_separation:
+			return false
+	return true
+
+
+# -------------------------
+# Encontra o Black Hole mais próximo de uma posição
+# -------------------------
+func _nearest_black_hole(position: Vector2) -> Node2D:
+	var black_holes := get_tree().get_nodes_in_group("black_holes")
+	var nearest_black_hole: Node2D = null
+	var best_distance := INF
+	for black_hole in black_holes:
+		if not (black_hole is Node2D):
+			continue
+		var distance := position.distance_to((black_hole as Node2D).global_position)
+		if distance < best_distance:
+			best_distance = distance
+			nearest_black_hole = black_hole
+	return nearest_black_hole
+
+
+# -------------------------
+# Escolhe uma posição segura para o portal ao longo do Path2D
+# - Faz tentativas aleatórias no PathFollow2D.
+# - Se todas falharem, “empurra” para longe do Black Hole mais próximo.
+# -------------------------
+func _find_safe_portal_position() -> Vector2:
+	var attempts := 32
+	var candidate_position = %PathFollow2D.global_position
+	
+	for i in range(attempts):
+		%PathFollow2D.progress_ratio = randf()
+		candidate_position = %PathFollow2D.global_position
+		if _is_safe_portal_position(candidate_position):
+			return candidate_position
+	
+	# Fallback: não achou posição segura dentro das tentativas.
+	# Empurra para fora do BH mais próximo a partir do último candidato.
+	var nearest_black_hole := _nearest_black_hole(candidate_position)
+	if is_instance_valid(nearest_black_hole):
+		var push_away_distance = (candidate_position - nearest_black_hole.global_position).normalized()
+		var min_separation := _black_hole_radius(nearest_black_hole) + portal_half_size + portal_safe_margin
+		return nearest_black_hole.global_position + push_away_distance * min_separation
+	
+	return candidate_position
+
+
 func _open_portal():
 	portal_node = PORTAL.instantiate()
 	
-	portal_node.global_position = %PathFollow2D.global_position
+	portal_node.global_position = _find_safe_portal_position()
 	
 	add_child(portal_node)
 	portal_node.add_to_group("portal")
@@ -236,3 +315,47 @@ func _on_time_timeout():
 		spawn_asteroid() #600
 	if score > 600:
 		spawn_asteroid() #800
+
+
+#===============================================
+# Teclas para teste de spawn do portal
+# NO TECLADO NUMERICO :
+# 	1 - ABRE PORTAL
+# 	2 - SPAWNA BURACO NEGRO
+# 	3 - TESTA POSICAO CANDIDATA PARA O PORTAL E MOSTRA MSG NO OUTPUT
+#================================================
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("debug_open_portal"):
+		if portal_active == false:
+			portal_active = true
+			portal_timer = portal_duration_seconds
+			Singleton.gui_manager.hud_portal_active.visible = true
+			Singleton.gui_manager.hud_timer_bar.get("theme_override_styles/fill").bg_color = Color.hex(0xb4b542ff)
+			_open_portal()
+
+	if event.is_action_pressed("debug_spawn_black_hole"):
+		# Spawna um buraco negro perto do PathFollow2D p/ tentar "atrapalhar"
+		var bh := preload("res://scenes/game/black_hole.tscn").instantiate()
+		%PathFollow2D.progress_ratio = randf()
+		var base = %PathFollow2D.global_position
+		bh.global_position = base + Vector2(randi_range(-120,120), randi_range(-120,120))
+		add_child(bh)
+
+	if event.is_action_pressed("debug_run_portal_test"):
+		_run_portal_sanity_check(300)  # 300 tentativas
+
+
+func _run_portal_sanity_check(attempts: int = 500) -> void:
+	var failures := 0
+	for i in range(attempts):
+		# gera uma posição candidata como o _open_portal faz
+		%PathFollow2D.progress_ratio = randf()
+		var candidate := _find_safe_portal_position()
+		if not _is_safe_portal_position(candidate):
+			failures += 1
+	
+	if failures == 0:
+		print("[PORTAL TEST] OK: ", attempts, " tentativas sem sobreposição.")
+	else:
+		push_error("[PORTAL TEST] Falhas: %d de %d" % [failures, attempts])
+		assert(false, "Portal nasceu em zona insegura")
