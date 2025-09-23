@@ -49,6 +49,8 @@ func start_game() -> void:
 	
 	goto_level(current_level_path)
 	
+	SaveManager.on_stage_started()
+	
 	# Só inicia o tutorial no nível "tutorial"
 	if current_level == "tutorial" or current_level_path.ends_with("tutorial.tscn"):
 		start_tutorial()
@@ -314,6 +316,8 @@ func game_over():
 		
 		AudioPlayer.stop_music() 
 		AudioPlayer._play_menu_music()
+		
+		SaveManager.on_stage_ended(false)
 
 
 # ---------------------

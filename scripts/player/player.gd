@@ -251,6 +251,9 @@ func _physics_process(delta : float) -> void:
 		new_black_hole.position = position
 		
 		Singleton.level.add_child(new_black_hole)
+		
+		SaveManager.on_black_hole_opened(1)
+		
 		health_depleted.emit()
 	
 	%ProgressBar.value = health
