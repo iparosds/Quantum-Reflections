@@ -45,9 +45,7 @@ func _on_body_entered(body: Node2D) -> void:
 #   _delta (float) ... Tempo do frame (não usado diretamente).
 # -----------------------------------------------------------------------------
 func _physics_process(_delta: float) -> void:
-	$AnimatedSprite2D.play( "default" if not Singleton.level.quantum else "quantum" )
-	
-	# Aviso de proximidade
+	$AnimatedSprite2D.play("default" if not Singleton.level.quantum else "quantum")
 	if is_instance_valid(Singleton.player) and is_instance_valid(Singleton.gui_manager):
 		var distance := global_position.distance_to(Singleton.player.global_position)
 		if (distance <= WARNING_NEAR_RADIUS) and not warning_sent:
