@@ -1,7 +1,6 @@
 class_name BlackHole extends Area2D
 
 const WARNING_NEAR_RADIUS := 380.0
-const WARNING_FAR_RADIUS  := 460.0
 
 var warning_sent := false
 var activated := false
@@ -51,14 +50,10 @@ func _physics_process(_delta: float) -> void:
 	# Aviso de proximidade
 	if is_instance_valid(Singleton.player) and is_instance_valid(Singleton.gui_manager):
 		var distance := global_position.distance_to(Singleton.player.global_position)
-		
-		# Liga quando entrar na zona "perto"
 		if (distance <= WARNING_NEAR_RADIUS) and not warning_sent:
 			warning_sent = true
 			Singleton.gui_manager.notify_black_hole_warning(true)
-
-		# Desliga só quando sair da zona "longe"
-		elif (distance >= WARNING_FAR_RADIUS) and warning_sent:
+		elif (distance >= WARNING_NEAR_RADIUS) and warning_sent:
 			warning_sent = false
 			Singleton.gui_manager.notify_black_hole_warning(false)
 
