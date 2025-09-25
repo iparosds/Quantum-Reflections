@@ -239,6 +239,7 @@ func open_controls() -> void:
 
 
 func quit_game_from_menu() -> void:
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
@@ -246,6 +247,7 @@ func quit_to_desktop_from_game() -> void:
 	if not gui_manager.is_paused:
 		return
 	
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
