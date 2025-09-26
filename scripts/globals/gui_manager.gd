@@ -35,6 +35,9 @@ const LEVELS_MENU_GROUP := "level_menu_button"
 @onready var settings_controls_btn: BaseButton = $SettingsMenu/MarginContainer/ButtonsContainer/ControlsButton
 
 var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
+var black_hole_warning_tween: Tween = null
+var black_hole_warning_sources : int = 0
+
 
 # Elementos do HUD principal do jogo.
 # Exibem informações como XP, pontuação, tempo, portal ativo e status de god mode.
@@ -45,6 +48,7 @@ var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
 @onready var hud_portal_active: Label = $GameHud/HudPortalActive
 @onready var hud_god_mode: Label = $GameHud/HudGodMode
 @onready var level_up_notification_label: Label = $GameHud/LevelUpNotificationLabel
+@onready var black_hole_warning_label: Label = $GameHud/BlackHoleWarningLabel
 
 # Elementos exibidos na tela de Game Over.
 @onready var game_over_label: Label = $GameOverScreen/ColorRect/GameOverLabel
@@ -96,6 +100,9 @@ func _ready() -> void:
 	game_over_screen.visible = false
 	pause_menu_layer.visible = false
 	levels_menu_layer.visible = false
+	black_hole_warning_label.visible = false
+	black_hole_warning_label.modulate.a = 0.0
+
 	
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
@@ -115,17 +122,22 @@ func _ready() -> void:
 	Singleton._ensure_settings_icon(self)
 
 
-
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("back"):
-		if settings_layer.visible:
-			_play_back_sound()
-			settings_layer.visible = false
-			on_settings_back.call()
-			on_settings_back = Callable(Singleton, "open_main_menu")
-		elif credits_layer.visible:
-			_play_back_sound()
-			Singleton.open_main_menu()
+	if event.is_action_pressed("pause"):
+		# ignora se estamos em Main Menu ou Game Over
+		if main_menu_layer.visible or game_over_screen.visible:
+			return
+
+		if is_paused:
+			# fecha overlays por cima do pause, se houver
+			if settings_layer.visible: settings_layer.visible = false
+			if input_settings_layer.visible: input_settings_layer.visible = false
+			if credits_layer.visible: credits_layer.visible = false
+			hide_pause_menu()
+			AudioPlayer.on_pause_exited()
+		else:
+			show_pause_menu()
+			AudioPlayer.on_pause_entered()
 
 
 # ------------------------------------------------------------
@@ -506,3 +518,39 @@ func show_level_up_notice(message: String) -> void:
 		if is_instance_valid(level_up_notification_label):
 			level_up_notification_label.visible = false
 	)
+
+
+func notify_black_hole_warning(active: bool) -> void:
+	# Agrega múltiplas fontes de aviso (vários buracos negros próximos).
+	if active:
+		black_hole_warning_sources += 1
+		if black_hole_warning_sources == 1:
+			_start_black_hole_blink()
+	else:
+		black_hole_warning_sources = max(0, black_hole_warning_sources - 1)
+		if black_hole_warning_sources == 0:
+			_stop_black_hole_blink()
+
+
+func _start_black_hole_blink() -> void:
+	if not is_instance_valid(black_hole_warning_label):
+		return
+	
+	black_hole_warning_label.visible = true
+	
+	# Recria tween em loop para piscar
+	if black_hole_warning_tween:
+		black_hole_warning_tween.kill()
+	black_hole_warning_tween = get_tree().create_tween().set_loops()
+	black_hole_warning_tween.tween_property(black_hole_warning_label, "modulate:a", 1.0, 0.35)
+	black_hole_warning_tween.tween_property(black_hole_warning_label, "modulate:a", 0.2, 0.35)
+
+
+func _stop_black_hole_blink() -> void:
+	if black_hole_warning_tween:
+		black_hole_warning_tween.kill()
+		black_hole_warning_tween = null
+	
+	if is_instance_valid(black_hole_warning_label):
+		black_hole_warning_label.visible = false
+		black_hole_warning_label.modulate.a = 1.0
