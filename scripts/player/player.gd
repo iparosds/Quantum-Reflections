@@ -214,34 +214,22 @@ func _physics_process(delta):
 	else:
 		%Ship.play("quantum")
 	
-	if Input.is_action_just_released("move_up"):
-		accelelariting = false
-	if Input.is_action_just_pressed("move_up"):
-		accelelariting = true
-	if Input.is_action_just_released("boost"):
-		boosting = false
-	if Input.is_action_just_pressed("boost"):
-		boosting = true
+	accelelariting = Input.is_action_pressed("move_up")
+	boosting = Input.is_action_pressed("boost")
+	stopping = Input.is_action_pressed("move_down")
+	rotating_right = Input.is_action_pressed("move_right")
+	rotating_left = Input.is_action_pressed("move_left")
+	
 	if accelelariting == true && stopping == false && acceleration < cap:
 		acceleration += 1
 	if boosting == true && stopping == false && acceleration < (cap - 10.0):
 		acceleration += 5
-	if Input.is_action_just_released("move_down"):
-		stopping = false
-	if Input.is_action_just_pressed("move_down"):
-		stopping = true
+	
 	if stopping == true && accelelariting == false && acceleration > 10:
 		acceleration -= 5
 	if stopping == false && accelelariting == false && acceleration > 0:
 		acceleration -= 1
-	if Input.is_action_just_pressed("move_right"):
-		rotating_right = true
-	if Input.is_action_just_released("move_right"):
-		rotating_right = false
-	if Input.is_action_just_pressed("move_left"):
-		rotating_left = true
-	if Input.is_action_just_released("move_left"):
-		rotating_left = false
+	
 	if rotating_right == true && boosting == false:
 		%Ship.rotation += (cap - (acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
