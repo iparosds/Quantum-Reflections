@@ -1,4 +1,4 @@
-extends AudioStreamPlayer
+class_name GlobalAudioPlayer extends AudioStreamPlayer
 
 const MENU_MUSIC = preload("res://assets/sounds/menus/MENU MUSIC.wav")
 const LEVEL_MUSIC = preload("res://assets/sounds/in_game/GAMEPLAY SONG MASTER.mp3")

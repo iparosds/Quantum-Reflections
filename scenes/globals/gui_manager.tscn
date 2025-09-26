@@ -1,6 +1,7 @@
-[gd_scene load_steps=38 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=40 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
+[ext_resource type="FontFile" uid="uid://du5x3bmkjrs0k" path="res://assets/fonts/Jersey25-Regular.ttf" id="2_3da3r"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/fonts/PixelifySans-VariableFont_wght.ttf" id="2_8d174"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/menus_and_misc/bg menu.jpg" id="3_mrw3c"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/menus_and_misc/logo animado.png" id="4_rbxbw"]
@@ -21,6 +22,19 @@ bg_color = Color(0.184314, 0.129412, 0.231373, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bglms"]
 bg_color = Color(0.129412, 0.258824, 0.419608, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3da3r"]
+bg_color = Color(0, 0, 0, 0.556863)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 5.0
+expand_margin_right = 5.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_av8d4"]
 atlas = ExtResource("4_rbxbw")
@@ -175,14 +189,18 @@ rounded = true
 show_percentage = false
 
 [node name="HudScoreLabel" type="Label" parent="GameHud"]
-offset_left = 550.0
-offset_top = -4.0
-offset_right = 604.0
-offset_bottom = 19.0
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+scale = Vector2(1, 0.56)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_8d174")
+theme_override_fonts/font = ExtResource("2_3da3r")
 text = "0 ores."
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
 [node name="HudTimerBar" type="ProgressBar" parent="GameHud"]
 offset_top = 14.0
@@ -193,11 +211,11 @@ value = 100.0
 show_percentage = false
 
 [node name="HudTimerText" type="Label" parent="GameHud"]
-offset_left = 554.0
-offset_top = 11.0
-offset_right = 594.0
-offset_bottom = 34.0
-theme_override_fonts/font = ExtResource("2_8d174")
+offset_left = 557.0
+offset_top = 14.0
+offset_right = 589.0
+offset_bottom = 31.0
+theme_override_fonts/font = ExtResource("2_3da3r")
 text = "10:00"
 
 [node name="HudPortalActive" type="Label" parent="GameHud"]
@@ -232,6 +250,25 @@ grow_vertical = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 24
 text = "Level UP!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BlackHoleWarningLabel" type="Label" parent="GameHud"]
+modulate = Color(1, 0, 0, 1)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -220.0
+offset_right = 20.0
+offset_bottom = -197.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_3da3r")
+text = "WARNING: BLACK HOLE NEAR!!!"
 horizontal_alignment = 1
 vertical_alignment = 1
 

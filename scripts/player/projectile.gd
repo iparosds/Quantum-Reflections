@@ -1,5 +1,4 @@
-class_name Projectile
-extends Resource
+class_name Projectile extends Resource
 
 @export var display_name : StringName
 @export var icon : Texture2D
