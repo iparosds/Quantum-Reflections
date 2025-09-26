@@ -10,6 +10,10 @@ var victim: Node2D = null
 var consuming : bool = false
 
 
+func _ready() -> void:
+	add_to_group("black_holes")
+
+
 # -----------------------------------------------------------------------------
 # Disparado quando um corpo entra na área do buraco negro.
 # Comportamento:
