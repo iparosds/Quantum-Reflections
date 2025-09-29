@@ -1,6 +1,6 @@
 extends Control
 
-@onready var upgrade_card_container: HBoxContainer = $HBoxContainer
+@onready var upgrade_card_container: HBoxContainer = $UpgradeCardContainer
 
 signal closed(track: int)
 
