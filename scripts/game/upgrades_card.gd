@@ -1,6 +1,10 @@
 extends Panel
 
-@export var upgrade: PlayerUpgrades.UpgradeTrack = PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1
+@export var upgrade: PlayerUpgrades.UpgradeTrack = PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1:
+	set(value):
+		upgrade = value
+		_refresh()
+
 @export var title := ""
 @export var icon: Texture2D
 

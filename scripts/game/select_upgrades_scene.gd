@@ -13,8 +13,7 @@ func _ready() -> void:
 		if node.has_signal("chosen"):
 			node.chosen.connect(_on_card_chosen)
 	
-	# AINDA VAI SER IMPLEMENTADO CORRETAMENTE
-	#_populate_random(3)
+	_populate_random(3)
 
 
 func _on_card_chosen(track: int) -> void:

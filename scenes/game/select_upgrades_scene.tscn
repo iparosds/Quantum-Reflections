@@ -45,14 +45,12 @@ script = ExtResource("2_ue5f2")
 [node name="UpgradesCardPanel2" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-upgrade = 1
 
 [node name="UpgradesCardPanel3" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-upgrade = 2
 
 [node name="UpgradesCardPanel4" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
+visible = false
 layout_mode = 2
 script = ExtResource("2_ue5f2")
-upgrade = 3

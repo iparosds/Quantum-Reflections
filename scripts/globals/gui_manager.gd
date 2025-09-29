@@ -533,6 +533,7 @@ func open_upgrades_picker() -> void:
 	
 	upgrades_menu.process_mode = Node.PROCESS_MODE_ALWAYS
 	picker.process_mode = Node.PROCESS_MODE_ALWAYS
+	picker._populate_random(3)
 	
 	get_tree().paused = true
 
