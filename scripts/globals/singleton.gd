@@ -306,7 +306,7 @@ func game_over():
 
 # Sempre retorna verdadeiro para liberar o nível de tutorial.
 func _tutorial() -> bool:
-	return false
+	return true
 
 
 # ------------------------------------------------------------
