@@ -321,6 +321,15 @@ theme = ExtResource("5_w8ru2")
 text = "New Game"
 flat = true
 
+[node name="TutorialButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_top = NodePath("../QuitButton")
+focus_neighbor_bottom = NodePath("../SettingsButton")
+theme = ExtResource("5_w8ru2")
+text = "Tutorial"
+flat = true
+
 [node name="ContinueGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 focus_mode = 0
