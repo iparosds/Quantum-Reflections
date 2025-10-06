@@ -23,7 +23,7 @@ class Asteroid {
     -_on_asteroid_life_timeout(): void
 }
 Asteroid::_physics_process --> Player : Checks
-Asteroid::_physics_process --> GlobalSingleton::level::portal_active : Checks
+Asteroid::_physics_process --> GlobalSingleton::level.portal_active : Checks
 Asteroid::_physics_process --> GlobalSingleton::quantum : Checks
 Asteroid::player_collision --> Player::health : Damages
 Asteroid::add_new_ore --> Ore : Instantiates
@@ -67,13 +67,13 @@ Player::turrets --> Turret : References
 Player::_ready --> GlobalSingleton::player : Register Self
 Player::DAMAGE_RATE --> Asteroid::take_damage : Damages
 Player::_ready --> Turret : Chooses
-Player::_init_level_progress --> GlobalSingleton::level::get_score : Gets score
+Player::_init_level_progress --> GlobalSingleton::level.get_score : Gets score
 Player::_apply_level_up_to --> Turret::current_bullet : Updates
-Player::_apply_level_up_to --> GlobalSingleton::gui_manager::show_level_up_notice : Notifies Level Up
+Player::_apply_level_up_to --> GlobalSingleton::gui_manager.show_level_up_notice : Notifies Level Up
 Player::_physics_process --> GlobalSingleton::quantum : Checks
 Player::_physics_process --> Asteroid::player_collision : Collides
 Player::_physics_process --> Ore::is_coin : Checks
-Player::_physics_process --> GlobalSingleton::level::add_ore : Collects
+Player::_physics_process --> GlobalSingleton::level.add_ore : Collects
 Player::_physics_process --> BlackHole : Instantiates
 Player::start_black_hole_death --> GlobalSingleton::god_mode : Checks
 Player::start_black_hole_death --> GlobalAudioPlayer::fade_out_and_stop : Fades out
@@ -203,20 +203,20 @@ Level::ASTEROID --> Asteroid : Preloads
 Level::PORTAL --> Portal : Preloads
 Level::_ready --> GlobalSingleton::level : Register Self
 Level::_ready --> GlobalAudioPlayer::_play_level_music : Plays music
-Level::_ready --> GlobalSingleton::gui_manager::hud_timer_bar : Starts
+Level::_ready --> GlobalSingleton::gui_manager.hud_timer_bar : Starts
 Level::_open_portal --> Portal : Instantiates
-Level::win --> GlobalSingleton::gui_manager::hud_portal_active : Disables
-Level::win --> GlobalSingleton::gui_manager::game_over_screen : Enables
+Level::win --> GlobalSingleton::gui_manager.hud_portal_active : Disables
+Level::win --> GlobalSingleton::gui_manager.game_over_screen : Enables
 Level::win --> GlobalSingleton::settings_icon : Disables
 Level::spawn_asteroid --> Asteroid : Instantiates
 Level::_physics_process --> GlobalSingleton::god_mode : Checks
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_god_mode : Updates
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_portal_active : Enables
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_portal_active : Enables
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_timer_bar : Changes
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_xp : Updates
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_god_mode : Updates
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_portal_active : Enables
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_portal_active : Enables
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_timer_bar : Changes
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_xp : Updates
 Level::_update_xp_label_text --> Player::PLAYER_LEVELS : Updates
-Level::_physics_process --> GlobalSingleton::gui_manager::hud_score_label : Updates
+Level::_physics_process --> GlobalSingleton::gui_manager.hud_score_label : Updates
 Level::_on_world_body_exited --> Player::is_player : Checks
 
 
@@ -228,9 +228,9 @@ class Ore {
     -_physics_process(delta: float): void
     +is_coin(): bool
 }
-Ore::_physics_process --> GlobalSingleton::level::add_ore : Generates
+Ore::_physics_process --> GlobalSingleton::level.add_ore : Generates
 Ore::_physics_process --> Player::is_player : Checks
-Ore::_physics_process --> GlobalSingleton::player::global_position : Moves towards
+Ore::_physics_process --> GlobalSingleton::player.global_position : Moves towards
 
 
 class Portal {
@@ -238,9 +238,9 @@ class Portal {
 
     +_on_body_entered(body : Node2D) : void
 }
-Portal::_on_body_entered --> GlobalSingleton::level::portal_active : Checks
+Portal::_on_body_entered --> GlobalSingleton::level.portal_active : Checks
 Portal::_on_body_entered --> Player::is_player : Type check
-Portal::_on_body_entered --> GlobalSingleton::level::win : Triggers
+Portal::_on_body_entered --> GlobalSingleton::level.win : Triggers
 Portal::_on_body_entered --> Asteroid::on_portal : Disappears
 
 
@@ -411,7 +411,7 @@ GuiManager::_on_levels_menu_button_pressed --> GlobalSingleton::quit_to_desktop_
 GuiManager::_on_levels_menu_button_pressed --> GlobalSingleton::open_main_menu : Opens
 GuiManager::_generate_level_buttons --> GlobalSingleton::levels.keys : Gets
 GuiManager::_generate_level_buttons --> GlobalSingleton::levels.level_id : Gets
-GuiManager::_generate_level_buttons --> GlobalSingleton::levels::is_level_unlocked : Checks
+GuiManager::_generate_level_buttons --> GlobalSingleton::levels.is_level_unlocked : Checks
 GuiManager::_generate_level_buttons --> GlobalSingleton::change_level : Changes
 GuiManager::_generate_level_buttons --> GlobalSingleton::start_game : Starts
 GuiManager::show_settings --> GlobalAudioPlayer::get_master_volume_db : Gets
