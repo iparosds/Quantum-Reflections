@@ -48,6 +48,9 @@ func win():
 	
 	if is_instance_valid(Singleton.settings_icon):
 		Singleton.settings_icon.visible = false
+	
+	SaveManager.on_stage_ended(true)
+	SaveManager.save_to_disk()
 
 
 # ------------------------------------------------------------
@@ -136,6 +139,8 @@ func _physics_process(delta):
 # ------------------------------------------------------------
 func add_ore():
 	score += 1
+	
+	SaveManager.add_score(1)
 	
 	if score <= 10:
 		Singleton.gui_manager.hud_xp.max_value = 10
