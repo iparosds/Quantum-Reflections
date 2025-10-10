@@ -1,17 +1,7 @@
-# Todo
-Sprint 1
-- Implement level up effect and selection of cards
-- Improve game over screen
+# Under development
+Follow the work at: https://tree.taiga.io/project/andrepfeiffer-quantum-reflections
 
-Sprint 2
-- Implement tutorial
-- Implement phase selection
 
-# List of cards
-- Weapon 1
-- Weapon 2
-- Improve speed
-- Improve acceleration
-- Improve shield
-- Improve shield recharge
+## Diagram
 
+![Quantum Reflections](https://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/iparosds/Quantum-Reflections/refs/heads/criar-documentacao-das-classes/docs/quantum_reflections_classes.puml&fmt=svg&cache=no)

@@ -1,4 +1,4 @@
-extends Node2D
+class_name GlobalSingleton extends Node2D
 
 @onready var closest_enemy := find_closest_enemy()
 const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")
@@ -48,6 +48,8 @@ func start_game() -> void:
 		gui_manager.game_hud_layer.visible = true
 	
 	goto_level(current_level_path)
+	
+	SaveManager.on_stage_started()
 	
 	# Só inicia o tutorial no nível "tutorial"
 	if current_level == "tutorial" or current_level_path.ends_with("tutorial.tscn"):
@@ -237,6 +239,7 @@ func open_controls() -> void:
 
 
 func quit_game_from_menu() -> void:
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
@@ -244,23 +247,8 @@ func quit_to_desktop_from_game() -> void:
 	if not gui_manager.is_paused:
 		return
 	
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"):
-		toggle_pause()
-
-
-func toggle_pause() -> void:
-	if gui_manager.main_menu_layer.visible || gui_manager.game_over_screen.visible:
-		return
-	
-	if gui_manager.is_paused:
-		gui_manager.hide_pause_menu()
-	else:
-		gui_manager.show_pause_menu()
-		AudioPlayer.on_pause_entered()
 
 
 # Reinicia a partida com teardown seguro e restaura o HUD.
@@ -300,7 +288,7 @@ func restart_game() -> void:
 func reset_game_state():
 	if gui_manager:
 		score = 0
-		gui_manager.hud_score_label.text = "0 ores"
+		gui_manager.hud_score_label.text = ""
 		gui_manager.hud_xp.value = 0
 	
 	if is_instance_valid(player):
@@ -321,6 +309,8 @@ func game_over():
 		
 		AudioPlayer.stop_music() 
 		AudioPlayer._play_menu_music()
+		
+		SaveManager.on_stage_ended(false)
 
 
 # ---------------------

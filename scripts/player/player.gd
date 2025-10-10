@@ -1,8 +1,8 @@
 class_name Player extends CharacterBody2D
 
-const BLACK_HOLE = preload("res://scenes/game/black_hole.tscn")
-const DAMAGE_RATE = 500.0
-const MAX_ACCELERATION = 1000.0
+const BLACK_HOLE : PackedScene = preload("res://scenes/game/black_hole.tscn")
+const DAMAGE_RATE : float = 500.0
+const MAX_ACCELERATION : float = 1000.0
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -54,7 +54,7 @@ signal health_depleted
 #   após o término do `_ready()` do Level, evitando problemas de ordem
 #   de inicialização entre Player e Level.
 # ------------------------------------------------------------
-func _ready():
+func _ready() -> void:
 	Singleton.player = self
 	
 	for turret in turrets.values():
@@ -82,11 +82,11 @@ func _on_upgrades_changed() -> void:
 			" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
 
 
-func is_player():
+func is_player() -> bool:
 	return true
 
 
-func world_limit(size):
+func world_limit(size: float) -> void:
 	var player_position = global_position
 	var vx = 563 - player_position.x
 	var vy = 339 - player_position.y
@@ -103,7 +103,7 @@ func world_limit(size):
 #   	redefine seu `current_bullet` para um valor aleatório (1 ou 2).
 # 	- Essa rotação cria variedade no comportamento das turrets
 #   	após a interação com o portal.
-func portal():
+func portal() -> void:
 	for turret in turrets.values():
 		if is_instance_valid(turret) and turret.current_bullet != 0:
 			turret.current_bullet = randi_range(1, 2)
@@ -204,7 +204,7 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 			Singleton.gui_manager.show_level_up_notice(message)
 
 
-func _physics_process(delta):
+func _physics_process(delta : float) -> void:
 	_update_level_from_score(Singleton.level.get_score())
 	
 	var cap := _get_speed_cap()
@@ -273,6 +273,9 @@ func _physics_process(delta):
 		new_black_hole.position = position
 		
 		Singleton.level.add_child(new_black_hole)
+		
+		SaveManager.on_black_hole_opened(1)
+		
 		health_depleted.emit()
 	
 	%ProgressBar.value = health
@@ -326,30 +329,30 @@ func start_black_hole_death(
 		if collision_shape is CollisionShape2D:
 			collision_shape.set_deferred("disabled", true)
 	
+	_camera_focus_to_point(black_hole_center, consume_duration)
+	
 	var ship_visual: Node2D = self
-	
 	if has_node("Ship"):
-		ship_visual = get_node("Ship") as Node2D
+		ship_visual = $Ship as Node2D
 	
-	var initial_position := global_position
+	var initial_position := ship_visual.global_position
 	var initial_rotation := ship_visual.rotation
-	var initial_scale    := scale
+	var initial_scale    := ship_visual.scale
 	
 	# Tween "custom": t vai de 0 -> 1; aplicamos as curvas dentro do método alvo
 	var consume_tween := get_tree().create_tween()
 	consume_tween.tween_method(
 		Callable(self, "_black_hole_consume_step")
-			.bind(
-				initial_position, 
-				black_hole_center, 
-				initial_rotation, 
-				initial_scale, 
-				float(total_spins), ship_visual
-			),
+		.bind(
+			initial_position,
+			black_hole_center,
+			initial_rotation,
+			initial_scale,
+			float(total_spins),
+			ship_visual
+		),
 		0.0, 1.0, consume_duration
-	)
-	
-	consume_tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
+	).set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
 	
 	await consume_tween.finished
 	queue_free()
@@ -389,12 +392,58 @@ func _black_hole_consume_step(
 	var eased_rotation_progress := pow(progress, 2.0)
 	var eased_scale_progress := pow(progress, 2.5)
 	
-	global_position = initial_position.lerp(black_hole_center, eased_position_progress)
-	
-	if ship_visual:
+	if is_instance_valid(ship_visual):
+		ship_visual.global_position = initial_position.lerp(black_hole_center, eased_position_progress)
 		ship_visual.rotation = initial_rotation + TAU * total_spins * eased_rotation_progress
+		ship_visual.scale    = initial_scale.lerp(Vector2.ZERO, eased_scale_progress)
+
+
+# -----------------------------------------------------------------------------
+# Reposiciona a Camera2D para focar suavemente no ponto-alvo (centro do buraco negro).
+# Parâmetros:
+#   black_hole_center (Vector2) ... Posição global de destino para a câmera.
+#   consume_duration (float) ...... Janela temporal usada para o tween de foco.
+#
+#   - A câmera passa a ser filha do Level e pode manter limites mais amplos.
+# -----------------------------------------------------------------------------
+func _camera_focus_to_point(black_hole_center: Vector2, consume_duration: float) -> void:
+	var camera := get_viewport().get_camera_2d()
+	if not camera or not is_instance_valid(Singleton.level):
+		return
 	
-	scale = initial_scale.lerp(Vector2.ZERO, eased_scale_progress)
+	if camera.has_method("reparent"):
+		camera.reparent(Singleton.level, true)
+	else:
+		var camera_transform := camera.global_transform
+		var old_parent := camera.get_parent()
+		if is_instance_valid(old_parent):
+			old_parent.remove_child(camera)
+		Singleton.level.add_child(camera)
+		camera.global_transform = camera_transform
+	
+	await get_tree().process_frame
+	
+	# Suavização nativa e limites amplos para não "clamparem" durante o tween
+	camera.position_smoothing_enabled = true
+	camera.position_smoothing_speed = 1.0
+	if camera.has_method("reset_smoothing"):
+		camera.reset_smoothing()
+	
+	camera.limit_left   = -100000000
+	camera.limit_top    = -100000000
+	camera.limit_right  =  100000000
+	camera.limit_bottom =  100000000
+	
+	camera.make_current()
+	
+	var cam_tween := get_tree().create_tween()
+	cam_tween.tween_property(
+		camera, "global_position", black_hole_center, consume_duration * 0.95
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
+	cam_tween.parallel().tween_property(
+		camera, "zoom", camera.zoom * 0.95, consume_duration * 0.6
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 
 # -----------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-extends CanvasLayer
+class_name SoundIcon extends CanvasLayer
 
 const MASTER_BUS_NAME := "Master"
 const ICON_OFF := preload("res://assets/sprites/icons/sound-off.svg")

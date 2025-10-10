@@ -1,4 +1,4 @@
-extends CharacterBody2D
+class_name Asteroid extends CharacterBody2D
 
 const SHIP_ATTRACTION = 100.0
 const ORE = preload("res://scenes/game/ore.tscn")
@@ -6,12 +6,15 @@ const MIN_DAMAGE := 10.0
 
 @onready var player: Node2D = Singleton.level.get_node_or_null("Player")
 
-var health = 100
-var moving = true
-var ore = false
-var asteroid_type
-var level
-var portal: Node2D = null
+var health : int = 100
+var moving : bool = true
+var ore : bool = false
+var asteroid_type : int
+var level : int
+
+
+@onready var player : Node2D = Singleton.level.get_node_or_null("Player")
+var portal : Node2D = null
 
 
 func _ready():
@@ -31,11 +34,11 @@ func on_portal_opened(p: Node2D) -> void:
 	portal = p
 
 
-func on_portal():
+func on_portal() -> void:
 	queue_free()
 
 
-func _physics_process(_delta):
+func _physics_process(_delta) -> void:
 	if !is_instance_valid(player):
 		player = Singleton.level.get_node_or_null("Player")
 		if !is_instance_valid(player):
@@ -76,20 +79,22 @@ func _physics_process(_delta):
 		move_and_slide()
 
 
-func player_collision():
+func player_collision() -> void:
 	asteroid_destruction()
 
 
-func asteroid_destruction():
+func asteroid_destruction() -> void:
 	moving = false
 	$Asteroid.play("explosion")
 	$AsteroidExplosion.start()
 	$AudioStreamPlayer2D.play()
 	$".".set_collision_layer_value(1, true)
 	$".".set_collision_layer_value(2, false)
+	
+	SaveManager.on_enemy_killed()
 
 
-func add_new_ore():
+func add_new_ore() -> void:
 	var new_ore = ORE.instantiate()
 	new_ore.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", new_ore)

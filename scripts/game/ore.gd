@@ -1,4 +1,4 @@
-extends CharacterBody2D
+class_name Ore extends CharacterBody2D
 
 var moving_speed = 0
 var player : Player 
