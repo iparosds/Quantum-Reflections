@@ -17,7 +17,7 @@ var portal_active = false
 var score = 0;
 var quantum_roll = 0	
 var portal_timer: float = 0.0
-var portal_node: Node2D = null
+var portal_node: Portal = null
 
 
 func _ready():
@@ -165,12 +165,12 @@ func _find_safe_portal_position() -> Vector2:
 
 func _open_portal():
 	portal_node = PORTAL.instantiate()
-	
+	portal_node.scale = Vector2(2, 2)
+	portal_node.start_animated = true
 	portal_node.global_position = _find_safe_portal_position()
 	
 	add_child(portal_node)
 	portal_node.add_to_group("portal")
-	
 	get_tree().call_group("asteroids", "on_portal_opened", portal_node)
 
 
@@ -185,6 +185,9 @@ func win():
 	
 	if is_instance_valid(Singleton.settings_icon):
 		Singleton.settings_icon.visible = false
+	
+	SaveManager.on_stage_ended(true)
+	SaveManager.save_to_disk()
 
 
 # ------------------------------------------------------------
@@ -279,6 +282,8 @@ func _physics_process(delta):
 # ------------------------------------------------------------
 func add_ore():
 	score += 1
+	
+	SaveManager.add_score(1)
 	
 	if score <= 10:
 		Singleton.gui_manager.hud_xp.max_value = 10

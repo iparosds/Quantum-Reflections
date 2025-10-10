@@ -88,6 +88,8 @@ func asteroid_destruction() -> void:
 	$AudioStreamPlayer2D.play()
 	$".".set_collision_layer_value(1, true)
 	$".".set_collision_layer_value(2, false)
+	
+	SaveManager.on_enemy_killed()
 
 
 func add_new_ore() -> void:
