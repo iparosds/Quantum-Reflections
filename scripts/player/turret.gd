@@ -22,7 +22,10 @@ func _ready() -> void:
 
 
 func shoot(target_enemy):
-	$AudioStreamPlayer2D.play()
+	var shot_stream: AudioStream = $AudioStreamPlayer2D.stream
+	AudioPlayer.play_shot(shot_stream, true, 6.0)
+	$AudioStreamPlayer2D.stop()
+	
 	var new_bullet = projectile.scene.instantiate()
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
