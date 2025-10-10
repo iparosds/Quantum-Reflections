@@ -11,9 +11,6 @@ var moving : bool = true
 var ore : bool = false
 var asteroid_type : int
 var level : int
-
-
-@onready var player : Node2D = Singleton.level.get_node_or_null("Player")
 var portal : Node2D = null
 
 
