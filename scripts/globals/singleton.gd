@@ -51,7 +51,6 @@ func start_game() -> void:
 	
 	goto_level(current_level_path)
 	
-	
 	if current_level == "level_01" or current_level_path.ends_with("level_01.tscn") and not skip_tutorial:
 		start_tutorial()
 
@@ -239,6 +238,7 @@ func open_controls() -> void:
 
 
 func quit_game_from_menu() -> void:
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
@@ -246,6 +246,7 @@ func quit_to_desktop_from_game() -> void:
 	if not gui_manager.is_paused:
 		return
 	
+	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
@@ -300,6 +301,8 @@ func game_over():
 		
 		AudioPlayer.stop_music() 
 		AudioPlayer._play_menu_music()
+		
+		SaveManager.on_stage_ended(false)
 
 
 # ---------------------

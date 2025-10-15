@@ -61,6 +61,7 @@ vertical_alignment = 1
 [node name="RightColumn" type="Control" parent="MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="LabelAction" type="Label" parent="MarginContainer/HBoxContainer/RightColumn"]
 layout_mode = 1
