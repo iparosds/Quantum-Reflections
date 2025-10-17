@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpwh8pafstt3h"]
+
+[ext_resource type="Script" uid="uid://cqiekqan6em7t" path="res://scripts/menus/stats_row.gd" id="1_adekb"]
+
+[node name="StatsRow" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_adekb")
+
+[node name="1" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "SN"
+
+[node name="2" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Name"
