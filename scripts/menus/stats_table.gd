@@ -14,14 +14,14 @@ func _ready() -> void:
 	var totals = SaveManager.profile.user.totals
 	
 	var rows : Array = [
-		{"id": "Atualizado em",        "name": str(SaveManager.profile.updated_at)},
-		{"id": "Score total",          "name": str(totals.score)},
-		{"id": "Tempo total (HMS)",    "name": str(totals.play_time_hms)},
-		{"id": "Inimigos mortos",      "name": str(totals.enemies_killed)},
-		{"id": "Estágios jogados",     "name": str(totals.stages_played)},
-		{"id": "Vitórias",             "name": str(totals.stages_won)},
-		{"id": "Derrotas",             "name": str(totals.stages_lost)},
-		{"id": "Buracos negros (tot)", "name": str(totals.black_holes_opened)},
+		{"id": "Updated at", "name": str(SaveManager.profile.updated_at)},
+		{"id": "Total score", "name": str(totals.score)},
+		{"id": "Total time played", "name": str(totals.play_time_hms)},
+		{"id": "Enemies killed", "name": str(totals.enemies_killed)},
+		{"id": "Stages played", "name": str(totals.stages_played)},
+		{"id": "Wins", "name": str(totals.stages_won)},
+		{"id": "Losses", "name": str(totals.stages_lost)},
+		{"id": "Black holes opened", "name": str(totals.black_holes_opened)},
 	]
 	
 	for row in rows:
@@ -33,5 +33,5 @@ func set_data(stats_data: Dictionary) -> void:
 	var row := stats_row.instantiate()
 	row.name = str(row_name)
 	stats_table.add_child(row)
-	row.get_node("1").text = str(stats_data["id"])
-	row.get_node("2").text = str(stats_data["name"])
+	row.get_node("StatNameLabel").text = str(stats_data["id"])
+	row.get_node("StatValueLabel").text = str(stats_data["name"])

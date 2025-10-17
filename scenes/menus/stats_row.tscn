@@ -5,14 +5,14 @@ anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 
-[node name="1" type="Label" parent="."]
+[node name="StatNameLabel" type="Label" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
-text = "SN"
+text = "Stat"
 
-[node name="2" type="Label" parent="."]
+[node name="StatValueLabel" type="Label" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
-text = "Name"
+text = "Result"

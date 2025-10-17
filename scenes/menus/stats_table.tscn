@@ -30,17 +30,17 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="1" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="StatsTitle" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
-text = "SN"
+text = "Stat	"
 
-[node name="2" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="StatsValue" type="Label" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
-text = "Name"
+text = "Value"
 vertical_alignment = 1
 
 [node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer"]
