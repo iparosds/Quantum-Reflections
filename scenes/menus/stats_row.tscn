@@ -1,12 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpwh8pafstt3h"]
-
-[ext_resource type="Script" uid="uid://cqiekqan6em7t" path="res://scripts/menus/stats_row.gd" id="1_adekb"]
+[gd_scene format=3 uid="uid://bpwh8pafstt3h"]
 
 [node name="StatsRow" type="HBoxContainer"]
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
-script = ExtResource("1_adekb")
 
 [node name="1" type="Label" parent="."]
 layout_mode = 2

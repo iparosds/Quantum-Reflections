@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=41 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
 [ext_resource type="FontFile" uid="uid://du5x3bmkjrs0k" path="res://assets/fonts/Jersey25-Regular.ttf" id="2_3da3r"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/menus/MENU SOUND - DOWN.wav" id="10_271i3"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/menus/MENU SOUND - SELECT.wav" id="11_4wjxq"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/menus/MENU SOUND - BACK.wav" id="12_pme4d"]
+[ext_resource type="PackedScene" uid="uid://ctilynnf7oo22" path="res://scenes/menus/stats_table.tscn" id="15_7aiwd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qupqx"]
 bg_color = Color(0.486275, 0.494118, 0.631373, 1)
@@ -900,6 +901,10 @@ stream = ExtResource("11_4wjxq")
 stream = ExtResource("12_pme4d")
 
 [node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
+
+[node name="StatsTable" type="CanvasLayer" parent="."]
+
+[node name="StatsTable" parent="StatsTable" instance=ExtResource("15_7aiwd")]
 
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/BackToSettingsButton" to="InputSettings/Control" method="_on_back_to_settings_button_pressed"]
