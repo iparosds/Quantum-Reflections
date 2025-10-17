@@ -28,3 +28,7 @@ func set_data(stats_data: Dictionary) -> void:
 	stats_table.add_child(row)
 	row.get_node("StatNameLabel").text = str(stats_data["id"])
 	row.get_node("StatValueLabel").text = str(stats_data["name"])
+
+
+func _on_stats_table_back_button_pressed() -> void:
+	Singleton.open_main_menu()

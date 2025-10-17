@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctilynnf7oo22"]
+[gd_scene load_steps=4 format=3 uid="uid://ctilynnf7oo22"]
 
 [ext_resource type="Script" uid="uid://bi66m46w3wbrp" path="res://scripts/menus/stats_table.gd" id="1_70qbj"]
+[ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/menus_and_misc/bg menu.jpg" id="2_3pmq3"]
+[ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons/buttons_theme.tres" id="2_8mhkr"]
 
 [node name="StatsTable" type="Control"]
 layout_mode = 3
@@ -9,20 +11,32 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 script = ExtResource("1_70qbj")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_3pmq3")
+expand_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 183.99998
-offset_top = 80.99999
-offset_right = 184.0
-offset_bottom = 81.0
+offset_left = 256.0
+offset_top = 72.0
+offset_right = 256.0
+offset_bottom = 72.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.72, 0.7135714)
+scale = Vector2(0.5529415, 0.7714688)
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -55,18 +69,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Button" type="Button" parent="."]
+[node name="StatsTableBackButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -22.5
-offset_top = -78.0
-offset_right = 22.5
-offset_bottom = -47.0
+offset_left = -24.0
+offset_top = -48.0
+offset_right = 6.0
+offset_bottom = -27.0
 grow_horizontal = 2
 grow_vertical = 0
+scale = Vector2(1.5, 1.5)
+theme = ExtResource("2_8mhkr")
 text = "Back
 "
+flat = true
+
+[connection signal="pressed" from="StatsTableBackButton" to="." method="_on_stats_table_back_button_pressed"]

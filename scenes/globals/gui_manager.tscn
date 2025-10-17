@@ -360,18 +360,24 @@ layout_mode = 2
 size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 focus_neighbor_top = NodePath("../SettingsButton")
-focus_neighbor_bottom = NodePath("../QuitButton")
+focus_neighbor_bottom = NodePath("../StatsButton")
 theme = ExtResource("5_w8ru2")
 text = "Credits"
 flat = true
 
-[node name="QuitButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+[node name="StatsButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../CreditsButton")
+focus_neighbor_bottom = NodePath("../QuitButton")
+theme = ExtResource("5_w8ru2")
+text = "Stats"
+flat = true
+
+[node name="QuitButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../StatsButton")
 focus_neighbor_bottom = NodePath("../NewGameButton")
 theme = ExtResource("5_w8ru2")
-theme_override_fonts/font = ExtResource("2_8d174")
-theme_override_font_sizes/font_size = 12
 text = "Quit"
 flat = true
 
@@ -900,11 +906,12 @@ stream = ExtResource("11_4wjxq")
 [node name="BackSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("12_pme4d")
 
-[node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
-
 [node name="StatsTable" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="StatsTable" parent="StatsTable" instance=ExtResource("15_7aiwd")]
+
+[node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
 
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/BackToSettingsButton" to="InputSettings/Control" method="_on_back_to_settings_button_pressed"]
