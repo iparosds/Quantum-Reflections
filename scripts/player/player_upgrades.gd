@@ -60,7 +60,7 @@ func get_damage_multiplier_for_weapon_id(weapon_id: int) -> float:
 	if weapon_id == WeaponId.BULLET_1:
 		return get_active_damage_multiplier(1)
 	elif weapon_id == WeaponId.BULLET_2:
-		return get_active_damage_multiplier(2)
+		return get_active_damage_multiplier(2) * 0.7
 	else:
 		return 1.0
 
