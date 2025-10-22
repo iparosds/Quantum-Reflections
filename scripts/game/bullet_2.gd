@@ -1,14 +1,12 @@
 class_name Bullet2 extends Area2D
 
 const RANGE = 300
-
+@onready var projectile: AnimatedSprite2D = %Projectile
 var target
 var direction
 var travelled_distance = 0
 var move_speed = 200
 var damage_multiplier: float = 1.0
-
-@onready var bullet_rotation = rotation
 
 
 func _ready():
@@ -25,6 +23,7 @@ func _physics_process(delta):
 			direction = global_position.direction_to(target.global_position)
 			position += direction * move_speed * delta
 			travelled_distance += move_speed * delta
+			projectile.rotate(0.7)
 
 func _on_body_entered(body):
 	if body.has_method("take_damage"):

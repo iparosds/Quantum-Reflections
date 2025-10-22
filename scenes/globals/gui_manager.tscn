@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=41 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
 [ext_resource type="FontFile" uid="uid://du5x3bmkjrs0k" path="res://assets/fonts/Jersey25-Regular.ttf" id="2_3da3r"]
