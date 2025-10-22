@@ -20,7 +20,6 @@ func _physics_process(delta):
 	else:
 		if move_speed != 0:
 			move_speed += 20
-			direction = global_position.direction_to(target.global_position)
 			position += direction * move_speed * delta
 			travelled_distance += move_speed * delta
 			projectile.rotate(0.7)
