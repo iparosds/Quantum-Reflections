@@ -43,10 +43,12 @@ func _on_body_entered(body):
 			var diff_position = global_position - body.global_position
 			if diff_position.length() > 0.0001:
 				direction = direction.bounce(diff_position.normalized()).normalized()
-				bounce_count += 1
 			else:
 				direction = -direction
-				bounce_count += 1
+			bounce_count += 1
+			projectile.scale = projectile.scale.lerp(Vector2.ZERO, 0.3)
+			if projectile.scale.x < 0.2 or projectile.scale.y < 0.2:
+				queue_free()
 		else:
 			queue_free()
 	else:
