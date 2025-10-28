@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://b023o2byg2jkp"]
+
+[ext_resource type="Script" uid="uid://bx0l7p0a201ys" path="res://scripts/game/bullet_3.gd" id="1_8iyde"]
+[ext_resource type="Texture2D" uid="uid://co3i467a2uh8a" path="res://icon.svg" id="1_dbbil"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ijc1p"]
+radius = 49.0
+
+[node name="Bullet_3" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_8iyde")
+
+[node name="MineSprite" type="Sprite2D" parent="."]
+scale = Vector2(0.21875, 0.23437499)
+texture = ExtResource("1_dbbil")
+
+[node name="VanishTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ijc1p")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
