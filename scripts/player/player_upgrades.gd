@@ -5,12 +5,13 @@ signal stats_updated
 # Cena da Primeira Arma Ativa
 const BULLET_1_SCENE: PackedScene = preload("res://scenes/game/bullet.tscn")
 const BULLET_2_SCENE: PackedScene = preload("res://scenes/game/bullet_2.tscn")
+const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
 const MAX_LEVEL: int = 5
 
 # Trilhas de upgrade disponíveis
-enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2, PASSIVE_SHIELD, PASSIVE_SPEED}
+enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2, ACTIVE_WEAPON_3, PASSIVE_SHIELD, PASSIVE_SPEED}
 # IDs dos projéteis (casam com o que o turret.gd espera em current_bullet)
-enum WeaponId { BULLET_1 = 1, BULLET_2 = 2 }
+enum WeaponId { BULLET_1 = 1, BULLET_2 = 2, BULLET_3 = 3 }
 
 # Bases
 var base_health: float = 100.0
@@ -20,6 +21,7 @@ var base_max_acceleration: float = 1000.0
 # Nível atual da Arma Ativa
 var active_weapon_1_level: int = 0
 var active_weapon_2_level: int = 0
+var active_weapon_3_level: int = 0
 var passive_shield_level: int = 0
 var passive_speed_level: int = 0
 
@@ -33,6 +35,8 @@ func apply_upgrade(track: UpgradeTrack) -> void:
 			active_weapon_1_level = min(active_weapon_1_level + 1, MAX_LEVEL)
 		UpgradeTrack.ACTIVE_WEAPON_2:
 			active_weapon_2_level = min(active_weapon_2_level + 1, MAX_LEVEL)
+		UpgradeTrack.ACTIVE_WEAPON_3:
+			active_weapon_3_level = min(active_weapon_3_level + 1, MAX_LEVEL)
 		UpgradeTrack.PASSIVE_SHIELD:
 			passive_shield_level = min(passive_shield_level + 1, MAX_LEVEL)
 		UpgradeTrack.PASSIVE_SPEED:
@@ -41,13 +45,15 @@ func apply_upgrade(track: UpgradeTrack) -> void:
 	stats_updated.emit()
 
 
-# Multiplicador de dano para o slot (1 → Bullet.tscn, 2 → Bullet_2.tscn)
+# Multiplicador de dano para o slot
 func get_active_damage_multiplier(slot: int) -> float:
 	var level: int
 	if slot == 1:
 		level = active_weapon_1_level
-	else:
+	elif slot == 2:
 		level = active_weapon_2_level
+	else:
+		level = active_weapon_3_level
 
 	if level <= 0:
 		return 1.0
@@ -61,6 +67,8 @@ func get_damage_multiplier_for_weapon_id(weapon_id: int) -> float:
 		return get_active_damage_multiplier(1)
 	elif weapon_id == WeaponId.BULLET_2:
 		return get_active_damage_multiplier(2) * 0.7
+	elif weapon_id == WeaponId.BULLET_3:
+		return get_active_damage_multiplier(3)
 	else:
 		return 1.0
 
@@ -69,8 +77,10 @@ func get_damage_multiplier_for_weapon_id(weapon_id: int) -> float:
 func get_weapon_scene_for_slot(slot: int) -> PackedScene:
 	if slot == 1:
 		return BULLET_1_SCENE
-	else:
+	elif slot == 2:
 		return BULLET_2_SCENE
+	else:
+		return BULLET_3_SCENE
 
 
 # Cena do projétil por id (1/2)
@@ -79,8 +89,10 @@ func get_weapon_scene_for_id(weapon_id: int) -> PackedScene:
 		return BULLET_1_SCENE
 	elif weapon_id == WeaponId.BULLET_2:
 		return BULLET_2_SCENE
+	elif weapon_id == WeaponId.BULLET_3:
+		return BULLET_3_SCENE
 	else:
-		return BULLET_1_SCENE  # fallback
+		return BULLET_1_SCENE
 
 
 # PASSIVAS (bônus percentual 0.0 .. 0.25)
@@ -113,6 +125,7 @@ func to_dictionary() -> Dictionary:
 	return {
 		"active_weapon_1_level": active_weapon_1_level,
 		"active_weapon_2_level": active_weapon_2_level,
+		"active_weapon_3_level": active_weapon_3_level,
 		"passive_shield_level": passive_shield_level,
 		"passive_speed_level": passive_speed_level,
 		"base_health": base_health,
@@ -124,6 +137,7 @@ func to_dictionary() -> Dictionary:
 func from_dictionary(data: Dictionary) -> void:
 	active_weapon_1_level = int(data.get("active_weapon_1_level", active_weapon_1_level))
 	active_weapon_2_level = int(data.get("active_weapon_2_level", active_weapon_2_level))
+	active_weapon_3_level = int(data.get("active_weapon_3_level", active_weapon_3_level))
 	passive_shield_level = int(data.get("passive_shield_level", passive_shield_level))
 	passive_speed_level = int(data.get("passive_speed_level", passive_speed_level))
 	base_health = float(data.get("base_health", base_health))
@@ -136,6 +150,7 @@ func from_dictionary(data: Dictionary) -> void:
 func reset() -> void:
 	active_weapon_1_level = 0
 	active_weapon_2_level = 0
+	active_weapon_3_level = 0
 	passive_shield_level = 0
 	passive_speed_level = 0
 	

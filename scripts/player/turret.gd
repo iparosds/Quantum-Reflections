@@ -23,28 +23,23 @@ func _ready() -> void:
 
 func shoot(target_enemy):
 	$AudioStreamPlayer2D.play()
-	
 	var new_bullet: Node
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
-	else:
+	elif current_bullet == 2:
 		new_bullet = BULLET_2.instantiate()
-	
+	else:
+		return
 	new_bullet.position = %ShootingPoint.position
 	new_bullet.rotation = %ShootingPoint.rotation
 	new_bullet.target = target_enemy
-	
 	var multiplier := 1.0
 	if PlayerUpgrades:
 		multiplier = PlayerUpgrades.get_damage_multiplier_for_weapon_id(current_bullet)
-	
 	if new_bullet.has_method("set_damage_multiplier"):
 		new_bullet.set_damage_multiplier(multiplier)
 	else:
 		new_bullet.damage_multiplier = multiplier
-	
-	#print("[Turret] fire id=", current_bullet, " mult=", mult)
-	
 	%ShootingPoint.add_child(new_bullet)
 
 
@@ -56,7 +51,6 @@ func _physics_process(_delta):
 			shoot(target_enemy)
 			$ShootingInterval.start()
 			cooldown = true
-			#look_at(target_enemy.global_position)
 
 
 func _on_timer_timeout():

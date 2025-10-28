@@ -3,6 +3,7 @@ class_name Player extends CharacterBody2D
 const BLACK_HOLE : PackedScene = preload("res://scenes/game/black_hole.tscn")
 const DAMAGE_RATE : float = 500.0
 const MAX_ACCELERATION : float = 1000.0
+const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -41,6 +42,8 @@ var level
 var dying_to_black_hole := false
 var max_health: float = 100.0
 var selected_weapon_id: int = 1
+var mine_drop_interval: float = 0.1
+var _mine_timer: Timer
 
 signal health_depleted
 
@@ -62,12 +65,24 @@ func _ready() -> void:
 			turret.current_bullet = 0
 	
 	call_deferred("_init_level_progress")
-	 
 	if get_tree().root.has_node("PlayerUpgrades"):
 		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
-	
 	_apply_health_from_upgrades(true, true)
 	_apply_speed_from_upgrades()
+	
+	_mine_timer = Timer.new()
+	_mine_timer.wait_time = mine_drop_interval
+	_mine_timer.one_shot = false
+	add_child(_mine_timer)
+	_mine_timer.timeout.connect(_on_mine_timer_timeout)
+
+
+func _on_mine_timer_timeout() -> void:
+	if not is_instance_valid(Singleton.level):
+		return
+	var mine := BULLET_3_SCENE.instantiate()
+	Singleton.level.add_child(mine)
+	mine.call_deferred("set", "global_position", global_position)
 
 
 func _on_upgrades_changed() -> void:
@@ -106,7 +121,7 @@ func world_limit(size: float) -> void:
 func portal() -> void:
 	for turret in turrets.values():
 		if is_instance_valid(turret) and turret.current_bullet != 0:
-			turret.current_bullet = randi_range(1, 2)
+			turret.current_bullet = randi_range(1, 3)
 
 
 # ------------------------
@@ -206,7 +221,6 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 
 func _physics_process(delta : float) -> void:
 	_update_level_from_score(Singleton.level.get_score())
-	
 	var cap := _get_speed_cap()
 	
 	if Singleton.quantum == false:
@@ -224,20 +238,16 @@ func _physics_process(delta : float) -> void:
 		acceleration += 1
 	if boosting == true && stopping == false && acceleration < (cap - 10.0):
 		acceleration += 5
-	
 	if stopping == true && accelelariting == false && acceleration > 10:
 		acceleration -= 5
 	if stopping == false && accelelariting == false && acceleration > 0:
 		acceleration -= 1
-	
 	if rotating_right == true && boosting == false:
 		%Ship.rotation += (cap - (acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
 		%Ship.rotation -= (cap - (acceleration/2))/10000.0
-	
 	if acceleration > cap:
 		acceleration = cap
-	
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		position += direction2 * (acceleration/2) * delta
@@ -254,9 +264,7 @@ func _physics_process(delta : float) -> void:
 				Singleton.display_number(damage, position, "#2f213b")
 			else:
 				Singleton.display_number(damage, position, "#7c7ea1")
-			
 			print_rich("[HP] ", snapped(health, 0.1), "/", max_health)
-			
 			mob.player_collision()
 	
 	var overlapping_ores = %CollectOre.get_overlapping_bodies()
@@ -268,17 +276,19 @@ func _physics_process(delta : float) -> void:
 	if health <= 0.0:
 		health = max_health
 		Singleton.level.quantum = true
-		
 		var new_black_hole = BLACK_HOLE.instantiate()
 		new_black_hole.position = position
-		
 		Singleton.level.add_child(new_black_hole)
-		
 		SaveManager.on_black_hole_opened(1)
-		
 		health_depleted.emit()
-	
 	%ProgressBar.value = health
+	
+	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
+		if _mine_timer.is_stopped():
+			_mine_timer.start()
+	else:
+		if not _mine_timer.is_stopped():
+			_mine_timer.stop()
 
 
 # ----------------------------------------------------------------------------
@@ -530,7 +540,7 @@ func _open_upgrade_picker() -> void:
 
 
 func set_selected_weapon(weapon_id: int) -> void:
-	selected_weapon_id = clamp(weapon_id, 1, 2)
+	selected_weapon_id = clamp(weapon_id, 1, 3)
 	_set_all_active_turrets_bullet(selected_weapon_id)
 
 
