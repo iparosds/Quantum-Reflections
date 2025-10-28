@@ -22,12 +22,13 @@ func _ready() -> void:
 
 
 func shoot(target_enemy):
-	$AudioStreamPlayer2D.play()
 	var new_bullet: Node
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
+		$AudioStreamPlayer2D.play()
 	elif current_bullet == 2:
 		new_bullet = BULLET_2.instantiate()
+		$AudioStreamPlayer2D.play()
 	else:
 		return
 	new_bullet.position = %ShootingPoint.position

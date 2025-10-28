@@ -42,7 +42,7 @@ var level
 var dying_to_black_hole := false
 var max_health: float = 100.0
 var selected_weapon_id: int = 1
-var mine_drop_interval: float = 0.1
+var mine_drop_interval: float = 0.2
 var _mine_timer: Timer
 
 signal health_depleted
