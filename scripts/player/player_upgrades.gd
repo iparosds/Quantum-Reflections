@@ -6,12 +6,14 @@ signal stats_updated
 const BULLET_1_SCENE: PackedScene = preload("res://scenes/game/bullet.tscn")
 const BULLET_2_SCENE: PackedScene = preload("res://scenes/game/bullet_2.tscn")
 const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
+const BULLET_4_SCENE: PackedScene = preload("res://scenes/game/bullet_4.tscn")
+
 const MAX_LEVEL: int = 5
 
 # Trilhas de upgrade disponíveis
-enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2, ACTIVE_WEAPON_3, PASSIVE_SHIELD, PASSIVE_SPEED}
+enum UpgradeTrack { ACTIVE_WEAPON_1, ACTIVE_WEAPON_2, ACTIVE_WEAPON_3, ACTIVE_WEAPON_4, PASSIVE_SHIELD, PASSIVE_SPEED}
 # IDs dos projéteis (casam com o que o turret.gd espera em current_bullet)
-enum WeaponId { BULLET_1 = 1, BULLET_2 = 2, BULLET_3 = 3 }
+enum WeaponId { BULLET_1 = 1, BULLET_2 = 2, BULLET_3 = 3, BULLET_4 = 4 }
 
 # Bases
 var base_health: float = 100.0
@@ -22,6 +24,7 @@ var base_max_acceleration: float = 1000.0
 var active_weapon_1_level: int = 0
 var active_weapon_2_level: int = 0
 var active_weapon_3_level: int = 0
+var active_weapon_4_level: int = 0
 var passive_shield_level: int = 0
 var passive_speed_level: int = 0
 
@@ -37,6 +40,8 @@ func apply_upgrade(track: UpgradeTrack) -> void:
 			active_weapon_2_level = min(active_weapon_2_level + 1, MAX_LEVEL)
 		UpgradeTrack.ACTIVE_WEAPON_3:
 			active_weapon_3_level = min(active_weapon_3_level + 1, MAX_LEVEL)
+		UpgradeTrack.ACTIVE_WEAPON_4:
+			active_weapon_4_level = min(active_weapon_4_level + 1, MAX_LEVEL)
 		UpgradeTrack.PASSIVE_SHIELD:
 			passive_shield_level = min(passive_shield_level + 1, MAX_LEVEL)
 		UpgradeTrack.PASSIVE_SPEED:
@@ -52,8 +57,10 @@ func get_active_damage_multiplier(slot: int) -> float:
 		level = active_weapon_1_level
 	elif slot == 2:
 		level = active_weapon_2_level
-	else:
+	elif slot == 3:
 		level = active_weapon_3_level
+	else: 
+		level = active_weapon_4_level
 
 	if level <= 0:
 		return 1.0
@@ -69,6 +76,8 @@ func get_damage_multiplier_for_weapon_id(weapon_id: int) -> float:
 		return get_active_damage_multiplier(2) * 0.7
 	elif weapon_id == WeaponId.BULLET_3:
 		return get_active_damage_multiplier(3)
+	elif weapon_id == WeaponId.BULLET_4:
+		return get_active_damage_multiplier(4)
 	else:
 		return 1.0
 
@@ -79,8 +88,10 @@ func get_weapon_scene_for_slot(slot: int) -> PackedScene:
 		return BULLET_1_SCENE
 	elif slot == 2:
 		return BULLET_2_SCENE
-	else:
+	elif slot == 3:
 		return BULLET_3_SCENE
+	else:
+		return BULLET_4_SCENE
 
 
 # Cena do projétil por id (1/2)
@@ -91,6 +102,8 @@ func get_weapon_scene_for_id(weapon_id: int) -> PackedScene:
 		return BULLET_2_SCENE
 	elif weapon_id == WeaponId.BULLET_3:
 		return BULLET_3_SCENE
+	elif weapon_id == WeaponId.BULLET_4:
+		return BULLET_4_SCENE
 	else:
 		return BULLET_1_SCENE
 
@@ -126,6 +139,7 @@ func to_dictionary() -> Dictionary:
 		"active_weapon_1_level": active_weapon_1_level,
 		"active_weapon_2_level": active_weapon_2_level,
 		"active_weapon_3_level": active_weapon_3_level,
+		"active_weapon_4_level": active_weapon_4_level,
 		"passive_shield_level": passive_shield_level,
 		"passive_speed_level": passive_speed_level,
 		"base_health": base_health,
@@ -138,6 +152,7 @@ func from_dictionary(data: Dictionary) -> void:
 	active_weapon_1_level = int(data.get("active_weapon_1_level", active_weapon_1_level))
 	active_weapon_2_level = int(data.get("active_weapon_2_level", active_weapon_2_level))
 	active_weapon_3_level = int(data.get("active_weapon_3_level", active_weapon_3_level))
+	active_weapon_4_level = int(data.get("active_weapon_3_level", active_weapon_4_level))
 	passive_shield_level = int(data.get("passive_shield_level", passive_shield_level))
 	passive_speed_level = int(data.get("passive_speed_level", passive_speed_level))
 	base_health = float(data.get("base_health", base_health))
@@ -151,6 +166,7 @@ func reset() -> void:
 	active_weapon_1_level = 0
 	active_weapon_2_level = 0
 	active_weapon_3_level = 0
+	active_weapon_4_level = 0
 	passive_shield_level = 0
 	passive_speed_level = 0
 	
