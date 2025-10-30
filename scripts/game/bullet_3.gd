@@ -7,9 +7,10 @@ class_name Bullet3 extends Area2D
 @onready var explosion_sound: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var lifetime_seconds: float = 3.0
-var insta_kill_amount: float = 99999
+var insta_kill_amount: float = 99999.0
 
 
+# Inicializa o timer e configura a mina para começar ativa e monitorando colisões.
 func _ready() -> void:
 	vanish_timer.wait_time = lifetime_seconds
 	vanish_timer.one_shot = true
@@ -21,19 +22,24 @@ func _ready() -> void:
 		vanish_timer.timeout.connect(_on_vanish_timer_timeout)
 
 
+# Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
 	if body.has_method("take_damage"):
-		collision_shape.set_deferred("disabled", true)
-		set_deferred("monitoring", false)
 		body.take_damage(insta_kill_amount, 1.0)
-		vanish_timer.stop()
-		mine_sprite.hide()
-		explosion_animation.show()
-		explosion_animation.frame = 0
-		explosion_sound.play()
-		explosion_animation.play("explosion")
-		if not explosion_animation.animation_finished.is_connected(_on_explosion_finished):
-			explosion_animation.animation_finished.connect(_on_explosion_finished)
+		_explode()
+
+
+# Executa a animação e o som da explosão e desativa colisões.
+func _explode() -> void:
+	collision_shape.set_deferred("disabled", true)
+	set_deferred("monitoring", false)
+	vanish_timer.stop()
+	mine_sprite.hide()
+	explosion_animation.show()
+	explosion_animation.play("explosion")
+	explosion_sound.play()
+	if not explosion_animation.animation_finished.is_connected(_on_explosion_finished):
+		explosion_animation.animation_finished.connect(_on_explosion_finished)
 
 
 func _on_explosion_finished() -> void:
@@ -41,4 +47,4 @@ func _on_explosion_finished() -> void:
 
 
 func _on_vanish_timer_timeout() -> void:
-	queue_free()
+	_explode()
