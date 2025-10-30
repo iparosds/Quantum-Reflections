@@ -1,12 +1,9 @@
 [gd_scene load_steps=29 format=3 uid="uid://b023o2byg2jkp"]
 
 [ext_resource type="Script" uid="uid://bx0l7p0a201ys" path="res://scripts/game/bullet_3.gd" id="1_8iyde"]
-[ext_resource type="Texture2D" uid="uid://co3i467a2uh8a" path="res://icon.svg" id="1_dbbil"]
+[ext_resource type="Texture2D" uid="uid://cp5wefpif1pbb" path="res://assets/sprites/icons/mine-image.png" id="2_5nyxk"]
 [ext_resource type="Texture2D" uid="uid://l2ubmkx08q5y" path="res://assets/sprites/levels_sprites/explosion-animation.png" id="4_5nyxk"]
 [ext_resource type="AudioStream" uid="uid://doo3c5hlt71b6" path="res://assets/sounds/in_game/SE-Explosion3-F.ogg" id="4_uv7wv"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_ijc1p"]
-radius = 49.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ijc1p"]
 atlas = ExtResource("4_5nyxk")
@@ -175,16 +172,17 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ijc1p"]
+radius = 49.0
+
 [node name="Bullet_3" type="Area2D"]
 collision_mask = 2
 script = ExtResource("1_8iyde")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_ijc1p")
-
 [node name="MineSprite" type="Sprite2D" parent="."]
-scale = Vector2(0.21875, 0.23437499)
-texture = ExtResource("1_dbbil")
+position = Vector2(-5.9604645e-08, 0)
+scale = Vector2(0.029296873, 0.029296873)
+texture = ExtResource("2_5nyxk")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 visible = false
@@ -199,5 +197,8 @@ autostart = true
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_uv7wv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ijc1p")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

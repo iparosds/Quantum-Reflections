@@ -47,6 +47,7 @@ theme_override_constants/margin_right = 30
 custom_minimum_size = Vector2(50, 75)
 layout_mode = 2
 texture = ExtResource("1_qqt0o")
+expand_mode = 2
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2
