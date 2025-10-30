@@ -4,6 +4,8 @@ const BLACK_HOLE : PackedScene = preload("res://scenes/game/black_hole.tscn")
 const DAMAGE_RATE : float = 500.0
 const MAX_ACCELERATION : float = 1000.0
 const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
+const BULLET_4_SCENE: PackedScene = preload("res://scenes/game/bullet_4.tscn")
+
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -44,6 +46,7 @@ var max_health: float = 100.0
 var selected_weapon_id: int = 1
 var mine_drop_interval: float = 0.2
 var _mine_timer: Timer
+var drone: Bullet4 = null
 
 signal health_depleted
 
@@ -282,13 +285,6 @@ func _physics_process(delta : float) -> void:
 		SaveManager.on_black_hole_opened(1)
 		health_depleted.emit()
 	%ProgressBar.value = health
-	
-	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
-		if _mine_timer.is_stopped():
-			_mine_timer.start()
-	else:
-		if not _mine_timer.is_stopped():
-			_mine_timer.stop()
 
 
 # ----------------------------------------------------------------------------
@@ -540,8 +536,35 @@ func _open_upgrade_picker() -> void:
 
 
 func set_selected_weapon(weapon_id: int) -> void:
-	selected_weapon_id = clamp(weapon_id, 1, 3)
+	selected_weapon_id = clamp(weapon_id, 1, 4)
 	_set_all_active_turrets_bullet(selected_weapon_id)
+	
+	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
+		if _mine_timer.is_stopped():
+			_mine_timer.start()
+	else:
+		if not _mine_timer.is_stopped():
+			_mine_timer.stop()
+	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_4:
+		_spawn_drone()
+	else:
+		_remove_drone()
+
+
+func _spawn_drone() -> void:
+	if drone == null or not is_instance_valid(drone):
+		if not is_instance_valid(Singleton.level):
+			return
+		var drone_scene := BULLET_4_SCENE.instantiate() as Bullet4
+		drone_scene.player = self
+		Singleton.level.add_child(drone_scene)
+		drone = drone_scene
+
+
+func _remove_drone() -> void:
+	if drone != null and is_instance_valid(drone):
+		drone.queue_free()
+	drone = null
 
 
 func _set_all_active_turrets_bullet(bullet_id: int) -> void:

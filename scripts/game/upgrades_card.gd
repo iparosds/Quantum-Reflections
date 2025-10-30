@@ -13,7 +13,8 @@ extends Panel
 
 var weapon_1_image : Texture2D = load("res://assets/sprites/levels_sprites/projectile.png")
 var weapon_2_image : Texture2D = load("res://assets/sprites/levels_sprites/turret.png")
-var weapon_3_image : Texture2D = load("res://icon.svg")
+var weapon_3_image : Texture2D = load("res://assets/sprites/icons/mine-image.png")
+var weapon_4_image : Texture2D = load("res://assets/sprites/icons/drone-image.png")
 var shield_image : Texture2D = load("res://assets/sprites/icons/shield-minimalistic-svgrepo-com (1).svg")
 var speed_image : Texture2D = load("res://assets/sprites/icons/speed-skiing-svgrepo-com.svg")
 
@@ -38,7 +39,8 @@ func _set_name_for(upgrade_label: int) -> String:
 	match upgrade_label:
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1: return "Weapon 1 +50% Damage"
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2: return "Weapon 2 +50% Damage"
-		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_3: return "Mine +50% Damage"
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_3: return "Mine"
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_4: return "Drone"
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD:  return "+5% Shield"
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED:   return "+5% Speed"
 		_: return "Upgrade"
@@ -49,6 +51,7 @@ func _set_image_for(upgrade_image: int) -> Texture2D:
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1: return weapon_1_image
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2: return weapon_2_image
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_3: return weapon_3_image
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_4: return weapon_4_image
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD:  return shield_image
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED:   return speed_image
 		_: return null

@@ -22,6 +22,8 @@ func _on_card_chosen(track: int) -> void:
 				Singleton.player.set_selected_weapon(PlayerUpgrades.WeaponId.BULLET_2)
 			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_3:
 				Singleton.player.set_selected_weapon(PlayerUpgrades.WeaponId.BULLET_3)
+			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_4:
+				Singleton.player.set_selected_weapon(PlayerUpgrades.WeaponId.BULLET_4)
 	closed.emit(track)
 
 
@@ -30,6 +32,7 @@ func _populate_random(count := 3) -> void:
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1,
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2,
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_3,
+		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_4,
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD,
 		PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED,
 	]
