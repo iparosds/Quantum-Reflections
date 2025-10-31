@@ -3,6 +3,9 @@ class_name Player extends CharacterBody2D
 const BLACK_HOLE : PackedScene = preload("res://scenes/game/black_hole.tscn")
 const DAMAGE_RATE : float = 500.0
 const MAX_ACCELERATION : float = 1000.0
+const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
+const BULLET_4_SCENE: PackedScene = preload("res://scenes/game/bullet_4.tscn")
+
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -29,16 +32,21 @@ const PLAYER_LEVELS := [
 ]
 
 # Estado de progressão
-var current_level_index : int = -1
-var health : float = 100.0
-var acceleration : float = 0.0
-var accelelariting : bool = false
-var boosting : bool = false
-var stopping : bool = false
-var rotating_right : bool = false
-var rotating_left : bool = false
-var level : int = 0
-var dying_to_black_hole : bool = false
+var current_level_index: int = -1
+var health = 100.0
+var acceleration = 0.0
+var accelelariting = false
+var boosting = false
+var stopping = false
+var rotating_right = false
+var rotating_left = false
+var level
+var dying_to_black_hole := false
+var max_health: float = 100.0
+var selected_weapon_id: int = 1
+var mine_drop_interval: float = 0.2
+var _mine_timer: Timer
+var drone: Bullet4 = null
 
 signal health_depleted
 
@@ -59,10 +67,37 @@ func _ready() -> void:
 		if is_instance_valid(turret):
 			turret.current_bullet = 0
 	
-	if is_instance_valid(turrets["E"]):
-		turrets["E"].current_bullet = 1
-	
 	call_deferred("_init_level_progress")
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
+	_apply_health_from_upgrades(true, true)
+	_apply_speed_from_upgrades()
+	
+	_mine_timer = Timer.new()
+	_mine_timer.wait_time = mine_drop_interval
+	_mine_timer.one_shot = false
+	add_child(_mine_timer)
+	_mine_timer.timeout.connect(_on_mine_timer_timeout)
+
+
+func _on_mine_timer_timeout() -> void:
+	if not is_instance_valid(Singleton.level):
+		return
+	var mine := BULLET_3_SCENE.instantiate()
+	Singleton.level.add_child(mine)
+	mine.call_deferred("set", "global_position", global_position)
+
+
+func _on_upgrades_changed() -> void:
+	_apply_health_from_upgrades()
+	_apply_speed_from_upgrades()
+	
+	# DEBUG: ver multiplicadores atuais sempre que um upgrade é aplicado
+	if PlayerUpgrades:
+		print("[UPGR] W1 L=", PlayerUpgrades.active_weapon_1_level,
+			" mult=", PlayerUpgrades.get_active_damage_multiplier(1),
+			" | W2 L=", PlayerUpgrades.active_weapon_2_level,
+			" mult=", PlayerUpgrades.get_active_damage_multiplier(2))
 
 
 func is_player() -> bool:
@@ -89,7 +124,7 @@ func world_limit(size: float) -> void:
 func portal() -> void:
 	for turret in turrets.values():
 		if is_instance_valid(turret) and turret.current_bullet != 0:
-			turret.current_bullet = randi_range(1, 2)
+			turret.current_bullet = randi_range(1, 3)
 
 
 # ------------------------
@@ -118,9 +153,17 @@ func _init_level_progress() -> void:
 func _update_level_from_score(score: int) -> void:
 	var target_index := _level_for_score(score)
 	
+	if current_level_index < 0:
+		_apply_level_up_to(target_index, false)
+		current_level_index = target_index
+		return
+	
 	if target_index > current_level_index:
 		_apply_level_up_to(target_index, true)
 		current_level_index = target_index
+		
+		if target_index >= 1:
+			_open_upgrade_picker()
 
 
 # ------------------------------------------------------------
@@ -162,7 +205,8 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
-				turret_node.current_bullet = 1
+				if turret_node.current_bullet == 0:
+					turret_node.current_bullet = selected_weapon_id
 		
 		if (
 			notify
@@ -180,45 +224,33 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 
 func _physics_process(delta : float) -> void:
 	_update_level_from_score(Singleton.level.get_score())
+	var cap := _get_speed_cap()
 	
 	if Singleton.quantum == false:
 		%Ship.play("default")
 	else:
 		%Ship.play("quantum")
 	
-	if Input.is_action_just_released("move_up"):
-		accelelariting = false
-	if Input.is_action_just_pressed("move_up"):
-		accelelariting = true
-	if Input.is_action_just_released("boost"):
-		boosting = false
-	if Input.is_action_just_pressed("boost"):
-		boosting = true
-	if accelelariting == true && stopping == false && acceleration < 1000:
+	accelelariting = Input.is_action_pressed("move_up")
+	boosting = Input.is_action_pressed("boost")
+	stopping = Input.is_action_pressed("move_down")
+	rotating_right = Input.is_action_pressed("move_right")
+	rotating_left = Input.is_action_pressed("move_left")
+	
+	if accelelariting == true && stopping == false && acceleration < cap:
 		acceleration += 1
-	if boosting == true && stopping == false && acceleration < 990:
+	if boosting == true && stopping == false && acceleration < (cap - 10.0):
 		acceleration += 5
-	if Input.is_action_just_released("move_down"):
-		stopping = false
-	if Input.is_action_just_pressed("move_down"):
-		stopping = true
 	if stopping == true && accelelariting == false && acceleration > 10:
 		acceleration -= 5
 	if stopping == false && accelelariting == false && acceleration > 0:
 		acceleration -= 1
-	if Input.is_action_just_pressed("move_right"):
-		rotating_right = true
-	if Input.is_action_just_released("move_right"):
-		rotating_right = false
-	if Input.is_action_just_pressed("move_left"):
-		rotating_left = true
-	if Input.is_action_just_released("move_left"):
-		rotating_left = false
 	if rotating_right == true && boosting == false:
-		%Ship.rotation += (1000-(acceleration/2))/10000.0
+		%Ship.rotation += (cap - (acceleration/2))/10000.0
 	if rotating_left == true && boosting == false:
-		%Ship.rotation -= (1000-(acceleration/2))/10000.0
-		
+		%Ship.rotation -= (cap - (acceleration/2))/10000.0
+	if acceleration > cap:
+		acceleration = cap
 	if acceleration > 0:
 		var direction2 = Vector2.UP.rotated(%Ship.rotation)
 		position += direction2 * (acceleration/2) * delta
@@ -235,6 +267,7 @@ func _physics_process(delta : float) -> void:
 				Singleton.display_number(damage, position, "#2f213b")
 			else:
 				Singleton.display_number(damage, position, "#7c7ea1")
+			print_rich("[HP] ", snapped(health, 0.1), "/", max_health)
 			mob.player_collision()
 	
 	var overlapping_ores = %CollectOre.get_overlapping_bodies()
@@ -244,18 +277,13 @@ func _physics_process(delta : float) -> void:
 			mob.queue_free()
 	
 	if health <= 0.0:
-		health = 100.0
+		health = max_health
 		Singleton.level.quantum = true
-		
 		var new_black_hole = BLACK_HOLE.instantiate()
 		new_black_hole.position = position
-		
 		Singleton.level.add_child(new_black_hole)
-		
 		SaveManager.on_black_hole_opened(1)
-		
 		health_depleted.emit()
-	
 	%ProgressBar.value = health
 
 
@@ -443,3 +471,103 @@ func _disable_all_turrets() -> void:
 				var shoot_timer := turret.get_node("ShootingInterval") as Timer
 				if shoot_timer:
 					shoot_timer.stop()
+
+
+func _get_max_health() -> float:
+	if get_tree().root.has_node("PlayerUpgrades"):
+		max_health = PlayerUpgrades.get_effective_health()
+	return max_health
+
+
+func _apply_health_from_upgrades(preserve_ratio := true, heal_to_full := false) -> void:
+	var new_max := _get_max_health()
+	var old_max := max_health
+	max_health = new_max
+	
+	# ajusta o HP atual
+	if preserve_ratio:
+		var ratio := 0.0
+		if old_max > 0.0:
+			ratio = health / old_max
+		if heal_to_full:
+			health = new_max
+		else:
+			health = clamp(ratio * new_max, 0.0, new_max)
+	else:
+		if health > new_max:
+			health = new_max
+	
+	# sincroniza a barra
+	if %ProgressBar:
+		%ProgressBar.max_value = new_max
+	
+	# log de debug
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_shield_bonus()
+	
+	print("[HEALTH] bonus=", bonus, " max=", new_max, " current=", health)
+
+
+func _get_speed_cap() -> float:
+	var cap := MAX_ACCELERATION
+	if get_tree().root.has_node("PlayerUpgrades"):
+		cap = PlayerUpgrades.get_effective_max_acceleration()
+	return cap
+
+
+func _apply_speed_from_upgrades() -> void:
+	var cap := _get_speed_cap()
+	if %SpeedBar:
+		%SpeedBar.max_value = cap / 10.0
+	var bonus := 0.0
+	if get_tree().root.has_node("PlayerUpgrades"):
+		bonus = PlayerUpgrades.get_speed_bonus()
+	print("[SPEED] bonus=", bonus, " cap=", cap)
+
+
+func _open_upgrade_picker() -> void:
+	if is_instance_valid(Singleton.gui_manager) and Singleton.gui_manager.has_method("open_upgrades_picker"):
+		Singleton.gui_manager.open_upgrades_picker()
+	else:
+		var ui := preload("res://scenes/game/select_upgrades_scene.tscn").instantiate()
+		get_tree().root.add_child(ui)
+		get_tree().paused = true
+
+
+func set_selected_weapon(weapon_id: int) -> void:
+	selected_weapon_id = clamp(weapon_id, 1, 4)
+	_set_all_active_turrets_bullet(selected_weapon_id)
+	
+	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
+		if _mine_timer.is_stopped():
+			_mine_timer.start()
+	else:
+		if not _mine_timer.is_stopped():
+			_mine_timer.stop()
+	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_4:
+		_spawn_drone()
+	else:
+		_remove_drone()
+
+
+func _spawn_drone() -> void:
+	if drone == null or not is_instance_valid(drone):
+		if not is_instance_valid(Singleton.level):
+			return
+		var drone_scene := BULLET_4_SCENE.instantiate() as Bullet4
+		drone_scene.player = self
+		Singleton.level.add_child(drone_scene)
+		drone = drone_scene
+
+
+func _remove_drone() -> void:
+	if drone != null and is_instance_valid(drone):
+		drone.queue_free()
+	drone = null
+
+
+func _set_all_active_turrets_bullet(bullet_id: int) -> void:
+	for turret in turrets.values():
+		if is_instance_valid(turret) and turret.current_bullet != 0:
+			turret.current_bullet = bullet_id
