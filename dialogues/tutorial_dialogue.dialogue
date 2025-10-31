@@ -1,59 +1,101 @@
 ~ start
-Tutorial: Hold [wave]** W **[/wave] to accelerate.
-do Singleton._wait_action("move_up")
-=> after_up
+Tutorial: Hold [wave]W[/wave] to accelerate.
+if Singleton._wait_action("move_up") == true
+	=> after_up
 
 ~ after_up
-Tutorial: Good! Now hold [wave]** S **[/wave] to brake/stop.
-do Singleton._wait_action("move_down")
-=> after_down
-
-~ after_down
-Tutorial: Great! Now turn with [wave]** A **[/wave] or [wave]** D **[/wave].
-do Singleton._wait_any_action(["move_left","move_right"])
-=> after_rotate
+Tutorial: Hold [wave]A[/wave] or [wave]D[/wave] to maneuver.
+if Singleton._wait_any_action(["move_left","move_right"]) == true
+	=> after_rotate
 
 ~ after_rotate
-Tutorial: Perfect. Finally, press [wave]** TAB **[/wave] to gain extra boost.
-do Singleton._wait_action("boost")
-=> after_boost
+Tutorial: You can also slow down with [wave]S[/wave].
+set locals.elapsed = 0.0
+=> wait_down_or_timeout
 
-~ after_boost
-Tutorial: Excellent! Movement tutorial completed.
-do wait(1.5)
-=> turrets
+~ wait_down_or_timeout
+if Input.is_action_pressed("move_down") or Input.is_action_pressed("skip")
+	=> after_down
+elif locals.elapsed >= 10.0
+	=> after_down
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_down_or_timeout
 
-~ turrets
-Turrets: Turrets will activate automatically when an asteroid approaches.
-do wait(1.5)
-=> black_hole
+~ after_down
+Tutorial: And there's turbo on the [wave]TAB[/wave].
+set locals.elapsed = 0.0
+=> wait_boost_or_timeout
+
+~ wait_boost_or_timeout
+if Input.is_action_pressed("boost") or Input.is_action_pressed("skip")
+	=> shield
+elif locals.elapsed >= 10.0
+	=> shield
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_boost_or_timeout
+
+~ shield
+Shield: If your shield runs out, a black hole will appear.
+set locals.elapsed = 0.0
+=> wait_skip_or_10_to_black_hole
+
+~ wait_skip_or_10_to_black_hole
+if Input.is_action_pressed("skip")
+	=> black_hole
+elif locals.elapsed >= 10.0
+	=> black_hole
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_skip_or_10_to_black_hole
 
 ~ black_hole
-Black holes: When your HP reaches zero, a black hole will open.  
-do wait(1.0)
-Black holes: You will be taken to the quantum world, where elements behave in reverse.  
-do wait(1.0)
-Black holes: Your HP will be restored, and after some time you will return to the normal dimension.  
-do wait(1.5)
-=> portal
+Black holes: Your job is to avoid entering the black hole.
+set locals.elapsed = 0.0
+=> wait_skip_or_10_to_portal
+
+~ wait_skip_or_10_to_portal
+if Input.is_action_pressed("skip")
+	=> portal
+elif locals.elapsed >= 10.0
+	=> portal
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_skip_or_10_to_portal
 
 ~ portal
-Portal: When the timer reaches zero, the portal will open and asteroids will be pulled toward it.
-do wait(1.0)
-Portal: Your goal is to enter the portal before time runs out — otherwise, you will be destroyed.
-do wait(1.5)
-=> asteroids_belt
+Portal: After the time runs out a new portal will appear.
+set locals.elapsed = 0.0
+=> wait_skip_or_10_to_portal_2
 
-~ asteroids_belt
-Asteroid Belt: If you move into the asteroid belt at the edge of the level, you'll be teleported to the opposite side of the screen.
-do wait(1.5)
-=> menus
+~ wait_skip_or_10_to_portal_2
+if Input.is_action_pressed("skip")
+	=> portal_2
+elif locals.elapsed >= 10.0
+	=> portal_2
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_skip_or_10_to_portal_2
 
-~ menus
-Menus: In the bottom-right corner, you can toggle sound and access the settings by clicking one of the icons.
-do wait(1.0)
-Menus: You can also press Esc to pause the game and open the menu.
-do wait(1.5)
-=> END
+~ portal_2
+Portal: Get in there quickly before this world collapses.
+set locals.elapsed = 0.0
+=> wait_skip_or_10_to_end
+
+~ wait_skip_or_10_to_end
+if Input.is_action_pressed("skip")
+	=> END
+elif locals.elapsed >= 10.0
+	=> END
+else
+	do wait(0.10)
+	set locals.elapsed = locals.elapsed + 0.10
+	=> wait_skip_or_10_to_end
 
 ~ END

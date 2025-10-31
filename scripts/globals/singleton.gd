@@ -19,6 +19,8 @@ var quantum_roll = 0
 var portal_timer = 150.0
 var _tutorial_running := false
 var active_balloons: Array = []
+var tutorial_unlocked: bool = false
+var skip_tutorial: bool = false
 
 # Dicionário com os níveis disponíveis e seus caminhos
 var levels: Dictionary = {
@@ -49,10 +51,7 @@ func start_game() -> void:
 	
 	goto_level(current_level_path)
 	
-	SaveManager.on_stage_started()
-	
-	# Só inicia o tutorial no nível "tutorial"
-	if current_level == "tutorial" or current_level_path.ends_with("tutorial.tscn"):
+	if current_level == "level_01" or current_level_path.ends_with("level_01.tscn") and not skip_tutorial:
 		start_tutorial()
 
 
@@ -312,7 +311,7 @@ func game_over():
 
 # Sempre retorna verdadeiro para liberar o nível de tutorial.
 func _tutorial() -> bool:
-	return false
+	return true
 
 
 # ------------------------------------------------------------
