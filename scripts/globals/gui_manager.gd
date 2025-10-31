@@ -10,6 +10,7 @@ const INPUT_SETTINGS_BUTTON_GROUP := "input_settings_button"
 const GAME_OVER_SCREEN_GROUP := "game_over_screen_button"
 const PAUSE_MENU_GROUP := "pause_menu_button"
 const LEVELS_MENU_GROUP := "level_menu_button"
+const STATS_TABLE_GROUP := "stats_table_layer"
 
 # Camadas principais da interface do jogo.
 # Cada camada é uma parte visual do HUD ou de menus.
@@ -21,6 +22,7 @@ const LEVELS_MENU_GROUP := "level_menu_button"
 @onready var game_over_screen: CanvasLayer  = $GameOverScreen
 @onready var pause_menu_layer: CanvasLayer = $PauseMenu
 @onready var levels_menu_layer: CanvasLayer = $LevelsMenu
+@onready var stats_table_layer: CanvasLayer = $StatsTable
 
 # Sons para interações de interface (hover, seleção, voltar).
 @onready var hover_sound_player:  AudioStreamPlayer = $Sounds/HoverSoundPlayer
@@ -101,6 +103,7 @@ func _ready() -> void:
 	pause_menu_layer.visible = false
 	levels_menu_layer.visible = false
 	black_hole_warning_label.visible = false
+	stats_table_layer.visible = false
 	black_hole_warning_label.modulate.a = 0.0
 
 	
@@ -111,6 +114,7 @@ func _ready() -> void:
 	_tag_buttons_in_tree(game_over_screen, GAME_OVER_SCREEN_GROUP)
 	_tag_buttons_in_tree(pause_menu_layer, PAUSE_MENU_GROUP)
 	_tag_buttons_in_tree(levels_menu_layer, LEVELS_MENU_GROUP)
+	_tag_buttons_in_tree(stats_table_layer, STATS_TABLE_GROUP)
 	
 	_connect_button_signals_recursively(self)
 	_connect_signal_safe(settings_master_volume_slider, "value_changed", Callable(self, "_on_settings_master_volume_changed"))
@@ -133,6 +137,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if settings_layer.visible: settings_layer.visible = false
 			if input_settings_layer.visible: input_settings_layer.visible = false
 			if credits_layer.visible: credits_layer.visible = false
+			if stats_table_layer.visible: stats_table_layer.visible = false
 			hide_pause_menu()
 			AudioPlayer.on_pause_exited()
 		else:
@@ -269,6 +274,8 @@ func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 			Singleton.open_settings()
 		"CreditsButton":
 			Singleton.open_credits()
+		"StatsButton":
+			_show_stats()
 		"QuitButton":
 			Singleton.quit_game_from_menu()
 
@@ -416,7 +423,8 @@ func _generate_level_buttons():
 func show_main_menu() -> void:
 	credits_layer.visible   = false
 	settings_layer.visible  = false
-	levels_menu_layer.visible = false	
+	levels_menu_layer.visible = false
+	stats_table_layer.visible = false
 	main_menu_layer.visible = true
 	_focus_first_button_in(main_menu_layer)
 
@@ -429,6 +437,7 @@ func show_settings() -> void:
 	credits_layer.visible   = false
 	settings_layer.visible  = true
 	input_settings_layer.visible = false
+	stats_table_layer.visible = false
 	settings_controls_btn.grab_focus()
 	
 	# sincroniza sliders com os buses
@@ -442,6 +451,12 @@ func show_credits() -> void:
 	settings_layer.visible  = false
 	credits_layer.visible   = true
 	_focus_first_button_in(credits_layer)
+
+
+func _show_stats() -> void:
+	main_menu_layer.visible = false
+	stats_table_layer.visible = true
+	_focus_first_button_in(stats_table_layer)
 
 
 func show_input_settings() -> void:
