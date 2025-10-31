@@ -1,17 +1,16 @@
 class_name Asteroid extends CharacterBody2D
 
-const SHIP_ATTRACTION : float = 100.0
-const ORE : PackedScene = preload("res://scenes/game/ore.tscn")
+const SHIP_ATTRACTION = 100.0
+const ORE = preload("res://scenes/game/ore.tscn")
+const MIN_DAMAGE := 10.0
 
+@onready var player: Node2D = Singleton.level.get_node_or_null("Player")
 
 var health : int = 100
 var moving : bool = true
 var ore : bool = false
 var asteroid_type : int
 var level : int
-
-
-@onready var player : Node2D = Singleton.level.get_node_or_null("Player")
 var portal : Node2D = null
 
 
@@ -41,9 +40,9 @@ func _physics_process(_delta) -> void:
 		player = Singleton.level.get_node_or_null("Player")
 		if !is_instance_valid(player):
 			return
-
+	
 	var direction: Vector2
-
+	
 	if Singleton.level.portal_active:
 		if portal == null or !is_instance_valid(portal):
 			portal = get_tree().get_first_node_in_group("portal")
@@ -53,7 +52,7 @@ func _physics_process(_delta) -> void:
 			direction = global_position.direction_to(player.global_position)
 	else:
 		direction = global_position.direction_to(player.global_position)
-
+	
 	if Singleton.level.quantum == false:
 		if moving == true:
 			if asteroid_type == 1:
@@ -72,7 +71,7 @@ func _physics_process(_delta) -> void:
 				$Asteroid.play("asteroid02-quantum")
 			else:
 				$Asteroid.play("asteroid03-quantum")
-
+	
 	if moving == true:
 		move_and_slide()
 
@@ -98,17 +97,32 @@ func add_new_ore() -> void:
 	get_tree().current_scene.call_deferred("add_child", new_ore)
 
 
-func take_damage():
-	var damage = player.acceleration / 10
-	if damage < 10:
-		damage = 10
-	health -= damage
+func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
+	var damage := 0.0
+	
+	if amount >= 0.0:
+		damage = amount
+		# print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+	else:
+		# Dano base pela velocidade do player
+		var base := MIN_DAMAGE
+		if is_instance_valid(player):
+			base = max(MIN_DAMAGE, float(player.acceleration) / 10.0)
 
-	if health <= 0:
+		# combinação base + multiplicador
+		damage = base * max(0.0, multiplier)
+		
+		# Se quiser SOMAR em vez de multiplicar, troque a linha acima por:
+		#damage = base + (multiplier)
+		# print("[Asteroid] incoming=", amount, " applied=", damage, " hp_before=", health)
+
+	health -= damage
+	# print("[Asteroid] hp_after=", health)
+	if health <= 0.0:
 		asteroid_destruction()
 		add_new_ore()
 	else:
-		Singleton.display_number(damage, $DamageText.global_position, '#b4b542')
+		Singleton.display_number(damage, $DamageText.global_position, "#b4b542")
 
 
 func _on_asteroid_explosion_timeout() -> void:

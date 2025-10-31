@@ -1,7 +1,7 @@
 class_name Turret extends Area2D
 
-const BULLET_1 = preload("res://scenes/game/bullet.tscn")
-const BULLET_2 = preload("res://scenes/game/bullet_2.tscn")
+const BULLET_1 = PlayerUpgrades.BULLET_1_SCENE
+const BULLET_2 = PlayerUpgrades.BULLET_2_SCENE
 
 @export var projectile : Projectile
 @export var projectiles_parent_group = "projectile_parent"
@@ -23,17 +23,30 @@ func _ready() -> void:
 
 func shoot(target_enemy):
 	$AudioStreamPlayer2D.play()
-	var new_bullet = projectile.scene.instantiate()
+	
+	var new_bullet: Node
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
 	else:
 		new_bullet = BULLET_2.instantiate()
-	#new_bullet.global_position = %ShootingPoint.global_position
+	
 	new_bullet.position = %ShootingPoint.position
 	new_bullet.rotation = %ShootingPoint.rotation
 	new_bullet.target = target_enemy
+	
+	var multiplier := 1.0
+	if PlayerUpgrades:
+		multiplier = PlayerUpgrades.get_damage_multiplier_for_weapon_id(current_bullet)
+	
+	if new_bullet.has_method("set_damage_multiplier"):
+		new_bullet.set_damage_multiplier(multiplier)
+	else:
+		new_bullet.damage_multiplier = multiplier
+	
+	#print("[Turret] fire id=", current_bullet, " mult=", mult)
+	
 	%ShootingPoint.add_child(new_bullet)
-	#projectiles_node.add_child(new_bullet)
+
 
 func _physics_process(_delta):
 	if cooldown == false && current_bullet != 0:
@@ -44,6 +57,7 @@ func _physics_process(_delta):
 			$ShootingInterval.start()
 			cooldown = true
 			#look_at(target_enemy.global_position)
+
 
 func _on_timer_timeout():
 	cooldown = false
