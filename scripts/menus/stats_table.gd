@@ -10,7 +10,6 @@ func _ready() -> void:
 	SaveManager.load_from_disk()
 	var totals = SaveManager.profile.user.totals
 	var rows : Array = [
-		{"id": "Updated at", "name": str(SaveManager.profile.updated_at)},
 		{"id": "Total score", "name": str(totals.score)},
 		{"id": "Total time played", "name": str(totals.play_time_hms)},
 		{"id": "Enemies killed", "name": str(totals.enemies_killed)},
