@@ -201,13 +201,11 @@ func _level_for_score(current_score: int) -> int:
 func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 	for level_index in range(target_level_index + 1):
 		var turrets_to_unlock: Array = PLAYER_LEVELS[level_index]["unlock"]
-		
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
 				if turret_node.current_bullet == 0:
 					turret_node.current_bullet = selected_weapon_id
-		
 		if (
 			notify
 			and int(PLAYER_LEVELS[level_index]["min_score"]) > 0
@@ -538,17 +536,11 @@ func _open_upgrade_picker() -> void:
 func set_selected_weapon(weapon_id: int) -> void:
 	selected_weapon_id = clamp(weapon_id, 1, 4)
 	_set_all_active_turrets_bullet(selected_weapon_id)
-	
 	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
 		if _mine_timer.is_stopped():
 			_mine_timer.start()
-	else:
-		if not _mine_timer.is_stopped():
-			_mine_timer.stop()
 	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_4:
 		_spawn_drone()
-	else:
-		_remove_drone()
 
 
 func _spawn_drone() -> void:
@@ -571,3 +563,4 @@ func _set_all_active_turrets_bullet(bullet_id: int) -> void:
 	for turret in turrets.values():
 		if is_instance_valid(turret) and turret.current_bullet != 0:
 			turret.current_bullet = bullet_id
+			return
