@@ -5,7 +5,7 @@ const DAMAGE_RATE : float = 500.0
 const MAX_ACCELERATION : float = 1000.0
 const BULLET_3_SCENE: PackedScene = preload("res://scenes/game/bullet_3.tscn")
 const BULLET_4_SCENE: PackedScene = preload("res://scenes/game/bullet_4.tscn")
-
+const MOVED_SO_FAR : float = 0.5
 
 @onready var turrets: Dictionary = {
 	"N":  %TurretN,
@@ -47,6 +47,8 @@ var selected_weapon_id: int = 1
 var mine_drop_interval: float = 0.2
 var _mine_timer: Timer
 var drone: Bullet4 = null
+var last_postion: Vector2
+var is_moving: bool = false
 
 signal health_depleted
 
@@ -78,10 +80,14 @@ func _ready() -> void:
 	_mine_timer.one_shot = false
 	add_child(_mine_timer)
 	_mine_timer.timeout.connect(_on_mine_timer_timeout)
+	
+	last_postion = global_position
 
 
 func _on_mine_timer_timeout() -> void:
 	if not is_instance_valid(Singleton.level):
+		return
+	if not is_moving:
 		return
 	var mine := BULLET_3_SCENE.instantiate()
 	Singleton.level.add_child(mine)
@@ -283,6 +289,10 @@ func _physics_process(delta : float) -> void:
 		SaveManager.on_black_hole_opened(1)
 		health_depleted.emit()
 	%ProgressBar.value = health
+	
+	var moved_distance := global_position.distance_to(last_postion)
+	is_moving = moved_distance > MOVED_SO_FAR
+	last_postion = global_position
 
 
 # ----------------------------------------------------------------------------
