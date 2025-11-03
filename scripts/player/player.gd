@@ -85,9 +85,9 @@ func _ready() -> void:
 
 
 func _on_mine_timer_timeout() -> void:
-	if not is_instance_valid(Singleton.level):
+	if not is_instance_valid(Singleton.level) or not is_moving:
 		return
-	if not is_moving:
+	if not Singleton.level._is_safe_portal_position(global_position):
 		return
 	var mine := BULLET_3_SCENE.instantiate()
 	Singleton.level.add_child(mine)
