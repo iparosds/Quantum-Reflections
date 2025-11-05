@@ -141,7 +141,7 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		# ignora se estamos em Main Menu ou Game Over
-		if main_menu_layer.visible or game_over_screen.visible:
+		if main_menu_layer.visible or game_over_screen.visible or upgrades_menu.visible:
 			return
 
 		if is_paused:
@@ -150,6 +150,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if input_settings_layer.visible: input_settings_layer.visible = false
 			if credits_layer.visible: credits_layer.visible = false
 			if stats_table_layer.visible: stats_table_layer.visible = false
+			if upgrades_menu.visible: upgrades_menu.visible = false
 			hide_pause_menu()
 			AudioPlayer.on_pause_exited()
 		else:
