@@ -60,6 +60,8 @@ var black_hole_warning_sources : int = 0
 @onready var levels_container: VBoxContainer = $LevelsMenu/ScrollContainer/LevelsContainer
 @onready var back_to_main_menu_button: Button = $LevelsMenu/VBoxContainer/BackToMainMenuButton
 
+@onready var upgrades_menu: CanvasLayer = $UpgradesMenu
+
 var is_paused: bool = false
 
 
@@ -92,7 +94,6 @@ func _ready() -> void:
 	
 	settings_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	input_settings_layer.process_mode = Node.PROCESS_MODE_ALWAYS
-
 	
 	main_menu_layer.visible  = true
 	credits_layer.visible    = false
@@ -124,12 +125,23 @@ func _ready() -> void:
 	_focus_first_button_in(main_menu_layer)
 	
 	Singleton._ensure_settings_icon(self)
+	
+	upgrades_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
+	if picker:
+		picker.process_mode = Node.PROCESS_MODE_ALWAYS
+
+		if picker.has_signal("closed") and not picker.is_connected("closed", Callable(self, "_on_upgrades_picker_closed")):
+			picker.closed.connect(_on_upgrades_picker_closed)
+		# começa escondido
+		picker.visible = false
+	upgrades_menu.visible = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
 		# ignora se estamos em Main Menu ou Game Over
-		if main_menu_layer.visible or game_over_screen.visible:
+		if main_menu_layer.visible or game_over_screen.visible or upgrades_menu.visible:
 			return
 
 		if is_paused:
@@ -138,6 +150,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if input_settings_layer.visible: input_settings_layer.visible = false
 			if credits_layer.visible: credits_layer.visible = false
 			if stats_table_layer.visible: stats_table_layer.visible = false
+			if upgrades_menu.visible: upgrades_menu.visible = false
 			hide_pause_menu()
 			AudioPlayer.on_pause_exited()
 		else:
@@ -535,6 +548,40 @@ func show_level_up_notice(message: String) -> void:
 	)
 
 
+func open_upgrades_picker() -> void:
+	if not is_instance_valid(upgrades_menu):
+		return
+	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
+	if picker == null:
+		push_error("SelectUpgrades não está como filho de UpgradesMenu.")
+		return
+	
+	upgrades_menu.visible = true
+	picker.visible = true
+	
+	upgrades_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	picker.process_mode = Node.PROCESS_MODE_ALWAYS
+	picker._populate_random(3)
+	
+	get_tree().paused = true
+
+
+func _on_upgrades_picker_closed(track: int) -> void:
+	get_tree().paused = false
+	
+	if is_instance_valid(Singleton.player):
+		match track:
+			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1:
+				Singleton.player.set_selected_weapon(1)
+			PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_2:
+				Singleton.player.set_selected_weapon(2)
+			PlayerUpgrades.UpgradeTrack.PASSIVE_SHIELD, PlayerUpgrades.UpgradeTrack.PASSIVE_SPEED:
+				pass
+	
+	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
+	if picker:
+		picker.visible = false
+	upgrades_menu.visible = false
 func notify_black_hole_warning(active: bool) -> void:
 	# Agrega múltiplas fontes de aviso (vários buracos negros próximos).
 	if active:
