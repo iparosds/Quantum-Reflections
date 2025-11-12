@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bpwh8pafstt3h"]
+[gd_scene load_steps=0 format=3 uid="uid://bpwh8pafstt3h"]
 
 [node name="StatsRow" type="HBoxContainer"]
 anchors_preset = 10
