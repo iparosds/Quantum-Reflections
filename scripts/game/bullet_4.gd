@@ -7,7 +7,7 @@ class_name Bullet4 extends Area2D
 var respawn_seconds : float = 0.5
 var insta_kill_amount : float = 99999.0
 var orbit_radius : float = 100.0
-var angular_speed : float = 600.0
+var angular_speed : float = 400.0
 var angle_degree : float = 0.0
 var player : Player
 var active : bool = true

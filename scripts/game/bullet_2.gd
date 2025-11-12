@@ -8,7 +8,7 @@ const MAX_BOUNCES : int = 3
 var target : Node2D
 var direction: Vector2
 var travelled_distance : float = 0.0
-var move_speed : float = 400.0
+var move_speed : float = 300.0
 var damage_multiplier: float = 1.0
 var bounce_count : int = 0
 var bounce_chance: float = 90.0
