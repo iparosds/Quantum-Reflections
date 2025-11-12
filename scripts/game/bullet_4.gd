@@ -1,19 +1,22 @@
 class_name Bullet4 extends Area2D
 
-@onready var collision_shape: CollisionShape2D = $CollisionShape2D
-@onready var spawn_timer: Timer = $SpawnTimer
-@onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var collision_shape : CollisionShape2D = $CollisionShape2D
+@onready var spawn_timer : Timer = $SpawnTimer
+@onready var sprite_2d : Sprite2D = $Sprite2D
 
-var respawn_seconds: float = 0.5
-var insta_kill_amount: float = 99999.0
-var orbit_radius: float = 100.0
+var respawn_seconds : float = 0.5
+var insta_kill_amount : float = 99999.0
+var orbit_radius : float = 100.0
 var angular_speed : float = 600.0
 var angle_degree : float = 0.0
-var player: Player
-var active: bool = true
+var player : Player
+var active : bool = true
 
 
-# Inicializa conexões e configurações do drone.
+## Inicializa o drone orbital.
+## - Configura o timer de respawn e conexões de sinais.
+## - Garante que o player esteja atribuído.
+## - Ativa monitoramento de colisões.
 func _ready() -> void:
 	spawn_timer.wait_time = respawn_seconds
 	spawn_timer.one_shot = true
@@ -27,7 +30,9 @@ func _ready() -> void:
 		body_entered.connect(_on_body_entered)
 
 
-# Atualiza a rotação e posição do drone ao redor do player a cada frame.
+## Atualiza a posição do drone em torno do player a cada frame de física.
+## - Mantém rotação constante em torno do jogador.
+## - Ignora a rotação da nave.
 func _physics_process(delta: float) -> void:
 	if player == null or not is_instance_valid(player):
 		return
@@ -38,7 +43,9 @@ func _physics_process(delta: float) -> void:
 	global_position = player.global_position + Vector2.RIGHT.rotated(deg_to_rad(angle_degree)) * orbit_radius
 
 
-# Detecta colisão com um corpo e aplica dano.
+## Executado ao colidir com outro corpo.
+## - Causa dano instantâneo (insta_kill_amount).
+## - Desativa temporariamente o projétil e inicia o timer de respawn.
 func _on_body_entered(body: Node2D) -> void:
 	if not active:
 		return
@@ -53,7 +60,8 @@ func _on_body_entered(body: Node2D) -> void:
 			spawn_timer.start()
 
 
-# Reativa o drone após o tempo de recarga do spawn_timer.
+## Callback do timer de respawn.
+## - Reativa o drone e restaura suas propriedades visuais e de colisão.
 func _on_spawn_timer_timeout() -> void:
 	active = true
 	collision_shape.set_deferred("disabled", false)

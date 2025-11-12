@@ -1,10 +1,11 @@
 extends Panel
 
+## Tipo de upgrade associado a esta carta (arma, escudo, velocidade etc.).
+## Ao ser alterado, chama automaticamente _refresh() para atualizar a exibição.
 @export var upgrade: PlayerUpgrades.UpgradeTrack = PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1:
 	set(value):
 		upgrade = value
 		_refresh()
-
 @export var title := ""
 @export var icon: Texture2D
 
@@ -21,13 +22,16 @@ var speed_image : Texture2D = load("res://assets/sprites/icons/speed-skiing-svgr
 signal chosen(track: int)
 
 
+## Inicializa a carta chamando _refresh() para configurar ícone e texto.
+## Define o cursor de mão ao passar o mouse e desativa o processamento de input não tratado.
 func _ready() -> void:
 	_refresh()
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	
 	set_process_unhandled_input(false)
 
 
+## Atualiza o texto e a imagem exibidos na carta conforme o tipo de upgrade.
+## Usa os métodos auxiliares _set_name_for() e _set_image_for().
 func _refresh() -> void:
 	if is_instance_valid(label):
 		label.text = title if title != "" else _set_name_for(upgrade)
@@ -35,6 +39,8 @@ func _refresh() -> void:
 		texture_rect.texture = _set_image_for(upgrade)
 
 
+## Retorna o nome descritivo do upgrade conforme o tipo especificado.
+## Utilizado quando a carta não possui um título personalizado.
 func _set_name_for(upgrade_label: int) -> String:
 	match upgrade_label:
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1: return "Weapon 1 +50% Damage"
@@ -46,6 +52,8 @@ func _set_name_for(upgrade_label: int) -> String:
 		_: return "Upgrade"
 
 
+## Retorna a imagem correspondente ao tipo de upgrade informado.
+## Caso o tipo não exista, retorna null.
 func _set_image_for(upgrade_image: int) -> Texture2D:
 	match upgrade_image:
 		PlayerUpgrades.UpgradeTrack.ACTIVE_WEAPON_1: return weapon_1_image
@@ -57,6 +65,9 @@ func _set_image_for(upgrade_image: int) -> Texture2D:
 		_: return null
 
 
+## Detecta cliques do mouse na carta.
+## Se o botão esquerdo for pressionado, aplica o upgrade correspondente
+## e emite o sinal "chosen" informando qual tipo de upgrade foi selecionado.
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		PlayerUpgrades.apply_upgrade(upgrade)
