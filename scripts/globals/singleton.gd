@@ -120,18 +120,11 @@ func _register_balloon(balloon: Node) -> void:
 		active_balloons.erase(reference))
 
 
+## Fecha todos os balões de diálogo atualmente ativos.
 func _close_all_dialogue_balloons() -> void:
-	# Fecha os que rastreamos explicitamente
-	for balloon in active_balloons.duplicate():
-		if is_instance_valid(balloon):
-			balloon.queue_free()
-	
-	active_balloons.clear()
-	
-	# Fallback: se houver quaisquer outros com o grupo, fecha também
 	for balloon in get_tree().get_nodes_in_group("dialogue_balloon"):
 		if is_instance_valid(balloon):
-			balloon.queue_free()
+			balloon.visible = false
 
 
 func continue_game() -> void:
