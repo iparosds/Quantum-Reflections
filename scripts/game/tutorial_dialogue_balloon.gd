@@ -5,7 +5,7 @@ class_name TutorialDialogueBalloon extends CanvasLayer
 @export var next_action: StringName = &"ui_accept"
 
 ## The action to use to skip typing the dialogue
-@export var skip_action: StringName = &"ui_cancel"
+@export var skip_action: StringName = &"skip"
 
 @export var mutation_hide_delay: float = 3.5
 
