@@ -111,7 +111,7 @@ func _init_level_progress() -> void:
 		var score = Singleton.level.get_score()
 		var level_index := _level_for_score(score)
 		
-		_apply_level_up_to(level_index, false)
+		_apply_level_up_to(level_index)
 		current_level_index = level_index
 
 
@@ -119,7 +119,7 @@ func _update_level_from_score(score: int) -> void:
 	var target_index := _level_for_score(score)
 	
 	if target_index > current_level_index:
-		_apply_level_up_to(target_index, true)
+		_apply_level_up_to(target_index)
 		current_level_index = target_index
 
 
@@ -155,7 +155,7 @@ func _level_for_score(current_score: int) -> int:
 # - Se `notify` for true e o nível possuir `min_score > 0`, gera uma mensagem
 #   descrevendo quais turrets foram adicionadas e chama `show_level_up_notice`
 #   no `gui_manager` para exibir o aviso na tela.
-func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
+func _apply_level_up_to(target_level_index: int) -> void:
 	for level_index in range(target_level_index + 1):
 		var turrets_to_unlock: Array = PLAYER_LEVELS[level_index]["unlock"]
 		
@@ -163,19 +163,6 @@ func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
 				turret_node.current_bullet = 1
-		
-		if (
-			notify
-			and int(PLAYER_LEVELS[level_index]["min_score"]) > 0
-			and is_instance_valid(Singleton.gui_manager)
-			and Singleton.gui_manager.has_method("show_level_up_notice")
-		):
-			var unlocked_parts: Array[String] = []
-			for turret_direction in turrets_to_unlock:
-				unlocked_parts.append("Turret " + String(turret_direction) + " Added!")
-			
-			var message := "Level up! " + ", ".join(unlocked_parts)
-			Singleton.gui_manager.show_level_up_notice(message)
 
 
 func _physics_process(delta : float) -> void:

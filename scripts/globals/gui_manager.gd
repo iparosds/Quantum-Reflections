@@ -49,7 +49,6 @@ var black_hole_warning_sources : int = 0
 @onready var hud_timer_text: Label = $GameHud/HudTimerText
 @onready var hud_portal_active: Label = $GameHud/HudPortalActive
 @onready var hud_god_mode: Label = $GameHud/HudGodMode
-@onready var level_up_notification_label: Label = $GameHud/LevelUpNotificationLabel
 @onready var black_hole_warning_label: Label = $GameHud/BlackHoleWarningLabel
 
 # Elementos exibidos na tela de Game Over.
@@ -498,41 +497,6 @@ func hide_pause_overlay_only() -> void:
 # ------------------------------------------------------------
 func show_pause_overlay_only() -> void:
 	pause_menu_layer.visible = true
-
-
-# ------------------------------------------------------------
-# Exibe uma notificação de "Level Up" no HUD.
-# Parâmetros:
-#   - message: Texto a ser mostrado na notificação.
-#
-# Comportamento:
-# - Garante que o Label `level_up_notification_label` é válido.
-# - Atualiza o texto do Label e o torna visível, mas inicialmente
-#   com alpha = 0 (invisível).
-# - Cria uma animação (Tween) que faz:
-#     1. Fade in rápido (0.15s).
-#     2. Pausa (1.0s).
-#     3. Fade out suave (0.35s).
-# - Quando o Tween termina, esconde novamente o Label
-#   para evitar que permaneça visível.
-# ------------------------------------------------------------
-func show_level_up_notice(message: String) -> void:
-	if not is_instance_valid(level_up_notification_label):
-		return
-	
-	level_up_notification_label.text = message
-	level_up_notification_label.visible = true
-	level_up_notification_label.modulate.a = 0.0
-	
-	var fade_tween := get_tree().create_tween()
-	fade_tween.tween_property(level_up_notification_label, "modulate:a", 1.0, 0.15)
-	fade_tween.tween_interval(1.0)
-	fade_tween.tween_property(level_up_notification_label, "modulate:a", 0.0, 0.35)
-	
-	fade_tween.finished.connect(func ():
-		if is_instance_valid(level_up_notification_label):
-			level_up_notification_label.visible = false
-	)
 
 
 func notify_black_hole_warning(active: bool) -> void:
