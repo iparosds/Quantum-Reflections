@@ -512,12 +512,14 @@ func open_upgrades_picker() -> void:
 	picker.process_mode = Node.PROCESS_MODE_ALWAYS
 	picker._populate_random()
 	get_tree().paused = true
+	AudioPlayer.on_pause_entered()
 
 
 ## Callback quando o seletor de upgrades é fechado.
 ## - Retoma o jogo, esconde o picker e o container de upgrades.
 func _on_upgrades_picker_closed(_track: int) -> void:
 	get_tree().paused = false
+	AudioPlayer.on_pause_exited()
 	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
 	if picker:
 		picker.visible = false
