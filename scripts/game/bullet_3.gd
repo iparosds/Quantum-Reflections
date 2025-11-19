@@ -8,6 +8,7 @@ class_name Bullet3 extends Area2D
 
 var lifetime_seconds: float = 3.0
 var insta_kill_amount: float = 99999.0
+var can_hit_player: bool = false
 
 
 ## Inicializa o timer e configura a mina para começar ativa e monitorando colisões.
@@ -20,10 +21,22 @@ func _ready() -> void:
 	explosion_animation.hide()
 	if not vanish_timer.timeout.is_connected(_on_vanish_timer_timeout):
 		vanish_timer.timeout.connect(_on_vanish_timer_timeout)
+	await get_tree().create_timer(0.2).timeout
+	can_hit_player = true
 
 
 ## Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
+	# Player: dano baseado na velocidade (mesma lógica da colisão com asteroide)
+	if body.has_method("is_player"):
+		if not can_hit_player:
+			return
+		var damage = body.acceleration / 30.0
+		if damage <= 10.0:
+			damage = 10.0
+		body.health -= damage
+		_explode()
+		#return
 	if body.has_method("take_damage"):
 		body.take_damage(insta_kill_amount, 1.0)
 		_explode()
