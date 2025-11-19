@@ -512,6 +512,9 @@ func open_upgrades_picker() -> void:
 	picker.process_mode = Node.PROCESS_MODE_ALWAYS
 	picker._populate_random()
 	get_tree().paused = true
+	var cards = picker.upgrade_card_container.get_children()
+	if cards.size() > 0:
+		cards[0].grab_focus()
 
 
 ## Callback quando o seletor de upgrades é fechado.
