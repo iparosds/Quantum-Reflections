@@ -43,7 +43,7 @@ curve = SubResource("Curve2D_q82x3")
 [node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
 unique_name_in_owner = true
 position = Vector2(-475.155, -570.064)
-rotation = -0.404754
+rotation = -0.4047543
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(-6, -6)
@@ -81,7 +81,6 @@ position = Vector2(563, 339)
 shape = SubResource("CircleShape2D_dgy74")
 
 [node name="Time" type="Timer" parent="."]
-wait_time = 0.7
 autostart = true
 
 [node name="SoundIcon" parent="." instance=ExtResource("5_llcge")]

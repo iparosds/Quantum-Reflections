@@ -372,18 +372,9 @@ func _on_time_timeout():
 		reset_quantum()
 
 	spawn_asteroid() #10
-	if score > 5:
-		spawn_asteroid() #50
-	if score > 10:
-		spawn_asteroid() #100
-	if score > 100:
-		spawn_asteroid() #200
-	if score > 200:
-		spawn_asteroid() #400
-	if score > 400:
-		spawn_asteroid() #600
-	if score > 600:
-		spawn_asteroid() #800
+	for level_data in Singleton.player.PLAYER_LEVELS:
+			if score >= int(level_data["min_score"]):
+				spawn_asteroid()
 
 
 #===============================================
