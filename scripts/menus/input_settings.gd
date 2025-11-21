@@ -28,6 +28,7 @@ var input_actions := {
 
 func _ready() -> void:
 	reset_button.grab_focus()
+	add_to_group("save_participant") 
 	_load_input_map()
 	_create_action_list()
 
@@ -40,6 +41,7 @@ func _on_reset_button_pressed() -> void:
 	InputMap.load_from_project_settings()
 	_delete_user_file()
 	_create_action_list()
+	_save_input_map()
 
 
 # ---------------------------------------------------------------------
@@ -155,20 +157,9 @@ func _input(event: InputEvent) -> void:
 # ---------------------------------------------------------------------
 # - Salva o estado do InputMap para o arquivo SAVE_PATH.
 # ---------------------------------------------------------------------
-func _save_input_map(should_clear_file: bool = false) -> void:
-	var config := ConfigFile.new()
-	
-	if not should_clear_file:
-		for action_name in input_actions.keys():
-			var serialized_events: Array = []
-			for input_event in InputMap.action_get_events(action_name):
-				# converte InputEvent -> Dictionary simples
-				var data := _serialize_event(input_event)
-				if data.size() > 0:
-					serialized_events.append(data)
-			config.set_value(CONFIG_SECTION_INPUT, action_name, serialized_events)
-	
-	config.save(SAVE_PATH)
+func _save_input_map() -> void:
+	if SaveManager:
+		SaveManager.save_to_disk()
 
 
 # ---------------------------------------------------------------------
@@ -177,20 +168,26 @@ func _save_input_map(should_clear_file: bool = false) -> void:
 #   * recria InputEvent(s) a partir dos dicionários salvos
 # ---------------------------------------------------------------------
 func _load_input_map() -> void:
-	var config := ConfigFile.new()
-	if config.load(SAVE_PATH) != OK:
+	if not SaveManager:
 		return
 	
+	var profile := SaveManager.profile
+	if typeof(profile) != TYPE_DICTIONARY or not profile.has("participants"):
+		return
+	
+	# chave usada pelo SaveManager
+	var key := "input_settings"
+	if not profile.participants.has(key):
+		return
+	
+	var bindings: Dictionary = profile.participants[key].get("bindings", {})
 	for action_name in input_actions.keys():
-		if config.has_section_key(CONFIG_SECTION_INPUT, action_name):
-			InputMap.action_erase_events(action_name)
-			
-			var serialized_events: Array = config.get_value(CONFIG_SECTION_INPUT, action_name, [])
-			for event_data in serialized_events:
-				# converte Dictionary para InputEvent
-				var event_to_add := _deserialize_event(event_data)
-				if event_to_add != null:
-					InputMap.action_add_event(action_name, event_to_add)
+		InputMap.action_erase_events(action_name)
+		if bindings.has(action_name):
+			for event_data in bindings[action_name]:
+				var event := _deserialize_event(event_data)
+				if event != null:
+					InputMap.action_add_event(action_name, event)
 
 
 # ---------------------------------------------------------------------

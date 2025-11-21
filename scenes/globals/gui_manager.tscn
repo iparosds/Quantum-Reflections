@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=41 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
 [ext_resource type="FontFile" uid="uid://du5x3bmkjrs0k" path="res://assets/fonts/Jersey25-Regular.ttf" id="2_3da3r"]
@@ -14,6 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/menus/MENU SOUND - DOWN.wav" id="10_271i3"]
 [ext_resource type="AudioStream" uid="uid://bnr2bup87a15w" path="res://assets/sounds/menus/MENU SOUND - SELECT.wav" id="11_4wjxq"]
 [ext_resource type="AudioStream" uid="uid://c7ub3vyngmw21" path="res://assets/sounds/menus/MENU SOUND - BACK.wav" id="12_pme4d"]
+[ext_resource type="PackedScene" uid="uid://ctilynnf7oo22" path="res://scenes/menus/stats_table.tscn" id="15_7aiwd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qupqx"]
 bg_color = Color(0.486275, 0.494118, 0.631373, 1)
@@ -360,18 +361,24 @@ layout_mode = 2
 size_flags_vertical = 4
 size_flags_stretch_ratio = 0.0
 focus_neighbor_top = NodePath("../SettingsButton")
-focus_neighbor_bottom = NodePath("../QuitButton")
+focus_neighbor_bottom = NodePath("../StatsButton")
 theme = ExtResource("5_w8ru2")
 text = "Credits"
 flat = true
 
-[node name="QuitButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+[node name="StatsButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../CreditsButton")
+focus_neighbor_bottom = NodePath("../QuitButton")
+theme = ExtResource("5_w8ru2")
+text = "Stats"
+flat = true
+
+[node name="QuitButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../StatsButton")
 focus_neighbor_bottom = NodePath("../NewGameButton")
 theme = ExtResource("5_w8ru2")
-theme_override_fonts/font = ExtResource("2_8d174")
-theme_override_font_sizes/font_size = 12
 text = "Quit"
 flat = true
 
@@ -904,6 +911,11 @@ stream = ExtResource("11_4wjxq")
 
 [node name="BackSoundPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("12_pme4d")
+
+[node name="StatsTable" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="StatsTable" parent="StatsTable" instance=ExtResource("15_7aiwd")]
 
 [node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
 
