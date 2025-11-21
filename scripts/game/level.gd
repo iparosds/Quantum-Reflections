@@ -198,7 +198,13 @@ func win():
 func spawn_asteroid():
 	var new_asteroid = ASTEROID.instantiate()
 	%PathFollow2D.progress_ratio = randf()
-	new_asteroid.global_position = %PathFollow2D.global_position
+	var candidate_position = %PathFollow2D.global_position
+	
+	if not _is_inside_world(candidate_position):
+		candidate_position = _clamp_inside_world(candidate_position)
+		
+	new_asteroid.global_position = candidate_position
+	
 	var asteroids_group = get_tree().get_first_node_in_group("asteroids")
 	asteroids_group.call_deferred("add_child", new_asteroid)
 

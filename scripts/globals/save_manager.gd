@@ -94,13 +94,12 @@ func _normalize_counters() -> void:
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_from_disk()
-	
+	add_to_group("save_manager")
 	autosave_timer = Timer.new()
 	autosave_timer.wait_time = AUTOSAVE_INTERVAL_SEC
 	autosave_timer.one_shot = false
 	autosave_timer.autostart = true
 	autosave_timer.process_mode = Node.PROCESS_MODE_ALWAYS
-	
 	add_child(autosave_timer)
 	autosave_timer.timeout.connect(_on_autosave_timeout)
 
@@ -202,30 +201,34 @@ func on_black_hole_opened(amount: int = 1) -> void:
 # Persistência
 # ---------------------------
 func save_to_disk() -> void:
-	# Coleta estados dos participantes
 	var participants_state := {}
 	for node in get_tree().get_nodes_in_group(PARTICIPANT_GROUP):
 		if node and node.has_method("_get_save_id") and node.has_method("_save_state"):
 			var pid := String(node._get_save_id())
 			if pid != "":
 				participants_state[pid] = node._save_state()
+		elif node and node is InputSettings:
+			var key := "input_settings"
+			var bindings := {}
+			for action_name in node.input_actions.keys():
+				var array := []
+				for input_event in InputMap.action_get_events(action_name):
+					var data = node._serialize_event(input_event)
+					if data.size() > 0:
+						array.append(data)
+				bindings[action_name] = array
+			participants_state[key] = {
+				"bindings": bindings,
+			}
+	
 	profile.participants = participants_state
-	
-	# Aplica delta restante (caso alguém chame save manual fora do timer)
 	_rollup_session_into_totals()
-	# Normaliza inteiros
 	_normalize_counters()
-	
-	# Timestamps BR
 	if profile.created_at == "":
 		profile.created_at = _now_br_string()
 	profile.updated_at = _now_br_string()
-	
-	# Campos derivados HH:MM:SS
 	profile.user.session.play_time_hms = _seconds_to_hms(profile.user.session.play_time_seconds)
 	profile.user.totals.play_time_hms  = _seconds_to_hms(profile.user.totals.play_time_seconds)
-	
-	# arredonda os floats a 2 casas
 	profile.user.session.play_time_seconds = snappedf(profile.user.session.play_time_seconds, 0.01)
 	profile.user.totals.play_time_seconds  = snappedf(profile.user.totals.play_time_seconds, 0.01)
 	
@@ -262,13 +265,25 @@ func load_from_disk() -> void:
 func _apply_participants_state() -> void:
 	if not profile.has("participants"):
 		return
-	
+
 	var participants_state: Dictionary = profile.participants
 	for node in get_tree().get_nodes_in_group(PARTICIPANT_GROUP):
 		if node and node.has_method("_get_save_id") and node.has_method("_load_state"):
 			var pid := String(node._get_save_id())
 			if participants_state.has(pid):
 				node._load_state(participants_state[pid])
+		elif node and node is InputSettings:
+			var key := "input_settings"
+			if not participants_state.has(key):
+				continue
+			var bindings: Dictionary = participants_state[key].get("bindings", {})
+			for action_name in node.input_actions.keys():
+				InputMap.action_erase_events(action_name)
+				if bindings.has(action_name):
+					for event_data in bindings[action_name]:
+						var event = node._deserialize_event(event_data)
+						if event != null:
+							InputMap.action_add_event(action_name, event)
 
 
 # Debug

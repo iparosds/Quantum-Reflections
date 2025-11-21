@@ -1,6 +1,7 @@
 class_name GlobalSingleton extends Node2D
 
 @onready var closest_enemy := find_closest_enemy()
+
 const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")
 const TUTORIAL_DIALOGUE := preload("res://dialogues/tutorial_dialogue.dialogue")
 
@@ -38,43 +39,31 @@ var levels: Dictionary = {
 
 signal action_pressed(action_name)
 
-# ---------------------
-# FUNÇÕES DE INTERFACE
-# ---------------------
 
-# Inicia o jogo carregando o nível selecionado
+## Inicia o jogo carregando o nível selecionado
 func start_game() -> void:
 	get_tree().paused = false
 	if gui_manager:
 		gui_manager.main_menu_layer.visible = false
 		gui_manager.game_hud_layer.visible = true
-	
 	goto_level(current_level_path)
 	
 	if current_level == "level_01" or current_level_path.ends_with("level_01.tscn") and not skip_tutorial:
 		start_tutorial()
 
 
-# Inicia o tutorial do jogo.
-# - Garante que só seja iniciado uma vez por sessão.
-# - Cria e exibe o balão de diálogo configurado para o tutorial.
-# - Ajusta o balão para avançar automaticamente após mutações bloqueantes
-#   	(como _wait_action), permitindo que o fluxo dependa apenas do input do jogador.
+## Inicia o tutorial do jogo.
 func start_tutorial() -> void:
 	if _tutorial_running:
 		return
 	_tutorial_running = true
 	var dialogue_balloon = DialogueManager.show_dialogue_balloon(TUTORIAL_DIALOGUE, "start")
 	_register_balloon(dialogue_balloon)
-
 	if dialogue_balloon and dialogue_balloon.has_method("set"):
 		dialogue_balloon.advance_after_blocking_mutation = true
 
 
-# Aguarda até que o jogador pressione a ação especificada.
-# - Recebe o nome da ação (string definida no InputMap).
-# - Suspende a execução até que a ação seja pressionada.
-# - Retorna automaticamente após a primeira ocorrência.
+## Aguarda até que o jogador pressione a ação especificada.
 func _wait_action(action_name) -> void:
 	var action = await action_pressed
 	if action == action_name:
@@ -82,10 +71,7 @@ func _wait_action(action_name) -> void:
 	await _wait_action(action_name)
 
 
-# Aguarda até que o jogador pressione qualquer ação de uma lista.
-# - Recebe um Array de strings com nomes de ações (InputMap).
-# - Suspende a execução até que uma das ações seja pressionada.
-# - Retorna na primeira ação válida detectada.
+## Aguarda até que o jogador pressione qualquer ação.
 func _wait_any_action(action_names: Array) -> void:
 	var action = await action_pressed
 	if action_names.has(action):
@@ -93,10 +79,7 @@ func _wait_any_action(action_names: Array) -> void:
 	await _wait_any_action(action_names)
 
 
-# Captura entradas globais do jogador e emite o sinal `action_pressed`.
-# - Detecta se o evento foi pressionado (sem repetição/echo).
-# - Para cada ação definida no InputMap, verifica se corresponde ao evento.
-# - Emite o sinal com o nome da ação (String) quando detectada.
+## Captura entradas globais do jogador e emite o sinal `action_pressed`.
 func _input(event: InputEvent) -> void:
 	if event.is_pressed() and not event.is_echo():
 		for action in InputMap.get_actions():
@@ -104,17 +87,13 @@ func _input(event: InputEvent) -> void:
 				action_pressed.emit(String(action))
 
 
+## Registra um balão de diálogo aberto para controle/fechamento posterior.
 func _register_balloon(balloon: Node) -> void:
 	if not is_instance_valid(balloon):
 		return
-	
 	active_balloons.append(balloon)
-	
-	# Marca em um grupo para fallback
 	if not balloon.is_in_group("dialogue_balloon"):
 		balloon.add_to_group("dialogue_balloon")
-	
-	# Quando o balão sair da árvore, removemos da lista
 	var reference := balloon
 	balloon.tree_exited.connect(func():
 		active_balloons.erase(reference))
@@ -127,22 +106,25 @@ func _close_all_dialogue_balloons() -> void:
 			balloon.visible = false
 
 
+## Retoma o jogo a partir do estado de pausa.
 func continue_game() -> void:
 	if not gui_manager.is_paused:
 		return
-	
 	gui_manager.hide_pause_menu()
 	AudioPlayer.on_pause_exited()
 
 
+## Carrega dados de jogo persistidos.
 func load_game() -> void:
 	pass
 
 
+## Salva dados de jogo persistidos.
 func save_game() -> void:
 	pass
 
 
+## Abre a tela de Settings a partir do menu ou do jogo.
 func open_settings() -> void:
 	if gui_manager:
 		if gui_manager.is_paused:
@@ -150,23 +132,15 @@ func open_settings() -> void:
 			gui_manager.hide_pause_overlay_only()
 		else:
 			gui_manager.on_settings_back = Callable(self, "open_main_menu")
-		
 		gui_manager.show_settings()
 
 
-# ------------------------------------------------------------
-# Abre a tela de Settings a partir do ícone in-game (sem passar pelo overlay do Pause).
-# 	- Garante que o jogo fique pausado.
-# 	- Define o callback de retorno do Settings para reabrir o Pause menu, 
-#		de forma que o botão “Back” do Settings volte ao Pause ao invés do Main Menu.
-# 	- Faz early-return se o gui_manager ainda não estiver disponível.
-# ------------------------------------------------------------
+
+## Abre a tela de Settings a partir do ícone in-game (sem passar pelo overlay do Pause).
 func open_settings_from_icon() -> void:
 	if not gui_manager:
-		return
-	
+		return	
 	var in_game := is_instance_valid(level) and gui_manager.game_hud_layer.visible
-	
 	if in_game:
 		get_tree().paused = true
 		gui_manager.is_paused = true
@@ -176,237 +150,169 @@ func open_settings_from_icon() -> void:
 	else:
 		gui_manager.on_settings_back = Callable(gui_manager, "show_main_menu")
 		AudioPlayer._play_menu_music()
-	
 	gui_manager.show_settings()
 
 
+## Abre a tela de créditos.
 func open_credits() -> void:
 	if gui_manager:
 		gui_manager.show_credits()
 
 
-# Abre o Main Menu com teardown seguro do gameplay.
-# 	Pausa a árvore para impedir ticks/resíduos durante a desmontagem.
-# 	Se o fluxo veio do Pause, esconde apenas o overlay de pausa (sem despausar).
-# 	Caso exista um Level ativo, limpa referências globais, faz queue_free nele
-# 		e aguarda um frame para a remoção efetivar.
-# 	Remove sobras que possam ter ficado fora do Level (grupos "asteroid" e "ore").
+## Abre o Main Menu.
 func open_main_menu() -> void:
 	get_tree().paused = true
-
 	if gui_manager:
 		if gui_manager.is_paused:
 			if gui_manager.has_method("hide_pause_overlay_only"):
 				gui_manager.hide_pause_overlay_only()
 			else:
 				gui_manager.pause_menu_layer.visible = false
-
 	if is_instance_valid(level):
 		var old_level := level
 		level = null
 		player = null
 		old_level.queue_free()
 		await get_tree().process_frame
-
 	for node in get_tree().get_nodes_in_group("asteroid"):
 		if is_instance_valid(node):
 			node.queue_free()
-	
 	for node in get_tree().get_nodes_in_group("ore"):
 		if is_instance_valid(node):
 			node.queue_free()
-
 	if gui_manager:
 		gui_manager.show_main_menu()
 		gui_manager.is_paused = false
 		AudioPlayer._play_menu_music()
 		_ensure_settings_icon(gui_manager)
-
 	get_tree().paused = false
 
 
+## Abre a tela de configurações de controle.
 func open_controls() -> void:
 	if gui_manager:
 		gui_manager.show_input_settings()
 
 
+## Sai do jogo ao ser chamado a partir do menu principal.
 func quit_game_from_menu() -> void:
 	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
+## Sai do jogo a partir do pause in-game.
 func quit_to_desktop_from_game() -> void:
 	if not gui_manager.is_paused:
 		return
-	
 	SaveManager.on_stage_ended(false)
 	get_tree().quit()
 
 
-# Reinicia a partida com teardown seguro e restaura o HUD.
+## Reinicia a partida e restaura o HUD.
 func restart_game() -> void:
 	if current_level_path == null or current_level_path == "":
 		return
-	
 	get_tree().paused = true
-	
+	_reset_all_bonuses_and_hide_picker()
 	if gui_manager:
 		gui_manager.game_over_screen.visible = false
-	
 	change_level(current_level_path)
 	await get_tree().process_frame
-	
 	reset_game_state()
-	
 	if gui_manager:
 		gui_manager.hud_portal_active.visible = false
 		gui_manager.hud_timer_bar.get(
 			"theme_override_styles/fill"
 		).bg_color = Color(0.129, 0.259, 0.42)
-	
 	get_tree().paused = false
 	start_game()
-	
 	AudioPlayer._play_level_music()
 	AudioPlayer.on_level_restart()
-	
 	if gui_manager and gui_manager.is_paused:
 		gui_manager.hide_pause_menu()
 
 
-# Reseta variáveis de estado do jogo (pontuação, XP etc.)
+## Reseta variáveis de estado do jogo.
 func reset_game_state():
 	if gui_manager:
 		score = 0
 		gui_manager.hud_score_label.text = ""
 		gui_manager.hud_xp.value = 0
+	if is_instance_valid(player):
+		player.set_selected_weapon(1)
 
 
+## Executa rotina de Game Over e exibe a tela correspondente.
 func game_over():
 	_close_all_dialogue_balloons()
-	
+	_reset_all_bonuses_and_hide_picker()
 	if god_mode == false:
 		get_tree().paused = true
 		gui_manager.game_over_screen.visible = true
 		gui_manager.game_over_label.text = "Game over!"
 		gui_manager.hud_portal_active.visible = false
 		settings_icon.visible = false
-		
 		AudioPlayer.stop_music() 
 		AudioPlayer._play_menu_music()
-		
 		SaveManager.on_stage_ended(false)
 
 
-# ---------------------
-# FUNÇÕES DE NÍVEL
-# ---------------------
-
-# Sempre retorna verdadeiro para liberar o nível de tutorial.
+## Sempre retorna verdadeiro para liberar o nível de tutorial.
 func _tutorial() -> bool:
 	return true
 
 
-# ------------------------------------------------------------
-# Retorna verdadeiro quando as condições para liberar o Level 01
-# forem atendidas. No momento está sempre liberado.
-# ------------------------------------------------------------
+## Retorna se o Level 01 está desbloqueado.
 func _level01() -> bool:
 	return true
 
 
-# ------------------------------------------------------------
-# Verifica se um nível está desbloqueado.
-# - Busca os metadados do nível no dicionário `levels`
-# - Lê o nome do método de desbloqueio em `unblock`
-# - Chama dinamicamente o método correspondente
-# Retorna:
-#   true  -> nível liberado
-#   false -> bloqueado ou configuração inválida (sem método)
-# ------------------------------------------------------------
+## Verifica se um nível está desbloqueado.
 func level_is_unlocked(level_id: String) -> bool:
-	var level_data: Dictionary = levels.get(level_id, {})  # nunca null
+	var level_data: Dictionary = levels.get(level_id, {})
 	var method_name: String = str(level_data.get("unblock", ""))
 	return method_name != "" and has_method(method_name) and call(method_name)
 
 
-# ------------------------------------------------------------
-# Vai para um nível por ID lógico.
-#   - Obtém os dados do nível via `level_id`
-#   - Valida existência e regra de desbloqueio (`level_is_unlocked`)
-#   - Extrai o `url` (ou falha se estiver vazio)
-#   - Chama `change_level(url)` para carregar a cena
-# ------------------------------------------------------------
+## Vai para um nível por ID lógico.
 func goto_level(level_or_path: String) -> void:
 	if level_or_path.begins_with("res://"):
 		var file_name := level_or_path.get_file()
 		change_level(file_name)
 		return
-	
 	if level_or_path.ends_with(".tscn"):
 		change_level(level_or_path)
 		return
-	
 	var level_data: Dictionary = levels.get(level_or_path, {})
 	if level_data.is_empty():
 		push_error("Nível desconhecido: %s" % level_or_path)
 		return
-	
 	if not level_is_unlocked(level_or_path):
 		push_warning("Nível bloqueado: %s" % level_or_path)
 		return
-	
 	var url: String = str(level_data.get("url", ""))
 	if url == "":
 		push_error("Nível %s sem 'url' definido" % level_or_path)
 		return
-	
 	change_level(url)
 
 
-# ------------------------------------------------------------
-# Carrega/troca o nível atual.
-# Parâmetro:
-#   load_level: pode ser um caminho completo "res://..." OU um nome de arquivo
-# Processo:
-#   - Resolve `level_path` (prefixa "res://levels/" quando necessário)
-#   - Valida existência do recurso e se é uma PackedScene
-#   - Instancia e anexa o novo Level ao nó pai apropriado
-#   - Libera o Level anterior com segurança
-#   - Atualiza `current_level_path` e `current_level` com base em `levels`
-# ------------------------------------------------------------
+## Carrega/troca o nível atual.
 func change_level(load_level: String) -> void:
 	var level_path: String
-	
 	if load_level.begins_with("res://"):
 		level_path = load_level
 	else:
 		level_path = "res://levels/%s" % load_level
-		
-	# Verifica se o arquivo do nível existe
-	
-	# Carrega recurso do nível
 	var scene_res: PackedScene = ResourceLoader.load(level_path) as PackedScene
-	
-	# Instancia novo nível
 	var new_level: Level = scene_res.instantiate() as Level
-	
-	# Remove o nível anterior, se existir
 	if level != null and is_instance_valid(level):
 		level.queue_free()
-	
-	# Define onde o nível será anexado
 	var parent: Node = level_manager if level_manager != null else get_tree().current_scene
 	parent.add_child(new_level)
-	
 	level = new_level
-	
 	_ensure_settings_icon(level)
-	
-	# reset do estado de tutorial ao trocar de fase
 	_tutorial_running = false
-	
-	# Atualiza variáveis de controle do nível atual
 	current_level_path = level_path
 	for id in levels.keys():
 		var url := String(levels[id].get("url", ""))
@@ -416,16 +322,10 @@ func change_level(load_level: String) -> void:
 			break
 
 
-# ------------------------------------------------------------
-# Garante a presença e o parent corretos do ícone de Settings.
-# Parâmetros:
-#   parent: Node que será o novo pai do ícone.
-# Comportamento:
-#   - Se o ícone ainda não existe, instancia-o, define PROCESS_MODE_ALWAYS
-#     (para responder mesmo com o jogo pausado) e o adiciona ao parent.
-#   - Se já existe mas está sob outro parent, realiza reparent seguro.
-#   - Garante que o ícone termine visível.
-# ------------------------------------------------------------
+## Garante a presença e o parente corretos do ícone de Settings.
+##  Se o ícone ainda não existe, instancia-o, define PROCESS_MODE_ALWAYS
+##  Se já existe mas está sob outro parente, realiza reparentamento seguro.
+##  Garante que o ícone termine visível.
 func _ensure_settings_icon(parent: Node) -> void:
 	if not is_instance_valid(settings_icon):
 		settings_icon = SETTINGS_ICON.instantiate()
@@ -438,11 +338,7 @@ func _ensure_settings_icon(parent: Node) -> void:
 	settings_icon.visible = true
 
 
-# ---------------------
-# FUNÇÕES UTILITÁRIAS
-# ---------------------
-
-# Exibe número animado na tela (pontuação, dano etc.)
+## Exibe número animado na tela
 func display_number(value: int, text_position: Vector2, text_color: String):
 	var number := Label.new()
 	number.global_position = text_position
@@ -451,36 +347,41 @@ func display_number(value: int, text_position: Vector2, text_color: String):
 	number.label_settings = LabelSettings.new()
 	number.label_settings.font_color = text_color
 	number.label_settings.font_size = 16
-	
 	call_deferred("add_child", number)
-	
 	await number.resized
 	number.pivot_offset = Vector2(number.size / 2)
-	
 	# Animações de movimento e desaparecimento
 	var tween := get_tree().create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(number, "position:y", number.position.y - 12, 0.25).set_ease(Tween.EASE_OUT)
 	tween.tween_property(number, "position:y", number.position.y, 0.25).set_ease(Tween.EASE_IN).set_delay(0.25)
 	tween.tween_property(number, "scale", Vector2.ZERO, 0.25).set_ease(Tween.EASE_IN).set_delay(0.5)
-	
 	await tween.finished
 	number.queue_free()
 
 
-# Retorna o inimigo mais próximo do player
+## Retorna o inimigo mais próximo do player
 func find_closest_enemy() -> Object:
 	var all_enemy := get_tree().get_nodes_in_group("asteroid")
-	
 	for enemy in all_enemy:
 		var gun2enemy_distance := position.distance_to(enemy.position)
 		if gun2enemy_distance < closest_distance:
-			closest_distance = gun2enemy_distance
+			closest_distance = int(gun2enemy_distance)
 			closest_enemy = enemy
-	
 	return closest_enemy
 
 
-# Chamado a cada frame para atualizar o inimigo mais próximo
+## Atualiza o inimigo mais próximo.
 func _process(_delta: float) -> void:
 	closest_enemy = find_closest_enemy()
+
+
+## Reseta upgrades e esconde o seletor de upgrades (se aberto).
+func _reset_all_bonuses_and_hide_picker() -> void:
+	if get_tree().root.has_node("PlayerUpgrades"):
+		PlayerUpgrades.reset()
+	if is_instance_valid(gui_manager) and is_instance_valid(gui_manager.upgrades_menu):
+		gui_manager.upgrades_menu.visible = false
+		var picker := gui_manager.upgrades_menu.get_node_or_null("SelectUpgrades")
+		if picker:
+			picker.visible = false

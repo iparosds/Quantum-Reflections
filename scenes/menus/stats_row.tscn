@@ -1,0 +1,18 @@
+[gd_scene load_steps=0 format=3 uid="uid://bpwh8pafstt3h"]
+
+[node name="StatsRow" type="HBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="StatNameLabel" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Stat"
+
+[node name="StatValueLabel" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Result"
