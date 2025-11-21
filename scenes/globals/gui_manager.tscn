@@ -318,9 +318,18 @@ theme = SubResource("Theme_1mbii")
 [node name="NewGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 focus_neighbor_top = NodePath("../QuitButton")
-focus_neighbor_bottom = NodePath("../SettingsButton")
+focus_neighbor_bottom = NodePath("../TutorialButton")
 theme = ExtResource("5_w8ru2")
 text = "New Game"
+flat = true
+
+[node name="TutorialButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+focus_neighbor_top = NodePath("../NewGameButton")
+focus_neighbor_bottom = NodePath("../SettingsButton")
+theme = ExtResource("5_w8ru2")
+text = "Tutorial"
 flat = true
 
 [node name="ContinueGameButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
@@ -350,7 +359,7 @@ flat = true
 [node name="SettingsButton" type="Button" parent="MainMenu/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 4
-focus_neighbor_top = NodePath("../NewGameButton")
+focus_neighbor_top = NodePath("../TutorialButton")
 focus_neighbor_bottom = NodePath("../CreditsButton")
 theme = ExtResource("5_w8ru2")
 text = "Settings"

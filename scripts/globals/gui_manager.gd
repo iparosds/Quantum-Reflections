@@ -36,11 +36,6 @@ const STATS_TABLE_GROUP := "stats_table_layer"
 @onready var settings_sfx_volume_slider: HSlider = $SettingsMenu/MarginContainer/ButtonsContainer/SFXVolumeSlider
 @onready var settings_controls_btn: BaseButton = $SettingsMenu/MarginContainer/ButtonsContainer/ControlsButton
 
-var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
-var black_hole_warning_tween: Tween = null
-var black_hole_warning_sources : int = 0
-
-
 # Elementos do HUD principal do jogo.
 # Exibem informações como XP, pontuação, tempo, portal ativo e status de god mode.
 @onready var hud_xp: ProgressBar = $GameHud/HudXP
@@ -60,6 +55,11 @@ var black_hole_warning_sources : int = 0
 @onready var levels_container: VBoxContainer = $LevelsMenu/ScrollContainer/LevelsContainer
 @onready var back_to_main_menu_button: Button = $LevelsMenu/VBoxContainer/BackToMainMenuButton
 
+@onready var tutorial_button: Button = $MainMenu/MarginContainer/VBoxContainer/TutorialButton
+
+var on_settings_back: Callable = Callable(Singleton, "open_main_menu")
+var black_hole_warning_tween: Tween = null
+var black_hole_warning_sources : int = 0
 # Elementos do Upgrades Menu
 @onready var upgrades_menu: CanvasLayer = $UpgradesMenu
 
@@ -105,6 +105,7 @@ func _ready() -> void:
 	black_hole_warning_label.visible = false
 	stats_table_layer.visible = false
 	black_hole_warning_label.modulate.a = 0.0
+	tutorial_button.visible = false
 	
 	_tag_buttons_in_tree(main_menu_layer,  MAIN_MENU_BUTTON_GROUP)
 	_tag_buttons_in_tree(credits_layer,    CREDITS_BUTTON_GROUP)
@@ -245,7 +246,23 @@ func _on_any_button_pressed(pressed_button: BaseButton) -> void:
 func _on_main_menu_button_pressed(pressed_button: BaseButton) -> void:
 	match pressed_button.name:
 		"NewGameButton":
-			_show_levels_menu()
+			var level_id := "level01"
+			var level_data = Singleton.levels.get(level_id, {})
+			if not level_data.is_empty():
+				Singleton.skip_tutorial = Singleton.tutorial_unlocked
+				Singleton.change_level(String(level_data.get("url", "")))
+				Singleton.start_game()
+				
+				if not Singleton.tutorial_unlocked:
+					Singleton.tutorial_unlocked = true
+					if is_instance_valid(tutorial_button):
+						tutorial_button.visible = true
+		"TutorialButton":
+			var level_data = Singleton.levels.get("level01", {})
+			if not level_data.is_empty():
+				Singleton.skip_tutorial = false
+				Singleton.change_level(String(level_data.get("url", "")))
+				Singleton.start_game()
 		"ContinueGameButton":
 			Singleton.continue_game()
 		"LoadGameButton":
