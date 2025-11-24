@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://bxkdmjkq2lql3"]
 
-[ext_resource type="Script" path="res://scripts/game/tutorial_dialogue_balloon.gd" id="1_ekbxt"]
+[ext_resource type="Script" uid="uid://de6cipbwydci" path="res://scripts/game/tutorial_dialogue_balloon.gd" id="1_ekbxt"]
 [ext_resource type="PackedScene" uid="uid://ckvgyvclnwggo" path="res://addons/dialogue_manager/dialogue_label.tscn" id="2_54q04"]
 [ext_resource type="Script" uid="uid://bb52rsfwhkxbn" path="res://addons/dialogue_manager/dialogue_responses_menu.gd" id="3_cmpfp"]
 
@@ -83,11 +83,14 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -219.0
+offset_left = 88.0
+offset_top = -128.0
+offset_right = -88.0
 grow_horizontal = 2
 grow_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="Balloon/MarginContainer"]
+self_modulate = Color(1, 1, 1, 0.6627451)
 clip_children = 2
 layout_mode = 2
 mouse_filter = 1
