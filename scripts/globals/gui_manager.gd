@@ -528,6 +528,10 @@ func open_upgrades_picker() -> void:
 	upgrades_menu.process_mode = Node.PROCESS_MODE_ALWAYS
 	picker.process_mode = Node.PROCESS_MODE_ALWAYS
 	picker._populate_random()
+	for balloon in Singleton.active_balloons:
+		if is_instance_valid(balloon):
+			balloon.visible = false
+	
 	get_tree().paused = true
 
 
@@ -539,6 +543,9 @@ func _on_upgrades_picker_closed(_track: int) -> void:
 	if picker:
 		picker.visible = false
 	upgrades_menu.visible = false
+	for balloon in Singleton.active_balloons:
+		if is_instance_valid(balloon):
+			balloon.visible = true
 
 
 ## Gerencia avisos de proximidade de buraco negro.
