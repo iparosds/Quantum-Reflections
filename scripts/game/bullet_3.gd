@@ -27,7 +27,6 @@ func _ready() -> void:
 
 ## Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
-	# Player: dano baseado na velocidade (mesma lógica da colisão com asteroide)
 	if body.has_method("is_player"):
 		if not can_hit_player:
 			return
@@ -36,7 +35,6 @@ func _on_body_entered(body: Node) -> void:
 			damage = 10.0
 		body.health -= damage
 		_explode()
-		#return
 	if body.has_method("take_damage"):
 		body.take_damage(insta_kill_amount, 1.0)
 		_explode()
