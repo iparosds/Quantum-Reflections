@@ -155,7 +155,7 @@ func _init_level_progress() -> void:
 func _update_level_from_score(score: int) -> void:
 	var target_index := _level_for_score(score)
 	if current_level_index < 0:
-		_apply_level_up_to(target_index, false)
+		_apply_level_up_to(target_index)
 		current_level_index = target_index
 		return
 	if target_index > current_level_index:
