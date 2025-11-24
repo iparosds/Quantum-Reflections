@@ -182,19 +182,13 @@ func _level_for_score(current_score: int) -> int:
 	return highest_unlocked_index
 
 
-# ------------------------------------------------------------
-# Aplica os desbloqueios de turrets até o nível especificado.
-# Parâmetros:
-#   - target_level_index: índice máximo de nível a ser aplicado.
-#   - notify: se true, mostra uma mensagem de Level Up ao desbloquear.
-#
-# Comportamento:
-# - Itera por todos os níveis do índice 0 até `target_level_index`.
-# - Para cada nível, percorre a lista de turrets em `unlock` e habilita 
-#   (define `current_bullet = 1`) as turrets correspondentes no dicionário `turrets`.
-# - Se `notify` for true e o nível possuir `min_score > 0`, gera uma mensagem
-#   descrevendo quais turrets foram adicionadas e chama `show_level_up_notice`
-#   no `gui_manager` para exibir o aviso na tela.
+## Aplica os desbloqueios de turrets até o nível especificado.
+## - Itera por todos os níveis do índice 0 até `target_level_index`.
+## - Para cada nível, percorre a lista de turrets em `unlock` e habilita 
+##   (define `current_bullet = 1`) as turrets correspondentes no dicionário `turrets`.
+## - Se `notify` for true e o nível possuir `min_score > 0`, gera uma mensagem
+##   descrevendo quais turrets foram adicionadas e chama `show_level_up_notice`
+##   no `gui_manager` para exibir o aviso na tela.
 func _apply_level_up_to(target_level_index: int) -> void:
 	for level_index in range(target_level_index + 1):
 		var turrets_to_unlock: Array = PLAYER_LEVELS[level_index]["unlock"]
