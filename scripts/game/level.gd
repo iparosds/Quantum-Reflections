@@ -247,7 +247,7 @@ func _physics_process(delta):
 	if time_left < 1:
 		if portal_active == false:
 			portal_active = true
-			portal_timer = portal_duration_seconds ### GPT
+			portal_timer = portal_duration_seconds
 			Singleton.gui_manager.hud_portal_active.visible = true
 			Singleton.gui_manager.hud_timer_bar.get("theme_override_styles/fill").bg_color = Color.hex(0xb4b542ff)
 			_open_portal()
