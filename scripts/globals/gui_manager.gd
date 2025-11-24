@@ -533,6 +533,9 @@ func open_upgrades_picker() -> void:
 			balloon.visible = false
 	
 	get_tree().paused = true
+	var cards = picker.upgrade_card_container.get_children()
+	if cards.size() > 0:
+		cards[0].grab_focus()
 
 
 ## Callback quando o seletor de upgrades é fechado.

@@ -1,20 +1,35 @@
-[gd_scene load_steps=3 format=3 uid="uid://dlnwlgmogbp6t"]
+[gd_scene load_steps=5 format=3 uid="uid://dlnwlgmogbp6t"]
 
 [ext_resource type="Texture2D" uid="uid://b3m52u6qpfgij" path="res://assets/sprites/levels_sprites/projectile.png" id="1_qqt0o"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oaoa1"]
-bg_color = Color(0.127371, 0.127371, 0.127371, 0.392157)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qqt0o"]
+bg_color = Color(0.12941177, 0.12156863, 0.11372549, 0.34509805)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
-[node name="UpgradesCardPanel" type="Panel"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5acd6"]
+bg_color = Color(0.12941177, 0.12156863, 0.11372549, 0.34509805)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.024560524, 0.024560524, 0.024560511, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_qqt0o"]
+Button/styles/focus = SubResource("StyleBoxFlat_qqt0o")
+Button/styles/normal = SubResource("StyleBoxFlat_5acd6")
+
+[node name="UpgradesCardPanel" type="Button"]
 custom_minimum_size = Vector2(150, 200)
 anchors_preset = 8
 anchor_left = 0.5
@@ -27,7 +42,8 @@ offset_right = 95.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_oaoa1")
+mouse_filter = 1
+theme = SubResource("Theme_qqt0o")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

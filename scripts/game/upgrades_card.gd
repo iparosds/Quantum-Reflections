@@ -1,4 +1,4 @@
-extends Panel
+extends Button
 
 ## Tipo de upgrade associado a esta carta (arma, escudo, velocidade etc.).
 ## Ao ser alterado, chama automaticamente _refresh() para atualizar a exibição.
@@ -6,11 +6,10 @@ extends Panel
 	set(value):
 		upgrade = value
 		_refresh()
-@export var title := ""
-@export var icon: Texture2D
+@export var title : String = ""
 
-@onready var texture_rect: TextureRect = $VBoxContainer/MarginContainer/TextureRect
-@onready var label: Label = $VBoxContainer/MarginContainer2/Label
+@onready var texture_rect : TextureRect = $VBoxContainer/MarginContainer/TextureRect
+@onready var label : Label = $VBoxContainer/MarginContainer2/Label
 
 var weapon_1_image : Texture2D = load("res://assets/sprites/levels_sprites/projectile.png")
 var weapon_2_image : Texture2D = load("res://assets/sprites/levels_sprites/turret.png")
@@ -19,7 +18,7 @@ var weapon_4_image : Texture2D = load("res://assets/sprites/icons/drone-image.pn
 var shield_image : Texture2D = load("res://assets/sprites/icons/shield-minimalistic-svgrepo-com (1).svg")
 var speed_image : Texture2D = load("res://assets/sprites/icons/speed-skiing-svgrepo-com.svg")
 
-signal chosen(track: int)
+signal chosen(track : int)
 
 
 ## Inicializa a carta chamando _refresh() para configurar ícone e texto.
@@ -65,10 +64,18 @@ func _set_image_for(upgrade_image: int) -> Texture2D:
 		_: return null
 
 
-## Detecta cliques do mouse na carta.
-## Se o botão esquerdo for pressionado, aplica o upgrade correspondente
-## e emite o sinal "chosen" informando qual tipo de upgrade foi selecionado.
+## Detecta selecao da carta de upgrade.
+## Emite o sinal "chosen" informando qual tipo de upgrade foi selecionado.
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		PlayerUpgrades.apply_upgrade(upgrade)
-		chosen.emit(upgrade)
+	if event is InputEventMouseButton:
+		if not event.pressed:
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			PlayerUpgrades.apply_upgrade(upgrade)
+			chosen.emit(upgrade)
+	elif event is InputEventKey:
+		if event.echo or not event.pressed:
+			return
+		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
+			PlayerUpgrades.apply_upgrade(upgrade)
+			chosen.emit(upgrade)
