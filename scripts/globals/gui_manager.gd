@@ -483,6 +483,72 @@ func show_pause_overlay_only() -> void:
 	pause_menu_layer.visible = true
 
 
+## Exibe uma notificação de "Level Up" no HUD.
+## Parâmetros:
+##   - message: Texto a ser mostrado na notificação.
+## Comportamento:
+## - Garante que o Label `level_up_notification_label` é válido.
+## - Atualiza o texto do Label e o torna visível, mas inicialmente
+##   com alpha = 0 (invisível).
+## - Cria uma animação (Tween) que faz:
+##     1. Fade in rápido (0.15s).
+##     2. Pausa (1.0s).
+##     3. Fade out suave (0.35s).
+## - Quando o Tween termina, esconde novamente o Label
+##   para evitar que permaneça visível.
+func show_level_up_notice(message: String) -> void:
+	if not is_instance_valid(level_up_notification_label):
+		return
+	level_up_notification_label.text = message
+	level_up_notification_label.visible = true
+	level_up_notification_label.modulate.a = 0.0
+	var fade_tween := get_tree().create_tween()
+	fade_tween.tween_property(level_up_notification_label, "modulate:a", 1.0, 0.15)
+	fade_tween.tween_interval(1.0)
+	fade_tween.tween_property(level_up_notification_label, "modulate:a", 0.0, 0.35)
+	fade_tween.finished.connect(func ():
+		if is_instance_valid(level_up_notification_label):
+			level_up_notification_label.visible = false
+	)
+
+
+## Abre o seletor de upgrades (picker).
+## - Garante existência de `upgrades_menu` e do nó `SelectUpgrades`.
+## - Torna-os visíveis/ativos, repopula as cartas e pausa o jogo.
+func open_upgrades_picker() -> void:
+	if not is_instance_valid(upgrades_menu):
+		return
+	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
+	if picker == null:
+		push_error("SelectUpgrades não está como filho de UpgradesMenu.")
+		return
+	upgrades_menu.visible = true
+	picker.visible = true
+	upgrades_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	picker.process_mode = Node.PROCESS_MODE_ALWAYS
+	picker._populate_random()
+	for balloon in Singleton.active_balloons:
+		if is_instance_valid(balloon):
+			balloon.visible = false
+	
+	get_tree().paused = true
+
+
+## Callback quando o seletor de upgrades é fechado.
+## - Retoma o jogo, esconde o picker e o container de upgrades.
+func _on_upgrades_picker_closed(_track: int) -> void:
+	get_tree().paused = false
+	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
+	if picker:
+		picker.visible = false
+	upgrades_menu.visible = false
+	for balloon in Singleton.active_balloons:
+		if is_instance_valid(balloon):
+			balloon.visible = true
+
+
+## Gerencia avisos de proximidade de buraco negro.
+## - Ativa/desativa o efeito de piscar no HUD baseado em fontes ativas.
 func notify_black_hole_warning(active: bool) -> void:
 	# Agrega múltiplas fontes de aviso (vários buracos negros próximos).
 	if active:
