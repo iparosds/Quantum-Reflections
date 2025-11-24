@@ -64,15 +64,18 @@ func _set_image_for(upgrade_image: int) -> Texture2D:
 		_: return null
 
 
-## Detecta cliques do mouse na carta.
-## Se o botão esquerdo for pressionado, aplica o upgrade correspondente
-## e emite o sinal "chosen" informando qual tipo de upgrade foi selecionado.
+## Detecta selecao da carta de upgrade.
+## Emite o sinal "chosen" informando qual tipo de upgrade foi selecionado.
 func _gui_input(event: InputEvent) -> void:
-	if (event is InputEventKey and event.echo) or not event.pressed:
-		return
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		PlayerUpgrades.apply_upgrade(upgrade)
-		chosen.emit(upgrade)
-	elif event is InputEventKey and (event.keycode == KEY_ENTER or event.keycode == KEY_SPACE):
-		PlayerUpgrades.apply_upgrade(upgrade)
-		chosen.emit(upgrade)
+	if event is InputEventMouseButton:
+		if not event.pressed:
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			PlayerUpgrades.apply_upgrade(upgrade)
+			chosen.emit(upgrade)
+	elif event is InputEventKey:
+		if event.echo or not event.pressed:
+			return
+		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
+			PlayerUpgrades.apply_upgrade(upgrade)
+			chosen.emit(upgrade)
