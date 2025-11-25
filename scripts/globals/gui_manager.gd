@@ -140,7 +140,13 @@ func _ready() -> void:
 ## - Garante que overlays (Settings/Credits/Stats) sejam fechados ao sair do pause.
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
-		# ignora se estamos em Main Menu ou Game Over
+		if settings_layer.visible:
+			_play_back_sound()
+			AudioPlayer.save_volumes()
+			settings_layer.visible = false
+			on_settings_back.call()
+			on_settings_back = Callable(Singleton, "open_main_menu")
+			return
 		if main_menu_layer.visible or game_over_screen.visible or upgrades_menu.visible:
 			return
 		if is_paused:
