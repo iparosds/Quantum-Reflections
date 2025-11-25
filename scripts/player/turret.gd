@@ -7,20 +7,20 @@ const BULLET_2 = PlayerUpgrades.BULLET_2_SCENE
 @export var projectiles_parent_group = "projectile_parent"
 
 var projectiles_node : Node
-var cooldown = false
-var current_bullet = 0;
+var cooldown : bool = false
+var current_bullet : int = 0
 
 
-func try_shoot() -> bool:
-	push_error("Not implemented")
-	return false
-
-
+## Inicializa a referência ao nó pai de projéteis via grupo configurado.
+## Garante, com assert, que o nó existe antes de continuar.
 func _ready() -> void:
 	projectiles_node = get_tree().get_first_node_in_group(projectiles_parent_group)
 	assert(projectiles_node != null, "Projectiles node is required")
 
 
+## Instancia o projétil conforme o tipo selecionado (current_bullet),
+## configura posição/rotação/alvo, aplica multiplicador de dano vindo de PlayerUpgrades
+## e adiciona o projétil como filho do ponto de disparo.
 func shoot(target_enemy):
 	var new_bullet: Node
 	if current_bullet == 1:
@@ -44,8 +44,10 @@ func shoot(target_enemy):
 	%ShootingPoint.add_child(new_bullet)
 
 
+## Verifica a cada frame de física se pode atirar,
+## seleciona um inimigo na área, dispara e inicia o temporizador de recarga.
 func _physics_process(_delta):
-	if cooldown == false && current_bullet != 0:
+	if not cooldown and current_bullet != 0:
 		var enemies_in_range = get_overlapping_bodies()
 		if enemies_in_range.size() > 0:
 			var target_enemy = enemies_in_range.front()
@@ -54,5 +56,6 @@ func _physics_process(_delta):
 			cooldown = true
 
 
+## Callback do temporizador de recarga: libera a turret para um novo disparo.
 func _on_timer_timeout():
 	cooldown = false

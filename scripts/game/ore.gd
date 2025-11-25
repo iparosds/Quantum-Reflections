@@ -6,6 +6,9 @@ var level
 
 
 func _physics_process(delta):
+	if not is_instance_valid(Singleton.player):
+		return
+	
 	if int(abs(global_position.distance_to(Singleton.player.global_position))) < 50:
 		Singleton.level.add_ore()
 		queue_free()

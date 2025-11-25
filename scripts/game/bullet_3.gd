@@ -10,7 +10,7 @@ var lifetime_seconds: float = 3.0
 var insta_kill_amount: float = 99999.0
 
 
-# Inicializa o timer e configura a mina para começar ativa e monitorando colisões.
+## Inicializa o timer e configura a mina para começar ativa e monitorando colisões.
 func _ready() -> void:
 	vanish_timer.wait_time = lifetime_seconds
 	vanish_timer.one_shot = true
@@ -22,14 +22,14 @@ func _ready() -> void:
 		vanish_timer.timeout.connect(_on_vanish_timer_timeout)
 
 
-# Detecta colisão com um corpo e aplica dano.
+## Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
 	if body.has_method("take_damage"):
 		body.take_damage(insta_kill_amount, 1.0)
 		_explode()
 
 
-# Executa a animação e o som da explosão e desativa colisões.
+## Executa a animação e o som da explosão e desativa colisões.
 func _explode() -> void:
 	collision_shape.set_deferred("disabled", true)
 	set_deferred("monitoring", false)
