@@ -110,6 +110,13 @@ func _close_all_dialogue_balloons() -> void:
 func continue_game() -> void:
 	if not gui_manager.is_paused:
 		return
+	if is_instance_valid(gui_manager.upgrades_menu):
+		var picker := gui_manager.upgrades_menu.get_node_or_null("SelectUpgrades")
+		if picker and picker.visible and not gui_manager.upgrades_menu.visible:
+			gui_manager.upgrades_menu.visible = true
+			gui_manager.is_paused = false
+			AudioPlayer.on_pause_exited()
+			return
 	gui_manager.hide_pause_menu()
 	AudioPlayer.on_pause_exited()
 
@@ -142,6 +149,10 @@ func open_settings_from_icon() -> void:
 		return	
 	var in_game := is_instance_valid(level) and gui_manager.game_hud_layer.visible
 	if in_game:
+		if is_instance_valid(gui_manager.upgrades_menu):
+			var picker := gui_manager.upgrades_menu.get_node_or_null("SelectUpgrades")
+			if picker and picker.visible and gui_manager.upgrades_menu.visible:
+				gui_manager.upgrades_menu.visible = false
 		get_tree().paused = true
 		gui_manager.is_paused = true
 		gui_manager.hide_pause_overlay_only()
