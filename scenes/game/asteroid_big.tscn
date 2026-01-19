@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4tfqrql8ywsb"]
+
+[ext_resource type="PackedScene" uid="uid://cdfj5mokmxuxt" path="res://scenes/game/asteroid.tscn" id="1_18x82"]
+
+[node name="AsteroidBig" instance=ExtResource("1_18x82")]
+scale = Vector2(4, 4)
+health_multiplier = 4.0
+speed_multiplier = 0.5
+splits_on_death = true
+asteroid_type = 1

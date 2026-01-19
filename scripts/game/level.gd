@@ -1,6 +1,7 @@
 class_name Level extends Node2D
 
 const ASTEROID = preload("res://scenes/game/asteroid.tscn")
+const ASTEROID_BIG = preload("res://scenes/game/asteroid_big.tscn")
 const PORTAL = preload("res://scenes/game/portal.tscn")
 
 @export var level_duration_seconds: float = 180.0
@@ -195,16 +196,17 @@ func win():
 # - Usa progress_ratio randômico para distribuir spawns pela trajetória
 # - Adiciona o novo nó ao primeiro nó encontrado no grupo "asteroids" de forma adiada
 # ------------------------------------------------------------
+#func spawn_asteroid():
 func spawn_asteroid():
-	var new_asteroid = ASTEROID.instantiate()
+	var scene_to_spawn = ASTEROID
+	if randf() < 0.15:
+		scene_to_spawn = ASTEROID_BIG
+	var new_asteroid = scene_to_spawn.instantiate()
 	%PathFollow2D.progress_ratio = randf()
 	var candidate_position = %PathFollow2D.global_position
-	
 	if not _is_inside_world(candidate_position):
 		candidate_position = _clamp_inside_world(candidate_position)
-		
 	new_asteroid.global_position = candidate_position
-	
 	var asteroids_group = get_tree().get_first_node_in_group("asteroids")
 	asteroids_group.call_deferred("add_child", new_asteroid)
 

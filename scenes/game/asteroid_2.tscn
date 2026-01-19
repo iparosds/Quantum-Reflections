@@ -1,0 +1,267 @@
+[gd_scene load_steps=17 format=3 uid="uid://1avomm1t1gqr"]
+
+[ext_resource type="Texture2D" uid="uid://c4sr8oscwaor2" path="res://assets/sprites/levels_sprites/asteroide01.png" id="2_qj6rs"]
+[ext_resource type="Texture2D" uid="uid://trvwq0qrgkv5" path="res://assets/sprites/quantum_sprites/asteroide01.png" id="3_5xtj6"]
+[ext_resource type="Texture2D" uid="uid://dtqj60jwhf2qj" path="res://assets/sprites/levels_sprites/minerio.png" id="8_itgy4"]
+[ext_resource type="Texture2D" uid="uid://b60r3ywngvxtm" path="res://assets/sprites/levels_sprites/explode_asteroide.png" id="9_3ytwy"]
+[ext_resource type="AudioStream" uid="uid://bg3a6bx85s7d3" path="res://assets/sounds/in_game/EXPLOSÃO 2 SEM PARTICULAS.wav" id="10_s7b6y"]
+[ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/fonts/PixelifySans-VariableFont_wght.ttf" id="11_l80du"]
+
+[sub_resource type="GDScript" id="GDScript_e62c0"]
+script/source = "class_name Asteroid_2extends CharacterBody2D
+
+const SHIP_ATTRACTION : float = 100.0
+const ORE : PackedScene = preload(\"res://scenes/game/ore.tscn\")
+const MIN_DAMAGE : float = 10.0
+
+@onready var player : Node2D = Singleton.level.get_node_or_null(\"Player\")
+
+var health : int = 100
+var moving : bool = true
+var asteroid_type : int
+var portal : Node2D = null
+
+
+## Escolhe aleatoriamente um tipo de asteroide (1, 2 ou 3) 
+## e toca a animação correspondente ao iniciar a cena.
+func _ready():
+	var rand = round(randf_range(1,3))
+	if rand == 1:
+		asteroid_type = 1
+		$Asteroid.play(\"asteroid01\")
+	elif rand == 2:
+		asteroid_type = 2
+		$Asteroid.play(\"asteroid02\")
+	else:
+		asteroid_type = 3
+		$Asteroid.play(\"asteroid03\")
+
+
+## Armazena a referência ao portal aberto, 
+## usada para direcionar o movimento do asteroide até ele.
+func on_portal_opened(p: Node2D) -> void:
+	portal = p
+
+
+## Remove o asteroide da cena quando entra em um portal ativo.
+func on_portal() -> void:
+	queue_free()
+
+
+## Atualiza o movimento e animação do asteroide a cada frame de física.
+## Segue o player por padrão, mas se o portal estiver ativo, 
+## é atraído ou repelido conforme o modo quantum.
+func _physics_process(_delta) -> void:
+	if !is_instance_valid(player):
+		player = Singleton.level.get_node_or_null(\"Player\")
+		if !is_instance_valid(player):
+			return
+	
+	var direction: Vector2
+	
+	if Singleton.level.portal_active:
+		if !is_instance_valid(portal):
+			portal = get_tree().get_first_node_in_group(\"portal\")
+		if is_instance_valid(portal):
+			direction = global_position.direction_to(portal.global_position)
+		else:
+			direction = global_position.direction_to(player.global_position)
+	else:
+		direction = global_position.direction_to(player.global_position)
+	
+	if moving:
+		if !Singleton.level.quantum:
+			if asteroid_type == 1:
+				$Asteroid.play(\"asteroid01\")
+			elif asteroid_type == 2:
+				$Asteroid.play(\"asteroid02\")
+			else:
+				$Asteroid.play(\"asteroid03\")
+			velocity = direction * SHIP_ATTRACTION
+		else:
+			velocity = -direction * SHIP_ATTRACTION
+			if asteroid_type == 1:
+				$Asteroid.play(\"asteroid01-quantum\")
+			elif asteroid_type == 2:
+				$Asteroid.play(\"asteroid02-quantum\")
+			else:
+				$Asteroid.play(\"asteroid03-quantum\")
+		move_and_slide()
+
+
+## Chamada quando o asteroide colide com o jogador. 
+## Inicia o processo de destruição.
+func player_collision() -> void:
+	asteroid_destruction()
+
+
+## Executa a sequência de destruição do asteroide: 
+## animação, som e registro da morte.
+func asteroid_destruction() -> void:
+	moving = false
+	$Asteroid.play(\"explosion\")
+	$AsteroidExplosion.start()
+	$AudioStreamPlayer2D.play()
+	set_collision_layer_value(1, true)
+	set_collision_layer_value(2, false)
+	SaveManager.on_enemy_killed()
+
+
+## Instancia um novo minério no local da destruição e adiciona-o à cena atual.
+func add_new_ore() -> void:
+	var new_ore = ORE.instantiate()
+	new_ore.global_position = global_position
+	get_tree().current_scene.call_deferred(\"add_child\", new_ore)
+
+
+## Aplica dano ao asteroide.
+## - Se amount for >= 0, usa esse valor como dano fixo.
+## - Se amount for -1.0 (padrão), calcula o dano automaticamente com base na aceleração do player.
+func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
+	var damage := 0.0
+	if amount >= 0.0:
+		damage = amount
+	else:
+		var base := MIN_DAMAGE
+		if is_instance_valid(player):
+			base = max(MIN_DAMAGE, float(player.acceleration) / 10.0)
+		damage = base * max(0.0, multiplier)
+	health -= int(damage)
+	if health <= 0.0:
+		asteroid_destruction()
+		add_new_ore()
+	else:
+		Singleton.display_number(int(damage), $DamageText.global_position, \"#b4b542\")
+
+
+## Remove o asteroide da cena quando o timer de explosão termina.
+func _on_asteroid_explosion_timeout() -> void:
+	queue_free()
+
+
+## Remove o asteroide da cena quando o tempo de vida total expira.
+func _on_asteroid_life_timeout() -> void:
+	queue_free()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_erx0o"]
+atlas = ExtResource("3_5xtj6")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yg5wq"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fycg"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ixphh"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6idua"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06p11"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_slfqt"]
+atlas = ExtResource("9_3ytwy")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jogq0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_qj6rs")
+}],
+"loop": true,
+"name": &"asteroid01",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_erx0o")
+}],
+"loop": true,
+"name": &"asteroid01-quantum",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_itgy4")
+}],
+"loop": true,
+"name": &"coin",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_yg5wq")
+}, {
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_8fycg")
+}, {
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_ixphh")
+}, {
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_6idua")
+}, {
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_06p11")
+}, {
+"duration": 0.2,
+"texture": SubResource("AtlasTexture_slfqt")
+}],
+"loop": false,
+"name": &"explosion",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vyoty"]
+radius = 8.0
+
+[node name="Asteroid_2" type="CharacterBody2D"]
+collision_layer = 2
+script = SubResource("GDScript_e62c0")
+
+[node name="Asteroid2" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jogq0")
+animation = &"asteroid01"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_vyoty")
+
+[node name="AsteroidExplosion" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_s7b6y")
+bus = &"SFX"
+
+[node name="AsteroidLife" type="Timer" parent="."]
+wait_time = 60.0
+one_shot = true
+autostart = true
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = 8.0
+offset_top = -12.0
+offset_right = 61.0
+offset_bottom = 4.0
+theme_override_colors/font_color = Color(0.705882, 0.709804, 0.258824, 1)
+theme_override_fonts/font = ExtResource("11_l80du")
+theme_override_font_sizes/font_size = 13
+text = "10.0"
+
+[node name="DamageText" type="Node2D" parent="."]
+position = Vector2(0, -17)
+
+[connection signal="timeout" from="AsteroidExplosion" to="." method="_on_asteroid_explosion_timeout"]
+[connection signal="timeout" from="AsteroidLife" to="." method="_on_asteroid_life_timeout"]

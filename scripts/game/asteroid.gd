@@ -1,29 +1,40 @@
 class_name Asteroid extends CharacterBody2D
 
-const SHIP_ATTRACTION : float = 100.0
 const ORE : PackedScene = preload("res://scenes/game/ore.tscn")
 const MIN_DAMAGE : float = 10.0
 
 @onready var player : Node2D = Singleton.level.get_node_or_null("Player")
 
+@export var health_multiplier: float = 1.0
+@export var base_speed: float = 100.0
+@export var speed_multiplier: float = 1.0
+@export var splits_on_death: bool = false
+@export var split_count: int = 4
+@export var asteroid_type : int = 0
+
 var health : int = 100
 var moving : bool = true
-var asteroid_type : int
 var portal : Node2D = null
 
 
 ## Escolhe aleatoriamente um tipo de asteroide (1, 2 ou 3) 
 ## e toca a animação correspondente ao iniciar a cena.
 func _ready():
-	var rand = round(randf_range(1,3))
-	if rand == 1:
-		asteroid_type = 1
+	health = int(health * health_multiplier)
+	print("ASTEROID TYPE:", asteroid_type, "HP:", health)
+	if asteroid_type == 0:
+		var rand = round(randf_range(1,3))
+		if rand == 1:
+			asteroid_type = 1
+		elif rand == 2:
+			asteroid_type = 2
+		else:
+			asteroid_type = 3
+	if asteroid_type == 1:
 		$Asteroid.play("asteroid01")
-	elif rand == 2:
-		asteroid_type = 2
+	elif asteroid_type == 2:
 		$Asteroid.play("asteroid02")
 	else:
-		asteroid_type = 3
 		$Asteroid.play("asteroid03")
 
 
@@ -67,9 +78,9 @@ func _physics_process(_delta) -> void:
 				$Asteroid.play("asteroid02")
 			else:
 				$Asteroid.play("asteroid03")
-			velocity = direction * SHIP_ATTRACTION
+			velocity = direction * base_speed * speed_multiplier
 		else:
-			velocity = -direction * SHIP_ATTRACTION
+			velocity = -direction * base_speed * speed_multiplier
 			if asteroid_type == 1:
 				$Asteroid.play("asteroid01-quantum")
 			elif asteroid_type == 2:
@@ -82,7 +93,7 @@ func _physics_process(_delta) -> void:
 ## Chamada quando o asteroide colide com o jogador. 
 ## Inicia o processo de destruição.
 func player_collision() -> void:
-	asteroid_destruction()
+	take_damage(health)
 
 
 ## Executa a sequência de destruição do asteroide: 
@@ -119,7 +130,10 @@ func take_damage(amount: float = -1.0, multiplier: float = 1.0) -> void:
 	health -= int(damage)
 	if health <= 0.0:
 		asteroid_destruction()
-		add_new_ore()
+		if splits_on_death:
+			_spawn_split_asteroids()
+		else:
+			add_new_ore()
 	else:
 		Singleton.display_number(int(damage), $DamageText.global_position, "#b4b542")
 
@@ -132,3 +146,17 @@ func _on_asteroid_explosion_timeout() -> void:
 ## Remove o asteroide da cena quando o tempo de vida total expira.
 func _on_asteroid_life_timeout() -> void:
 	queue_free()
+
+func _spawn_split_asteroids():
+	if not is_instance_valid(Singleton.level):
+		return
+	for i in range(split_count):
+		var asteroid := Singleton.level.ASTEROID.instantiate()
+		var angle := TAU * float(i) / float(split_count)
+		var offset := Vector2.RIGHT.rotated(angle) * 24
+		asteroid.global_position = global_position + offset
+		asteroid.health_multiplier = 1.0
+		asteroid.speed_multiplier = 1.0
+		asteroid.splits_on_death = false
+		var asteroids_group = get_tree().get_first_node_in_group("asteroids")
+		asteroids_group.call_deferred("add_child", asteroid)
