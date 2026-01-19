@@ -143,7 +143,8 @@ func _init_level_progress() -> void:
 	if is_instance_valid(Singleton.level) and Singleton.level.has_method("get_score"):
 		var score = Singleton.level.get_score()
 		var level_index := _level_for_score(score)
-		_apply_level_up_to(level_index, false)
+		
+		_apply_level_up_to(level_index)
 		current_level_index = level_index
 
 
@@ -154,11 +155,11 @@ func _init_level_progress() -> void:
 func _update_level_from_score(score: int) -> void:
 	var target_index := _level_for_score(score)
 	if current_level_index < 0:
-		_apply_level_up_to(target_index, false)
+		_apply_level_up_to(target_index)
 		current_level_index = target_index
 		return
 	if target_index > current_level_index:
-		_apply_level_up_to(target_index, true)
+		_apply_level_up_to(target_index)
 		current_level_index = target_index
 		if target_index >= 1:
 			Singleton.gui_manager.open_upgrades_picker()
@@ -182,35 +183,19 @@ func _level_for_score(current_score: int) -> int:
 
 
 ## Aplica os desbloqueios de turrets até o nível especificado.
-## Parâmetros:
-##   - target_level_index: índice máximo de nível a ser aplicado.
-##   - notify: se true, mostra uma mensagem de Level Up ao desbloquear.
-## Comportamento:
 ## - Itera por todos os níveis do índice 0 até `target_level_index`.
 ## - Para cada nível, percorre a lista de turrets em `unlock` e habilita 
 ##   (define `current_bullet = 1`) as turrets correspondentes no dicionário `turrets`.
 ## - Se `notify` for true e o nível possuir `min_score > 0`, gera uma mensagem
 ##   descrevendo quais turrets foram adicionadas e chama `show_level_up_notice`
 ##   no `gui_manager` para exibir o aviso na tela.
-func _apply_level_up_to(target_level_index: int, notify: bool = true) -> void:
+func _apply_level_up_to(target_level_index: int) -> void:
 	for level_index in range(target_level_index + 1):
 		var turrets_to_unlock: Array = PLAYER_LEVELS[level_index]["unlock"]
 		for turret_direction in turrets_to_unlock:
 			var turret_node = turrets.get(turret_direction, null)
 			if is_instance_valid(turret_node):
-				if turret_node.current_bullet == 0:
-					turret_node.current_bullet = selected_weapon_id
-		if (
-			notify
-			and int(PLAYER_LEVELS[level_index]["min_score"]) > 0
-			and is_instance_valid(Singleton.gui_manager)
-			and Singleton.gui_manager.has_method("show_level_up_notice")
-		):
-			var unlocked_parts: Array[String] = []
-			for turret_direction in turrets_to_unlock:
-				unlocked_parts.append("Turret " + String(turret_direction) + " Added!")
-			var message := "Level up! " + ", ".join(unlocked_parts)
-			Singleton.gui_manager.show_level_up_notice(message)
+				turret_node.current_bullet = 1
 
 
 ## Atualiza a física e o estado geral do Player a cada frame.
