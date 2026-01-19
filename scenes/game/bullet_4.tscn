@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bwl780eio1ntw"]
+
+[ext_resource type="Script" uid="uid://blt24aoy4vabe" path="res://scripts/game/bullet_4.gd" id="1_xsjv7"]
+[ext_resource type="Texture2D" uid="uid://c1godu1moy8li" path="res://assets/sprites/icons/drone-image.png" id="2_xsjv7"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xsjv7"]
+radius = 23.0
+
+[node name="Bullet4" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_xsjv7")
+
+[node name="SpawnTimer" type="Timer" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
+scale = Vector2(0.039062496, 0.044921875)
+texture = ExtResource("2_xsjv7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_xsjv7")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
