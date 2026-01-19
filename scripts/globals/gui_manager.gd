@@ -44,7 +44,6 @@ const STATS_TABLE_GROUP := "stats_table_layer"
 @onready var hud_timer_text: Label = $GameHud/HudTimerText
 @onready var hud_portal_active: Label = $GameHud/HudPortalActive
 @onready var hud_god_mode: Label = $GameHud/HudGodMode
-@onready var level_up_notification_label: Label = $GameHud/LevelUpNotificationLabel
 @onready var black_hole_warning_label: Label = $GameHud/BlackHoleWarningLabel
 
 # Elementos exibidos na tela de Game Over.
@@ -140,13 +139,21 @@ func _ready() -> void:
 ## - Garante que overlays (Settings/Credits/Stats) sejam fechados ao sair do pause.
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause"):
-		if main_menu_layer.visible or game_over_screen.visible:
+		if settings_layer.visible:
+			_play_back_sound()
+			AudioPlayer.save_volumes()
+			settings_layer.visible = false
+			on_settings_back.call()
+			on_settings_back = Callable(Singleton, "open_main_menu")
+			return
+		if main_menu_layer.visible or game_over_screen.visible or upgrades_menu.visible:
 			return
 		if is_paused:
 			if settings_layer.visible: settings_layer.visible = false
 			if input_settings_layer.visible: input_settings_layer.visible = false
 			if credits_layer.visible: credits_layer.visible = false
 			if stats_table_layer.visible: stats_table_layer.visible = false
+			if upgrades_menu.visible: upgrades_menu.visible = false
 			hide_pause_menu()
 			AudioPlayer.on_pause_exited()
 		else:
@@ -484,35 +491,6 @@ func show_pause_overlay_only() -> void:
 	pause_menu_layer.visible = true
 
 
-## Exibe uma notificação de "Level Up" no HUD.
-## Parâmetros:
-##   - message: Texto a ser mostrado na notificação.
-## Comportamento:
-## - Garante que o Label `level_up_notification_label` é válido.
-## - Atualiza o texto do Label e o torna visível, mas inicialmente
-##   com alpha = 0 (invisível).
-## - Cria uma animação (Tween) que faz:
-##     1. Fade in rápido (0.15s).
-##     2. Pausa (1.0s).
-##     3. Fade out suave (0.35s).
-## - Quando o Tween termina, esconde novamente o Label
-##   para evitar que permaneça visível.
-func show_level_up_notice(message: String) -> void:
-	if not is_instance_valid(level_up_notification_label):
-		return
-	level_up_notification_label.text = message
-	level_up_notification_label.visible = true
-	level_up_notification_label.modulate.a = 0.0
-	var fade_tween := get_tree().create_tween()
-	fade_tween.tween_property(level_up_notification_label, "modulate:a", 1.0, 0.15)
-	fade_tween.tween_interval(1.0)
-	fade_tween.tween_property(level_up_notification_label, "modulate:a", 0.0, 0.35)
-	fade_tween.finished.connect(func ():
-		if is_instance_valid(level_up_notification_label):
-			level_up_notification_label.visible = false
-	)
-
-
 ## Abre o seletor de upgrades (picker).
 ## - Garante existência de `upgrades_menu` e do nó `SelectUpgrades`.
 ## - Torna-os visíveis/ativos, repopula as cartas e pausa o jogo.
@@ -533,6 +511,7 @@ func open_upgrades_picker() -> void:
 			balloon.visible = false
 	
 	get_tree().paused = true
+	AudioPlayer.on_pause_entered()
 	var cards = picker.upgrade_card_container.get_children()
 	if cards.size() > 0:
 		cards[0].grab_focus()
@@ -542,6 +521,7 @@ func open_upgrades_picker() -> void:
 ## - Retoma o jogo, esconde o picker e o container de upgrades.
 func _on_upgrades_picker_closed(_track: int) -> void:
 	get_tree().paused = false
+	AudioPlayer.on_pause_exited()
 	var picker := upgrades_menu.get_node_or_null("SelectUpgrades")
 	if picker:
 		picker.visible = false

@@ -25,6 +25,8 @@ animations = [{
 radius = 116.004
 
 [node name="Ore" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_qc37p")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -34,6 +36,7 @@ shape = SubResource("CircleShape2D_d5nk3")
 sprite_frames = SubResource("SpriteFrames_43gb8")
 
 [node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("CircleShape2D_byohb")
