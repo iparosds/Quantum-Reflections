@@ -21,13 +21,21 @@ const MOVED_SO_FAR : float = 0.5
 # Obs: o nível 0 liga a turret "E" por padrão (também forçada no _ready).
 const PLAYER_LEVELS := [
 	{"min_score": 0,   "unlock": ["E"]},
-	{"min_score": 10,  "unlock": ["W"]},
-	{"min_score": 50,  "unlock": ["S"]},
-	{"min_score": 100, "unlock": ["N"]},
-	{"min_score": 200, "unlock": ["NW"]},
-	{"min_score": 400, "unlock": ["SE"]},
-	{"min_score": 600, "unlock": ["NE"]},
-	{"min_score": 800, "unlock": ["SW"]},
+	{"min_score": 5,  "unlock": ["W"]},
+	{"min_score": 15,  "unlock": ["S"]},
+	{"min_score": 35, "unlock": ["N"]},
+	{"min_score": 65, "unlock": ["NW"]},
+	{"min_score": 100, "unlock": ["SE"]},
+	{"min_score": 150, "unlock": ["NE"]},
+	{"min_score": 200, "unlock": ["SW"]},
+	{"min_score": 250, "unlock": ["09"]},
+	{"min_score": 300, "unlock": ["10"]},
+	{"min_score": 450, "unlock": ["11"]},
+	{"min_score": 600, "unlock": ["12"]},
+	{"min_score": 750, "unlock": ["13"]},
+	{"min_score": 900, "unlock": ["14"]},
+	{"min_score": 1050, "unlock": ["15"]},
+	{"min_score": 1200, "unlock": ["16"]},
 ]
 
 # Estado de progressão
