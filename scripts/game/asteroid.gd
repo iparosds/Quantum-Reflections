@@ -112,7 +112,12 @@ func asteroid_destruction() -> void:
 func add_new_ore() -> void:
 	var new_ore = ORE.instantiate()
 	new_ore.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", new_ore)
+	if not new_ore.is_in_group("ore"):
+		new_ore.add_to_group("ore")
+	if is_instance_valid(Singleton.level):
+		Singleton.level.call_deferred("add_child", new_ore)
+	else:
+		get_tree().current_scene.call_deferred("add_child", new_ore)
 
 
 ## Aplica dano ao asteroide.
