@@ -139,7 +139,7 @@ script = ExtResource("1_mgqqj")
 
 [node name="Asteroid" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jogq0")
-animation = &"asteroid03-quantum"
+animation = &"asteroid01"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_vyoty")
