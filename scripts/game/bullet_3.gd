@@ -7,8 +7,8 @@ class_name Bullet3 extends Area2D
 @onready var explosion_sound: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var lifetime_seconds: float = 3.0
-var insta_kill_amount: float = 99999.0
 var can_hit_player: bool = false
+var damage : float = 0.0
 
 
 ## Inicializa o timer e configura a mina para começar ativa e monitorando colisões.
@@ -27,21 +27,39 @@ func _ready() -> void:
 
 ## Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
-	if body.has_method("is_player"):
+	damage_enemy(body)
+	damage_player(body)
+
+
+## Aplica dano ao Player somente se a mina estiver autorizada a atingi-lo.
+## O dano é calculado com base na aceleração atual do Player,
+## Após aplicar o dano, a mina explode.
+func damage_player(body: Node) -> void:
+	if body is Player:
 		if not can_hit_player:
 			return
-		var damage = body.acceleration / 30.0
+		damage = body.acceleration / 30.0
 		if damage <= 10.0:
 			damage = 10.0
 		body.health -= damage
-		_explode()
+		explode()
+
+
+## Aplica dano a inimigos que implementam `take_damage`.
+## O dano é calculado a partir da velocidade do corpo,
+## Explode a mina após o impacto.
+func damage_enemy(body: Node) -> void:
 	if body.has_method("take_damage"):
-		body.take_damage(insta_kill_amount, 1.0)
-		_explode()
+		damage = body.velocity.length() / 7.0
+		if damage <= 10.0:
+			damage = 10.0
+		body.take_damage(damage, 1.0)
+		print("ASTEROID damaged: ", snapped(damage, 0.01))
+		explode()
 
 
 ## Executa a animação e o som da explosão e desativa colisões.
-func _explode() -> void:
+func explode() -> void:
 	collision_shape.set_deferred("disabled", true)
 	set_deferred("monitoring", false)
 	vanish_timer.stop()
@@ -58,4 +76,4 @@ func _on_explosion_finished() -> void:
 
 
 func _on_vanish_timer_timeout() -> void:
-	_explode()
+	explode()
