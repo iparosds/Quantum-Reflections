@@ -70,8 +70,17 @@ func _ready() -> void:
 	add_child(mutation_cooldown)
 
 
-func _unhandled_input(_event: InputEvent) -> void:
-	# Only the balloon is allowed to handle input while it's showing
+#func _unhandled_input(_event: InputEvent) -> void:
+	## Only the balloon is allowed to handle input while it's showing
+	#get_viewport().set_input_as_handled()
+func _unhandled_input(event: InputEvent) -> void:
+	# Se o balão n está visível, não bloqueia nada
+	if not is_instance_valid(balloon) or not balloon.visible:
+		return
+	# Deixa o jogo abrir o pause/menu principal mesmo durante o tutorial
+	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
+		return
+	# Bloqueia o resto para não "vazar" input pro gameplay
 	get_viewport().set_input_as_handled()
 
 

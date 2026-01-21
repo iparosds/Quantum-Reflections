@@ -64,7 +64,7 @@ MarginContainer/constants/margin_top = 15
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_qkmqt")
 
 [node name="TutorialDialogueBalloon" type="CanvasLayer"]
-layer = 100
+layer = 10
 script = ExtResource("1_ekbxt")
 
 [node name="Balloon" type="Control" parent="."]

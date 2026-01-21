@@ -442,6 +442,7 @@ text = "Back"
 flat = true
 
 [node name="SettingsMenu" type="CanvasLayer" parent="."]
+layer = 60
 visible = false
 
 [node name="TextureRect" type="TextureRect" parent="SettingsMenu"]
@@ -570,6 +571,7 @@ vertical_alignment = 1
 visible = false
 
 [node name="InputSettings" type="CanvasLayer" parent="."]
+layer = 60
 visible = false
 
 [node name="Control" type="Control" parent="InputSettings"]
@@ -723,6 +725,7 @@ offset_bottom = 412.0
 text = "Restart"
 
 [node name="PauseMenu" type="CanvasLayer" parent="."]
+layer = 50
 visible = false
 
 [node name="TextureRect" type="TextureRect" parent="PauseMenu"]
@@ -908,6 +911,7 @@ visible = false
 [node name="StatsTable" parent="StatsTable" instance=ExtResource("15_7aiwd")]
 
 [node name="SoundIcon" parent="." instance=ExtResource("6_haemp")]
+layer = 150
 
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/ResetButton" to="InputSettings/Control" method="_on_reset_button_pressed"]
 [connection signal="pressed" from="InputSettings/Control/PanelContainer/MarginContainer/VBoxContainer/BackToSettingsButton" to="InputSettings/Control" method="_on_back_to_settings_button_pressed"]
