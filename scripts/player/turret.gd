@@ -23,6 +23,9 @@ func _ready() -> void:
 ## e adiciona o projétil como filho do ponto de disparo.
 func shoot(target_enemy):
 	var new_bullet: Node
+	var shot_stream: AudioStream = $AudioStreamPlayer2D.stream
+	AudioPlayer.play_shot(shot_stream, true, 6.0)
+	$AudioStreamPlayer2D.stop()
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
 		$AudioStreamPlayer2D.play()
