@@ -1,6 +1,8 @@
 class_name TutorialDialogueBalloon extends CanvasLayer
 ## A basic dialogue balloon for use with Dialogue Manager.
 
+@onready var close_tutorial_button: Button = $Balloon/CloseTutorialButton
+
 ## The action to use for advancing the dialogue
 @export var next_action: StringName = &"ui_accept"
 
@@ -61,17 +63,28 @@ var mutation_cooldown: Timer = Timer.new()
 func _ready() -> void:
 	balloon.hide()
 	Engine.get_singleton("DialogueManager").mutated.connect(_on_mutated)
-
 	# If the responses menu doesn't have a next action set, use this one
 	if responses_menu.next_action.is_empty():
 		responses_menu.next_action = next_action
-
 	mutation_cooldown.timeout.connect(_on_mutation_cooldown_timeout)
 	add_child(mutation_cooldown)
+	if is_instance_valid(close_tutorial_button):
+		_update_close_tutorial_text()
 
 
-func _unhandled_input(_event: InputEvent) -> void:
-	# Only the balloon is allowed to handle input while it's showing
+func _unhandled_input(event: InputEvent) -> void:
+	# Se o balão nao está visível, não bloqueia nada
+	if not is_instance_valid(balloon) or not balloon.visible:
+		return
+	# Deixa o jogo abrir o pause/menu principal mesmo durante o tutorial
+	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
+		return
+	# fechar tutorial (tecla configurável)
+	if event.is_action_pressed("close_tutorial"):
+		_on_close_tutorial_button_pressed()
+		get_viewport().set_input_as_handled()
+		return
+	# Bloqueia o resto para não "vazar" input pro gameplay
 	get_viewport().set_input_as_handled()
 
 
@@ -96,29 +109,22 @@ func start(dialogue_resource: DialogueResource, title: String, extra_game_states
 ## Apply any changes to the balloon given a new [DialogueLine].
 func apply_dialogue_line() -> void:
 	mutation_cooldown.stop()
-
 	is_waiting_for_input = false
 	balloon.focus_mode = Control.FOCUS_ALL
 	balloon.grab_focus()
-
 	character_label.visible = not dialogue_line.character.is_empty()
 	character_label.text = tr(dialogue_line.character, "dialogue")
-
 	dialogue_label.hide()
 	dialogue_label.dialogue_line = dialogue_line
-
 	responses_menu.hide()
 	responses_menu.responses = dialogue_line.responses
-
 	# Show our balloon
 	balloon.show()
 	will_hide_balloon = false
-
 	dialogue_label.show()
 	if not dialogue_line.text.is_empty():
 		dialogue_label.type_out()
 		await dialogue_label.finished_typing
-
 	# Wait for input
 	if dialogue_line.responses.size() > 0:
 		balloon.focus_mode = Control.FOCUS_NONE
@@ -166,13 +172,10 @@ func _on_balloon_gui_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			dialogue_label.skip_typing()
 			return
-
 	if not is_waiting_for_input: return
 	if dialogue_line.responses.size() > 0: return
-
 	# When there are no response options the balloon itself is the clickable thing
 	get_viewport().set_input_as_handled()
-
 	if event is InputEventMouseButton and event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
 		next(dialogue_line.next_id)
 	elif event.is_action_pressed(next_action) and get_viewport().gui_get_focus_owner() == balloon:
@@ -184,3 +187,30 @@ func _on_responses_menu_response_selected(response: DialogueResponse) -> void:
 
 
 #endregion
+
+
+func _on_close_tutorial_button_pressed() -> void:
+	# Não rodar tutorial de novo nessa run
+	Singleton.skip_tutorial = true
+	# Para qualquer avanço automático enquanto fecha
+	advance_after_blocking_mutation = false
+	is_waiting_for_input = false
+	balloon.hide()
+	# Espera 1 frame pra não matar o state "self"
+	# enquanto o DialogueManager ainda está resolvendo/mutando.
+	await get_tree().process_frame
+	queue_free()
+
+
+
+func _update_close_tutorial_text() -> void:
+	var key_text := _get_action_first_bind_text(&"close_tutorial")
+	close_tutorial_button.text = "Press %s to close tutorial" % key_text
+
+
+func _get_action_first_bind_text(action: StringName) -> String:
+	var events := InputMap.action_get_events(action)
+	if events.is_empty():
+		return "?"
+	# pega o primeiro bind
+	return events[0].as_text().trim_suffix(" (Physical)")

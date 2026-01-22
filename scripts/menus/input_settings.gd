@@ -20,9 +20,11 @@ var input_actions := {
 	"move_down": "Move down",
 	"move_left": "Move left",
 	"pause": "Pause",
-	"enter": "Enter",
+	"accept": "Accept",
 	"boost": "Boost",
 	"god": "God",
+	"skip": "Skip tutorial",
+	"close_tutorial": "Close tutorial",
 }
 
 
@@ -55,7 +57,6 @@ func _on_input_button_pressed(button: Node, action: String) -> void:
 		remap_armed = false
 		action_to_remap = action
 		remapping_button = button
-		
 		# limpa estado visual anterior, se houver
 		_set_error_ui(button, false)
 		button.find_child("LabelInput").text = "Press key to bind..."
@@ -72,20 +73,17 @@ func _on_input_button_pressed(button: Node, action: String) -> void:
 func _create_action_list() -> void:
 	for item in action_list.get_children():
 		item.queue_free()
-	
 	for action in input_actions:
 		var button := input_button_scene.instantiate()
 		var action_label := button.find_child("LabelAction")
 		var input_label := button.find_child("LabelInput")
 		action_label.text = input_actions[action]
-		
 		# Pega os eventos atuais da ação.
 		var events := InputMap.action_get_events(action)
 		if events.size() > 0:
 			input_label.text = events[0].as_text().trim_suffix(" (Physical)")
 		else:
 			input_label.text = ""
-		
 		action_list.add_child(button)
 		button.pressed.connect(_on_input_button_pressed.bind(button, action))
 
@@ -105,26 +103,21 @@ func _input(event: InputEvent) -> void:
 	# só captura se estiver remapeando
 	if not is_remapping or not remap_armed:
 		return
-	
 	# --- Allowlist dos tipos aceitos ---
 	var is_key := event is InputEventKey
 	var is_mouse_btn := event is InputEventMouseButton
 	var is_pad_btn := event is InputEventJoypadButton
-	
 	if not (is_key or is_mouse_btn or is_pad_btn):
 		return
-	
 	if is_key and not event.pressed:
 		return
 	if is_mouse_btn and not event.pressed:
 		return
 	if is_pad_btn and not event.pressed:
 		return
-	
 	# evita duplicidade por double click no mouse
 	if is_mouse_btn and event.double_click:
 		event.double_click = false
-	
 	var conflict_with := _is_event_in_use(event, action_to_remap)
 	if conflict_with != "":
 		if remapping_button:
@@ -132,25 +125,20 @@ func _input(event: InputEvent) -> void:
 			if label:
 				label.text = "Shortcut already in use. Try another one."
 			_set_error_ui(remapping_button, true)
-		
 		accept_event()
 		return
-	
 	# aplica o novo atalho
 	InputMap.action_erase_events(action_to_remap)
 	InputMap.action_add_event(action_to_remap, event)
 	_update_action_list(remapping_button, event)
-	
 	# restaura UI (cor padrão + largura original)
 	if remapping_button:
 		_set_error_ui(remapping_button, false)
-		
 	# encerra remapeamento
 	is_remapping = false
 	remap_armed = false
 	action_to_remap = ""
 	remapping_button = null
-	
 	accept_event()
 
 
@@ -170,16 +158,13 @@ func _save_input_map() -> void:
 func _load_input_map() -> void:
 	if not SaveManager:
 		return
-	
 	var profile := SaveManager.profile
 	if typeof(profile) != TYPE_DICTIONARY or not profile.has("participants"):
 		return
-	
 	# chave usada pelo SaveManager
 	var key := "input_settings"
 	if not profile.participants.has(key):
 		return
-	
 	var bindings: Dictionary = profile.participants[key].get("bindings", {})
 	for action_name in input_actions.keys():
 		InputMap.action_erase_events(action_name)
@@ -319,7 +304,6 @@ func _is_event_in_use(new_event: InputEvent, except_action: String) -> String:
 func _set_error_ui(line_button: Node, is_error: bool) -> void:
 	var label: Label = line_button.find_child("LabelInput")
 	var left_column: Control = line_button.find_child("LeftColumn")
-
 	if is_error:
 		if label:
 			label.add_theme_color_override("font_color", Color(1, 0.3, 0.1))

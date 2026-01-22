@@ -104,6 +104,7 @@ func _close_all_dialogue_balloons() -> void:
 	for balloon in get_tree().get_nodes_in_group("dialogue_balloon"):
 		if is_instance_valid(balloon):
 			balloon.visible = false
+	active_balloons.clear()
 
 
 ## Retoma o jogo a partir do estado de pausa.
@@ -173,6 +174,8 @@ func open_credits() -> void:
 ## Abre o Main Menu.
 func open_main_menu() -> void:
 	get_tree().paused = true
+	_close_all_dialogue_balloons()
+	_tutorial_running = false
 	if gui_manager:
 		if gui_manager.is_paused:
 			if gui_manager.has_method("hide_pause_overlay_only"):

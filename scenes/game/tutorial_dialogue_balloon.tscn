@@ -64,7 +64,7 @@ MarginContainer/constants/margin_top = 15
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_qkmqt")
 
 [node name="TutorialDialogueBalloon" type="CanvasLayer"]
-layer = 100
+layer = 10
 script = ExtResource("1_ekbxt")
 
 [node name="Balloon" type="Control" parent="."]
@@ -144,5 +144,18 @@ visible = false
 layout_mode = 2
 text = "Response example"
 
+[node name="CloseTutorialButton" type="Button" parent="Balloon"]
+layout_mode = 0
+offset_left = 760.0
+offset_top = 495.0
+offset_right = 1032.0
+offset_bottom = 529.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+focus_mode = 0
+text = "Press Enter to close tutorial"
+flat = true
+
 [connection signal="gui_input" from="Balloon" to="." method="_on_balloon_gui_input"]
 [connection signal="response_selected" from="Balloon/ResponsesMenu" to="." method="_on_responses_menu_response_selected"]
+[connection signal="pressed" from="Balloon/CloseTutorialButton" to="." method="_on_close_tutorial_button_pressed"]
