@@ -27,14 +27,6 @@ func _ready() -> void:
 
 ## Detecta colisão com um corpo e aplica dano.
 func _on_body_entered(body: Node) -> void:
-	damage_enemy(body)
-	damage_player(body)
-
-
-## Aplica dano ao Player somente se a mina estiver autorizada a atingi-lo.
-## O dano é calculado com base na aceleração atual do Player,
-## Após aplicar o dano, a mina explode.
-func damage_player(body: Node) -> void:
 	if body is Player:
 		if not can_hit_player:
 			return
@@ -42,24 +34,17 @@ func damage_player(body: Node) -> void:
 		if damage <= 10.0:
 			damage = 10.0
 		body.health -= damage
-		explode()
-
-
-## Aplica dano a inimigos que implementam `take_damage`.
-## O dano é calculado a partir da velocidade do corpo,
-## Explode a mina após o impacto.
-func damage_enemy(body: Node) -> void:
 	if body.has_method("take_damage"):
 		damage = body.velocity.length() / 7.0
 		if damage <= 10.0:
 			damage = 10.0
 		body.take_damage(damage, 1.0)
 		print("ASTEROID damaged: ", snapped(damage, 0.01))
-		explode()
+	_explode()
 
 
 ## Executa a animação e o som da explosão e desativa colisões.
-func explode() -> void:
+func _explode() -> void:
 	collision_shape.set_deferred("disabled", true)
 	set_deferred("monitoring", false)
 	vanish_timer.stop()
@@ -76,4 +61,4 @@ func _on_explosion_finished() -> void:
 
 
 func _on_vanish_timer_timeout() -> void:
-	explode()
+	_explode()
