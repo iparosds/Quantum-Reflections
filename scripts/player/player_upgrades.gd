@@ -25,7 +25,7 @@ var base_damage_rate: float = 500.0
 var base_max_acceleration: float = 1000.0
 
 # Nível atual da Arma Ativa
-var active_weapon_1_level: int = 0
+var active_weapon_1_level: int = 1
 var active_weapon_2_level: int = 0
 var active_weapon_3_level: int = 0
 var active_weapon_4_level: int = 0
@@ -99,7 +99,7 @@ func get_effective_max_acceleration() -> float:
 ## Reseta todos os níveis de upgrades (ativos e passivos) para 0 e emite o sinal
 ## stats_updated.
 func reset() -> void:
-	active_weapon_1_level = 0
+	active_weapon_1_level = 1
 	active_weapon_2_level = 0
 	active_weapon_3_level = 0
 	active_weapon_4_level = 0
