@@ -1,14 +1,22 @@
-[gd_scene load_steps=42 format=3 uid="uid://kqrwytbvwyno"]
+[gd_scene load_steps=50 format=3 uid="uid://kqrwytbvwyno"]
 
 [ext_resource type="Script" uid="uid://63ocy5a6gohw" path="res://scripts/globals/gui_manager.gd" id="1_01qsd"]
 [ext_resource type="FontFile" uid="uid://du5x3bmkjrs0k" path="res://assets/fonts/Jersey25-Regular.ttf" id="2_3da3r"]
 [ext_resource type="FontFile" uid="uid://d3qxk71omhsy" path="res://assets/fonts/PixelifySans-VariableFont_wght.ttf" id="2_8d174"]
+[ext_resource type="Script" uid="uid://dwjobttdvs4aq" path="res://scripts/game/weapons_layer_ui.gd" id="3_3300y"]
 [ext_resource type="Texture2D" uid="uid://jvmip0bjonjh" path="res://assets/sprites/menus_and_misc/bg menu.jpg" id="3_mrw3c"]
+[ext_resource type="PackedScene" uid="uid://bp82ohb46iqkd" path="res://scenes/game/slot_ui.tscn" id="3_v2ivh"]
+[ext_resource type="Texture2D" uid="uid://b3m52u6qpfgij" path="res://assets/sprites/levels_sprites/projectile.png" id="4_k83f3"]
 [ext_resource type="Texture2D" uid="uid://dkjp51g1sjh21" path="res://assets/sprites/menus_and_misc/logo animado.png" id="4_rbxbw"]
+[ext_resource type="Texture2D" uid="uid://drlku570m4xp1" path="res://assets/sprites/levels_sprites/turret.png" id="5_ewkre"]
 [ext_resource type="Theme" uid="uid://765j1dxaivoe" path="res://assets/themes/buttons/buttons_theme.tres" id="5_w8ru2"]
 [ext_resource type="PackedScene" uid="uid://b35fe5wdtb77i" path="res://scenes/globals/sound_icon.tscn" id="6_haemp"]
+[ext_resource type="Texture2D" uid="uid://cp5wefpif1pbb" path="res://assets/sprites/icons/mine-image.png" id="6_tun2a"]
+[ext_resource type="Texture2D" uid="uid://c1godu1moy8li" path="res://assets/sprites/icons/drone-image.png" id="7_d2a71"]
 [ext_resource type="Texture2D" uid="uid://krnpsv5q7w60" path="res://assets/sprites/menus_and_misc/creditos2.png" id="7_dc7dl"]
 [ext_resource type="Script" uid="uid://c8nh1wpwg1qo2" path="res://scripts/menus/input_settings.gd" id="8_aae78"]
+[ext_resource type="Texture2D" uid="uid://ripgyitk8gr0" path="res://assets/sprites/icons/shield-minimalistic-svgrepo-com (1).svg" id="8_qd1n1"]
+[ext_resource type="Texture2D" uid="uid://bc6h5ffy64jvv" path="res://assets/sprites/icons/speed-skiing-svgrepo-com.svg" id="9_urw70"]
 [ext_resource type="PackedScene" uid="uid://duqt0xpu2vl7s" path="res://scenes/menus/input_button.tscn" id="9_yixji"]
 [ext_resource type="PackedScene" uid="uid://bm6d5h4uxvq7x" path="res://scenes/game/select_upgrades_scene.tscn" id="10_3da3r"]
 [ext_resource type="AudioStream" uid="uid://ttsymx30w523" path="res://assets/sounds/menus/MENU SOUND - DOWN.wav" id="10_271i3"]
@@ -243,10 +251,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -220.0
-offset_right = 20.0
-offset_bottom = -197.0
+offset_left = -185.5
+offset_top = -262.0
+offset_right = 185.5
+offset_bottom = -222.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 24
@@ -254,6 +262,59 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_3da3r")
 text = "WARNING: BLACK HOLE NEAR!!!"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="WeaponsLayer2" type="Control" parent="GameHud"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_3300y")
+weapon_1_texture = ExtResource("4_k83f3")
+weapon_2_texture = ExtResource("5_ewkre")
+weapon_3_texture = ExtResource("6_tun2a")
+weapon_4_texture = ExtResource("7_d2a71")
+shield_texture = ExtResource("8_qd1n1")
+speed_texture = ExtResource("9_urw70")
+
+[node name="MarginContainer" type="MarginContainer" parent="GameHud/WeaponsLayer2"]
+layout_mode = 1
+offset_right = 250.0
+offset_bottom = 86.0
+scale = Vector2(0.798965, 0.7948529)
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 58
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameHud/WeaponsLayer2/MarginContainer"]
+layout_mode = 2
+
+[node name="WeaponsRow" type="HBoxContainer" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SlotUi" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/WeaponsRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
+
+[node name="SlotUi2" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/WeaponsRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
+
+[node name="SlotUi3" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/WeaponsRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
+
+[node name="SlotUi4" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/WeaponsRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
+
+[node name="PassivesRow" type="HBoxContainer" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SlotPassive1" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/PassivesRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
+
+[node name="SlotPassive2" parent="GameHud/WeaponsLayer2/MarginContainer/VBoxContainer/PassivesRow" instance=ExtResource("3_v2ivh")]
+layout_mode = 2
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
 visible = false
