@@ -9,6 +9,7 @@ extends Panel
 @export var title := ""
 @export var icon: Texture2D
 
+@onready var upgrade_info_label: Label = $MarginContainer/UpgradeInfoLabel
 @onready var texture_rect: TextureRect = $VBoxContainer/MarginContainer/TextureRect
 @onready var label: Label = $VBoxContainer/MarginContainer2/Label
 
@@ -37,6 +38,7 @@ func _refresh() -> void:
 		label.text = title if title != "" else _set_name_for(upgrade)
 	if is_instance_valid(texture_rect):
 		texture_rect.texture = _set_image_for(upgrade)
+	_refresh_badge()
 
 
 ## Retorna o nome descritivo do upgrade conforme o tipo especificado.
@@ -72,3 +74,23 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		PlayerUpgrades.apply_upgrade(upgrade)
 		chosen.emit(upgrade)
+
+
+## Atualiza o badge informativo da carta de upgrade.
+func _refresh_badge() -> void:
+	if not is_instance_valid(upgrade_info_label):
+		return
+	if not get_tree().root.has_node("PlayerUpgrades"):
+		upgrade_info_label.visible = false
+		return
+	var current_level := PlayerUpgrades.get_level_for_track(upgrade)
+	upgrade_info_label.visible = true
+	if current_level >= PlayerUpgrades.MAX_LEVEL:
+		upgrade_info_label.text = "MAX!"
+		upgrade_info_label.add_theme_color_override("font_color", Color("#FF1E1E"))
+	elif current_level <= 0:
+		upgrade_info_label.text = "New!"
+		upgrade_info_label.add_theme_color_override("font_color", Color("#00FF4A"))
+	else:
+		upgrade_info_label.text = "Level UP!"
+		upgrade_info_label.add_theme_color_override("font_color", Color("#FF7A00"))

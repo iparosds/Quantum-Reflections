@@ -106,3 +106,24 @@ func reset() -> void:
 	passive_shield_level = 0
 	passive_speed_level = 0
 	stats_updated.emit()
+
+
+## Retorna o nível atual (0..MAX_LEVEL) da trilha de upgrade informada.
+## permitir que a UI (cartas/badges) e outras regras do jogo
+## consultem rapidamente se um upgrade é novo, está evoluindo ou já atingiu o máximo.
+func get_level_for_track(track: int) -> int:
+	match track:
+		UpgradeTrack.ACTIVE_WEAPON_1:
+			return active_weapon_1_level
+		UpgradeTrack.ACTIVE_WEAPON_2:
+			return active_weapon_2_level
+		UpgradeTrack.ACTIVE_WEAPON_3:
+			return active_weapon_3_level
+		UpgradeTrack.ACTIVE_WEAPON_4:
+			return active_weapon_4_level
+		UpgradeTrack.PASSIVE_SHIELD:
+			return passive_shield_level
+		UpgradeTrack.PASSIVE_SPEED:
+			return passive_speed_level
+		_:
+			return 0
