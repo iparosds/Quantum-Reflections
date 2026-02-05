@@ -1,4 +1,4 @@
-extends Control
+class_name SelectUpgradesScene extends Control
 
 @onready var upgrade_card_container: HBoxContainer = $UpgradeCardContainer
 

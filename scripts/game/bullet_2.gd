@@ -17,7 +17,7 @@ var can_bounce: bool = false
 
 ## Inicializa o projétil definindo chance de ricochete e direção inicial
 ## em direção ao alvo, normalizando o vetor de movimento.
-func _ready():
+func _ready() -> void:
 	randomize()
 	can_bounce = randf() * 100 < bounce_chance
 	direction = global_position.direction_to(target.global_position)
@@ -26,7 +26,7 @@ func _ready():
 ## Atualiza o movimento do projétil a cada frame de física.
 ## Remove o projétil se ultrapassar o alcance máximo ou se o alvo deixar de existir.
 ## Incrementa gradualmente a velocidade e adiciona rotação visual ao sprite.
-func _physics_process(delta):
+func _physics_process(delta : float) -> void:
 	if travelled_distance > RANGE:
 		queue_free()
 		return
@@ -45,7 +45,7 @@ func _physics_process(delta):
 ## Caso o projétil tenha chance de ricochete e ainda possa fazê-lo,
 ## recalcula a direção do movimento e reduz gradualmente o tamanho.
 ## Caso contrário, remove o projétil da cena.
-func _on_body_entered(body):
+func _on_body_entered(body) -> void:
 	if not body.has_method("take_damage"):
 		queue_free()
 		return

@@ -1,19 +1,19 @@
 class_name GlobalSaveManager extends Node
 
-const SAVE_PATH := "user://save_game.json"
-const SCHEMA_VERSION := 1
+const SAVE_PATH : String = "user://save_game.json"
+const SCHEMA_VERSION : int = 1
 
 # Participantes que querem salvar estado adicionam-se a este grupo e expõem uma mini-interface:
 #   func _get_save_id() -> String
 #   func _save_state() -> Dictionary
 #   func _load_state(data: Dictionary) -> void
-const PARTICIPANT_GROUP := "save_participant"
-const AUTOSAVE_INTERVAL_SEC := 10.0
-const BR_TZ_OFFSET_SEC := -3 * 3600  # Brasil (sem horário de verão)
+const PARTICIPANT_GROUP : String = "save_participant"
+const AUTOSAVE_INTERVAL_SEC : float = 10.0
+const BR_TZ_OFFSET_SEC : int = -3 * 3600  # Brasil (sem horário de verão)
 
 var autosave_timer : Timer
 var dirty_data : bool = false
-var _track_time: bool = true
+var track_time: bool = true
 var profile : Dictionary = {
 	"schema" : SCHEMA_VERSION,
 	"created_at" : "",
@@ -46,7 +46,7 @@ var profile : Dictionary = {
 	},
 }
 # Snapshot do último autosave para calcular delta de sessão -> totals
-var _last_session_snapshot := {
+var last_session_snapshot : Dictionary = {
 	"score": 0,
 	"play_time_seconds": 0.0,
 	"enemies_killed": 0,
@@ -105,7 +105,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _track_time and not get_tree().paused and is_instance_valid(Singleton) and is_instance_valid(Singleton.level):
+	if track_time and not get_tree().paused and is_instance_valid(Singleton) and is_instance_valid(Singleton.level):
 		profile.user.session.play_time_seconds += delta
 		dirty_data = true
 
@@ -153,7 +153,7 @@ func on_stage_started() -> void:
 		dirty_data = true
 		
 		# zera snapshot para iniciar contagem de delta
-		_last_session_snapshot = {
+		last_session_snapshot = {
 			"score": 0,
 			"play_time_seconds": 0.0,
 			"enemies_killed": 0,
@@ -178,7 +178,7 @@ func on_stage_ended(won : bool) -> void:
 	profile.user.session.enemies_killed = 0
 	profile.user.session.black_holes_opened = 0
 	profile.user.session.stage_started = false
-	_last_session_snapshot = {
+	last_session_snapshot = {
 		"score": 0,
 		"play_time_seconds": 0.0,
 		"enemies_killed": 0,
@@ -295,7 +295,7 @@ func debug_print_profile() -> void:
 # Retorna true se houve algum delta aplicado.
 func _rollup_session_into_totals() -> bool:
 	var current_session = profile.user.session
-	var snap := _last_session_snapshot
+	var snap := last_session_snapshot
 	
 	var date_score := int(current_session.score) - int(snap.score)
 	var date_time := float(current_session.play_time_seconds) - float(snap.play_time_seconds)
@@ -310,9 +310,9 @@ func _rollup_session_into_totals() -> bool:
 		profile.user.totals.black_holes_opened = int(profile.user.totals.black_holes_opened) + max(0, date_black_holes)
 		
 		# Atualiza snapshot para o estado atual da sessão
-		_last_session_snapshot.score = int(current_session.score)
-		_last_session_snapshot.play_time_seconds = float(current_session.play_time_seconds)
-		_last_session_snapshot.enemies_killed = int(current_session.enemies_killed)
-		_last_session_snapshot.black_holes_opened = int(current_session.black_holes_opened)
+		last_session_snapshot.score = int(current_session.score)
+		last_session_snapshot.play_time_seconds = float(current_session.play_time_seconds)
+		last_session_snapshot.enemies_killed = int(current_session.enemies_killed)
+		last_session_snapshot.black_holes_opened = int(current_session.black_holes_opened)
 	
 	return changed

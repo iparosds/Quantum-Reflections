@@ -383,7 +383,7 @@ func _show_levels_menu() -> void:
 ##   - Se desbloqueado: habilita o botão.
 ##   - Se bloqueado: desabilita o botão e exibe apenas o rótulo.
 ##   - Popula `levels_container` com novos botões.
-func _generate_level_buttons():
+func _generate_level_buttons() -> void:
 	for levels in levels_container.get_children():
 		levels.queue_free()
 	var level_keys = Singleton.levels.keys()

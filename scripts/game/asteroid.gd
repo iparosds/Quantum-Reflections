@@ -40,12 +40,12 @@ func _ready():
 
 ## Armazena a referência ao portal aberto, 
 ## usada para direcionar o movimento do asteroide até ele.
-func on_portal_opened(p: Node2D) -> void:
+func _on_portal_opened(p: Node2D) -> void:
 	portal = p
 
 
 ## Remove o asteroide da cena quando entra em um portal ativo.
-func on_portal() -> void:
+func _on_portal() -> void:
 	queue_free()
 
 
@@ -147,6 +147,7 @@ func _on_asteroid_explosion_timeout() -> void:
 func _on_asteroid_life_timeout() -> void:
 	queue_free()
 
+	
 func _spawn_split_asteroids():
 	if not is_instance_valid(Singleton.level):
 		return

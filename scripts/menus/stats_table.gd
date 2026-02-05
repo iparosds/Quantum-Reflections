@@ -1,4 +1,4 @@
-extends Control
+class_name StatsTable extends Control
 
 var stats_row = preload("res://scenes/menus/stats_row.tscn")
 @onready var stats_table: VBoxContainer = $VBoxContainer/PanelContainer2/ScrollContainer/VBoxContainer

@@ -5,20 +5,20 @@ class_name GlobalSingleton extends Node2D
 const SETTINGS_ICON := preload("res://scenes/globals/settings_icon.tscn")
 const TUTORIAL_DIALOGUE := preload("res://dialogues/tutorial_dialogue.dialogue")
 
-var gui_manager: GuiManager
-var level_manager: LevelManager
+var gui_manager : GuiManager
+var level_manager : LevelManager
 var level : Level
 var player : Player
 var settings_icon : SettingsIcon
-var quantum := false
-var closest_distance := 1000
-var current_level: String
-var current_level_path: String
-var score = 0
-var god_mode = false
-var quantum_roll = 0
-var portal_timer = 150.0
-var _tutorial_running := false
+var quantum : bool = false
+var closest_distance : int = 1000
+var current_level : String
+var current_level_path : String
+var score : int = 0
+var god_mode : bool = false
+var quantum_roll : int = 0
+var portal_timer : float = 150.0
+var tutorial_running : bool = false
 var active_balloons: Array = []
 var tutorial_unlocked: bool = false
 var skip_tutorial: bool = false
@@ -54,9 +54,9 @@ func start_game() -> void:
 
 ## Inicia o tutorial do jogo.
 func start_tutorial() -> void:
-	if _tutorial_running:
+	if tutorial_running:
 		return
-	_tutorial_running = true
+	tutorial_running = true
 	var dialogue_balloon = DialogueManager.show_dialogue_balloon(TUTORIAL_DIALOGUE, "start")
 	_register_balloon(dialogue_balloon)
 	if dialogue_balloon and dialogue_balloon.has_method("set"):
@@ -64,19 +64,19 @@ func start_tutorial() -> void:
 
 
 ## Aguarda até que o jogador pressione a ação especificada.
-func _wait_action(action_name) -> void:
+func wait_action(action_name) -> void:
 	var action = await action_pressed
 	if action == action_name:
 		return
-	await _wait_action(action_name)
+	await wait_action(action_name)
 
 
 ## Aguarda até que o jogador pressione qualquer ação.
-func _wait_any_action(action_names: Array) -> void:
+func wait_any_action(action_names: Array) -> void:
 	var action = await action_pressed
 	if action_names.has(action):
 		return
-	await _wait_any_action(action_names)
+	await wait_any_action(action_names)
 
 
 ## Captura entradas globais do jogador e emite o sinal `action_pressed`.
@@ -254,7 +254,7 @@ func reset_game_state():
 
 
 ## Executa rotina de Game Over e exibe a tela correspondente.
-func game_over():
+func game_over() -> void:
 	_close_all_dialogue_balloons()
 	_reset_all_bonuses_and_hide_picker()
 	if god_mode == false:
@@ -323,7 +323,7 @@ func change_level(load_level: String) -> void:
 	parent.add_child(new_level)
 	level = new_level
 	_ensure_settings_icon(level)
-	_tutorial_running = false
+	tutorial_running = false
 	current_level_path = level_path
 	for id in levels.keys():
 		var url := String(levels[id].get("url", ""))

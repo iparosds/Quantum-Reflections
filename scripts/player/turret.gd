@@ -4,7 +4,7 @@ const BULLET_1 = PlayerUpgrades.BULLET_1_SCENE
 const BULLET_2 = PlayerUpgrades.BULLET_2_SCENE
 
 @export var projectile : Projectile
-@export var projectiles_parent_group = "projectile_parent"
+@export var projectiles_parent_group : String = "projectile_parent"
 
 var projectiles_node : Node
 var cooldown : bool = false
@@ -21,7 +21,7 @@ func _ready() -> void:
 ## Instancia o projétil conforme o tipo selecionado (current_bullet),
 ## configura posição/rotação/alvo, aplica multiplicador de dano vindo de PlayerUpgrades
 ## e adiciona o projétil como filho do ponto de disparo.
-func shoot(target_enemy):
+func shoot(target_enemy) -> void:
 	var new_bullet: Node
 	if current_bullet == 1:
 		new_bullet = BULLET_1.instantiate()
@@ -46,7 +46,7 @@ func shoot(target_enemy):
 
 ## Verifica a cada frame de física se pode atirar,
 ## seleciona um inimigo na área, dispara e inicia o temporizador de recarga.
-func _physics_process(_delta):
+func _physics_process(_delta : float) -> void:
 	if not cooldown and current_bullet != 0:
 		var enemies_in_range = get_overlapping_bodies()
 		if enemies_in_range.size() > 0:
@@ -57,5 +57,5 @@ func _physics_process(_delta):
 
 
 ## Callback do temporizador de recarga: libera a turret para um novo disparo.
-func _on_timer_timeout():
+func _on_timer_timeout() -> void:
 	cooldown = false

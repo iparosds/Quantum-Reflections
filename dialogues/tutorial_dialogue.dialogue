@@ -1,11 +1,11 @@
 ~ start
 Tutorial: Hold [wave]W[/wave] to accelerate.
-if Singleton._wait_action("move_up") == true
+if Singleton.wait_action("move_up") == true
 	=> after_up
 
 ~ after_up
 Tutorial: Hold [wave]A[/wave] or [wave]D[/wave] to maneuver.
-if Singleton._wait_any_action(["move_left","move_right"]) == true
+if Singleton.wait_any_action(["move_left","move_right"]) == true
 	=> after_rotate
 
 ~ after_rotate

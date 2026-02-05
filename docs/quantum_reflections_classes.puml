@@ -1,140 +1,245 @@
 @startuml QuantumReflectionsClasses
+set namespaceSeparator none
+
 
 class Asteroid {
-    -SHIP_ATTRACTION: float
-    -ORE: PackedScene
-    -health: int
-    -moving: bool
-    -ore: bool
-    -asteroid_type: int
-    -level: int
-    -player: Node2D
-    -portal: Node2D
+  -ORE: PackedScene
+  -MIN_DAMAGE: float
 
-    -_ready(): void
-    -on_portal_opened(p: Node2D): void
-    -on_portal(): void
-    -_physics_process(delta: float): void
-    +player_collision(): void
-    +asteroid_destruction(): void
-    +add_new_ore(): void
-    +take_damage(): void
-    -_on_asteroid_explosion_timeout(): void
-    -_on_asteroid_life_timeout(): void
+  +health_multiplier: float
+  +base_speed: float
+  +speed_multiplier: float
+  +splits_on_death: bool
+  +split_count: int
+  +asteroid_type: int
+
+  -player: Node2D
+  -portal: Node2D
+  -health: int
+  -moving: bool
+
+  -_ready(): void
+  -_on_portal_opened(p: Node2D): void
+  -_on_portal(): void
+  -_physics_process(delta): void
+
+  +player_collision(): void
+  +asteroid_destruction(): void
+  +add_new_ore(): void
+  +take_damage(amount: float = -1.0, multiplier: float = 1.0): void
+
+  -_on_asteroid_explosion_timeout(): void
+  -_on_asteroid_life_timeout(): void
+  -_spawn_split_asteroids(): void
 }
-Asteroid::_physics_process --> Player : Checks
-Asteroid::_physics_process --> GlobalSingleton::level.portal_active : Checks
+Asteroid::_physics_process --> GlobalSingleton::portal_active : Checks
 Asteroid::_physics_process --> GlobalSingleton::quantum : Checks
-Asteroid::player_collision --> Player::health : Damages
+Asteroid::_physics_process --> Player : Tracks/targets
+Asteroid::take_damage --> Player::acceleration : Uses when auto-damage
 Asteroid::add_new_ore --> Ore : Instantiates
-Asteroid::take_damage --> Player::acceleration : Checks
+Asteroid::asteroid_destruction --> GlobalSaveManager::on_enemy_killed
+Asteroid::take_damage --> GlobalSingleton : display_number
+Asteroid::_spawn_split_asteroids --> GlobalSingleton::ASTEROID : Instantiates
 
 
 class Player {
-    -BLACK_HOLE: PackedScene
-    -DAMAGE_RATE: int
-    -MAX_ACCELERATION: float
-    -turrets: Dictionary
-    -PLAYER_LEVELS: Array
-    -current_level_index: int
-    -health: float
-    -acceleration: float
-    -accelelariting: bool
-    -boosting: bool
-    -stopping: bool
-    -rotating_right: bool
-    -rotating_left: bool
-    -level: int
-    -dying_to_black_hole: bool
-    -health_depleted: Signal
+  -BLACK_HOLE: PackedScene
+  -MAX_ACCELERATION: float
+  -BULLET_3_SCENE: PackedScene
+  -BULLET_4_SCENE: PackedScene
+  -MOVED_SO_FAR: float
+  -PLAYER_LEVELS: Array
 
-    -_ready(): void
-    +is_player(): bool
-    +world_limit(size: float): void
-    +portal(): void
-    -_init_level_progress(): void
-    -_update_level_from_score(score: int): void
-    -_level_for_score(score: int): int
-    -_apply_level_up_to(target_level_index: int, notify: bool): void
-    -_physics_process(delta: float): void
-    +start_black_hole_death(black_hole_center: Vector2, consume_duration : float, total_spins : float): void
-    -_black_hole_consume_step(progress: float, initial_position: Vector2, black_hole_center: Vector2, initial_rotation: float, initial_scale: Vector2, total_spins: float, ship_visual: Node2D): void
-    -_camera_focus_to_point(black_hole_center: Vector2, consume_duration: float): void
-    -_disable_all_turrets(): void
+  -turrets: Dictionary
+  -current_level_index: int
+  -health: float
+  -acceleration: float
+  -accelerating: bool
+  -boosting: bool
+  -stopping: bool
+  -rotating_right: bool
+  -rotating_left: bool
+  -dying_to_black_hole: bool
+  -max_health: float
+  -selected_weapon_id: int
+  -mine_drop_interval: float
+  -mine_timer: Timer
+  -drone: Bullet4
+  -last_position: Vector2
+  -is_moving: bool
+
+  -_ready(): void
+  -_on_mine_timer_timeout(): void
+  -_on_upgrades_changed(): void
+  -_init_level_progress(): void
+  -_update_level_from_score(score: int): void
+  -_level_for_score(current_score: int): int
+  -_apply_level_up_to(target_level_index: int): void
+  -_physics_process(delta: float): void
+  -_black_hole_consume_step(progress: float, initial_position: Vector2, black_hole_center: Vector2, initial_rotation: float, initial_scale: Vector2, total_spins: float, ship_visual: Node2D): void
+  -_camera_focus_to_point(black_hole_center: Vector2, consume_duration: float): void
+  -_disable_all_turrets(): void
+  -_get_max_health(): float
+  -_apply_health_from_upgrades(preserve_ratio: bool = true, heal_to_full: bool = false): void
+  -_get_speed_cap(): float
+  -_apply_speed_from_upgrades(): void
+  -_spawn_drone(): void
+  -_remove_drone(): void
+  -_set_all_active_turrets_bullet(bullet_id: int): void
+
+  +is_player(): bool
+  +world_limit(size: float): void
+  +portal(): void
+  +start_black_hole_death(black_hole_center: Vector2, consume_duration: float = 1.5, total_spins: float = 13.0): void
+  +set_selected_weapon(weapon_id: int): void
 }
 Player::BLACK_HOLE --> BlackHole : Preloads
+Player::BULLET_3_SCENE --> Bullet3 : Preloads (mine)
+Player::BULLET_4_SCENE --> Bullet4 : Preloads (drone)
 Player::turrets --> Turret : References
-Player::_ready --> GlobalSingleton::player : Register Self
-Player::DAMAGE_RATE --> Asteroid::take_damage : Damages
-Player::_ready --> Turret : Chooses
-Player::_init_level_progress --> GlobalSingleton::level.get_score : Gets score
-Player::_apply_level_up_to --> Turret::current_bullet : Updates
-Player::_apply_level_up_to --> GlobalSingleton::gui_manager.show_level_up_notice : Notifies Level Up
+Player::drone --> Bullet4 : Holds instance
+Player::_ready --> GlobalSingleton::player : Register self
+Player::_ready --> GlobalPlayerUpgrades : Connects stats_updated
+Player::_on_mine_timer_timeout --> GlobalSingleton::level : Checks/Adds mine
+Player::_on_mine_timer_timeout --> GlobalSingleton::_is_safe_portal_position : Checks
+Player::_on_mine_timer_timeout --> Bullet3 : Instantiates
+Player::_init_level_progress --> GlobalSingleton::get_score : Gets score
+Player::_update_level_from_score --> GlobalSingleton::open_upgrades_picker : Opens
+Player::_apply_level_up_to --> Turret::current_bullet : Unlocks
+Player::_physics_process --> GlobalSingleton::get_score : Polls score
 Player::_physics_process --> GlobalSingleton::quantum : Checks
-Player::_physics_process --> Asteroid::player_collision : Collides
-Player::_physics_process --> Ore::is_coin : Checks
-Player::_physics_process --> GlobalSingleton::level.add_ore : Collects
-Player::_physics_process --> BlackHole : Instantiates
+Player::_physics_process --> Asteroid::player_collision : Calls on mobs with method
+Player::_physics_process --> Ore::is_coin : Uses has_method("is_coin")
+Player::_physics_process --> GlobalSingleton::add_ore : Collects
+Player::_physics_process --> GlobalSingleton::display_number : Shows damage
+Player::_physics_process --> BlackHole : Instantiates on death
+Player::_physics_process --> GlobalSaveManager::on_black_hole_opened : Notifies
 Player::start_black_hole_death --> GlobalSingleton::god_mode : Checks
 Player::start_black_hole_death --> GlobalAudioPlayer::fade_out_and_stop : Fades out
+Player::start_black_hole_death --> GlobalAudioPlayer::stop_music : Fallback
 Player::start_black_hole_death --> GlobalSingleton::game_over : Triggers
-Player::_disable_all_turrets --> Turret : Disables
-Player::_disable_all_turrets --> Turret::cooldown : Resets
+Player::_disable_all_turrets --> Turret::current_bullet : Sets 0
+Player::_get_max_health --> GlobalPlayerUpgrades::get_effective_health : Reads
+Player::_apply_health_from_upgrades --> GlobalPlayerUpgrades::get_shield_bonus : Reads
+Player::_get_speed_cap --> GlobalPlayerUpgrades::get_effective_max_acceleration : Reads
+Player::_apply_speed_from_upgrades --> GlobalPlayerUpgrades::get_speed_bonus : Reads
+Player::_spawn_drone --> GlobalSingleton::level : Adds child
+Player::_spawn_drone --> Bullet4 : Instantiates/assigns player
+Player::_remove_drone --> Bullet4 : queue_free
 
 
 class BlackHole {
-    +WARNING_NEAR_RADIUS : float
-    -warning_sent : bool
-    -activated : bool
-    -player_on_black_hole : bool
-    -size : int
-    -victim : Node2D
-    -consuming : bool
+  -WARNING_NEAR_RADIUS: float
 
-    +_on_body_entered(body : Node2D) : void
-    -_physics_process(delta : float) : void
-    -_exit_tree() : void
-    +_on_body_exited(body : Node2D) : void
-    -_on_increase_size_timeout() : void
-    -_on_activate_timer_timeout() : void
-    +_start_consume_now() : void
+  -warning_sent: bool
+  -activated: bool
+  -player_on_black_hole: bool
+  -size: int
+  -victim: Node2D
+  -consuming: bool
+
+  -_ready(): void
+  -_on_body_entered(body: Node2D): void
+  -_physics_process(_delta: float): void
+  -_exit_tree(): void
+  -_on_body_exited(body: Node2D): void
+  -_on_increase_size_timeout(): void
+  -_on_activate_timer_timeout(): void
+  -_start_consume_now(): void
 }
-BlackHole::_on_body_entered --> Player::is_player : Type check
-BlackHole::_start_consume_now --> Player::start_black_hole_death : Consume
-BlackHole::_physics_process --> Player::global_position : Distance check
+BlackHole::_on_body_entered --> Player::is_player : has_method check
+BlackHole::_on_body_entered --> GlobalSingleton::spawn_asteroid : Replaces asteroid
+BlackHole::_physics_process --> GlobalSingleton::quantum : Checks
+BlackHole::_physics_process --> GlobalSingleton::global_position : Distance check
+BlackHole::_physics_process --> GlobalSingleton::notify_black_hole_warning : Toggles warning
+BlackHole::_exit_tree --> GlobalSingleton::notify_black_hole_warning : Clears warning
+BlackHole::_start_consume_now --> Player::start_black_hole_death : Calls if available
+BlackHole::_start_consume_now --> GlobalSingleton::game_over : Fallback
 
 
 class Bullet {
-    -RANGE : int
-    -level : Level
-    +bullet_rotation : float
-    +target : Node2D
-    -direction : Vector2
-    -travelled_distance : float
-    -move_speed : float
+  -RANGE: int
 
-    -_ready(): void
-    -_physics_process(delta: float): void
-    -_on_body_entered(body): void
-    -_on_explosion_timeout(): void
+  -target: Node2D
+  -direction: Vector2
+  -travelled_distance: int
+  -move_speed: int
+  -damage_multiplier: float
+
+  -_ready(): void
+  -_physics_process(delta: float): void
+  -_on_body_entered(body): void
+  -_on_explosion_timeout(): void
+
+  +set_damage_multiplier(multiplier: float): void
 }
-Bullet::_on_body_entered --> Asteroid::take_damage : Damages
+Bullet::_physics_process --> GlobalSingleton::quantum : Checks
+Bullet::_on_body_entered --> Asteroid::take_damage : Common target
 
 
 class Bullet2 {
-    -RANGE : int
-    -game : Node2D
-    +bullet_rotation : float
-    +target : Node2D
-    -direction : Vector2
-    -travelled_distance : float
-    -move_speed : float
+  -RANGE: float
+  -MAX_BOUNCES: int
 
-    -_ready(): void
-    -_physics_process(delta: float): void
-    -_on_body_entered(body): void
+  -projectile: AnimatedSprite2D
+  -target: Node2D
+  -direction: Vector2
+  -travelled_distance: float
+  -move_speed: float
+  -damage_multiplier: float
+  -bounce_count: int
+  -bounce_chance: float
+  -can_bounce: bool
+
+  -_ready(): void
+  -_physics_process(delta: float): void
+  -_on_body_entered(body): void
+
+  +set_damage_multiplier(multiplier: float): void
 }
-Bullet2::_on_body_entered --> Asteroid::take_damage : Damages
+Bullet2::_on_body_entered --> Asteroid::take_damage : Common target
+
+
+class Bullet3 {
+  -collision_shape: CollisionShape2D
+  -vanish_timer: Timer
+  -mine_sprite: Sprite2D
+  -explosion_animation: AnimatedSprite2D
+  -explosion_sound: AudioStreamPlayer2D
+
+  -lifetime_seconds: float
+  -insta_kill_amount: float
+
+  -_ready(): void
+  -_on_body_entered(body: Node): void
+  -_explode(): void
+  -_on_explosion_finished(): void
+  -_on_vanish_timer_timeout(): void
+}
+Bullet3::_on_body_entered --> Asteroid::take_damage : Common target
+
+
+class Bullet4 {
+  -collision_shape: CollisionShape2D
+  -spawn_timer: Timer
+  -sprite_2d: Sprite2D
+
+  -respawn_seconds: float
+  -insta_kill_amount: float
+  -orbit_radius: float
+  -angular_speed: float
+  -angle_degree: float
+  -player: Player
+  -active: bool
+
+  -_ready(): void
+  -_physics_process(delta: float): void
+  -_on_body_entered(body: Node2D): void
+  -_on_spawn_timer_timeout(): void
+}
+Bullet4::_ready --> GlobalSingleton::player : Assigns fallback
+Bullet4::_physics_process --> Player::global_position : Orbits around
+Bullet4::_on_body_entered --> Asteroid::take_damage : Common target
 
 
 class Projectile {
@@ -148,242 +253,332 @@ class Projectile {
 
 
 class Turret {
-    -BULLET_1 : PackedScene
-    -BULLET_2 : PackedScene
-    -projectile : Projectile
-    -projectiles_parent_group : String
-    -projectiles_node : Projectile
-    +cooldown : bool
-    +current_bullet : int
-    +try_shoot() : bool
+  -BULLET_1 : PackedScene
+  -BULLET_2 : PackedScene
 
-    -_ready() : void
-    +shoot(target_enemy : Node2D) : void
-    -_physics_process(delta : float) : void
-    +_on_timer_timeout : void
+  +projectile : Projectile
+  +projectiles_parent_group : String
+
+  -projectiles_node : Node
+  +cooldown : bool
+  +current_bullet : int
+
+  -_ready() : void
+  -_physics_process(delta: float) : void
+  -_on_timer_timeout() : void
+  
+  +shoot(target_enemy: Node2D) : void
 }
-Turret::BULLET_1 --> Bullet : Preloads
-Turret::BULLET_2 --> Bullet2 : Preloads
-Turret::projectile --> Projectile : References
-Turret::shoot --> Projectile::scene : Instantiates
-Turret::shoot --> Bullet : Instantiates
-Turret::shoot --> Bullet2 : Instantiates
-Turret::shoot --> Bullet::bullet_rotation : Sets
-Turret::shoot --> Bullet::target : Assign
-Turret::shoot --> Bullet2::bullet_rotation : Sets
-Turret::shoot --> Bullet2::target : Assign
+Turret::BULLET_1 --> Bullet : Uses scene (instantiate)
+Turret::BULLET_2 --> Bullet2 : Uses scene (instantiate)
+Turret::shoot --> GlobalPlayerUpgrades::get_damage_multiplier_for_weapon_id : Reads multiplier
+Turret::shoot --> Bullet : Sets position/rotation/target/damage_multiplier
+Turret::shoot --> Bullet2 : Sets position/rotation/target/damage_multiplier
 
 
 class Level {
-    -ASTEROID : PackedScene
-    -PORTAL : PackedScene
-    -level_duration_seconds : float
-    -portal_duration_seconds : float
-    +game_paused : bool
-    +quantum : bool
-    +portal_active : bool
-    +score : int
-    +quantum_roll : int
-    +portal_timer : float
-    -portal_node : Node2D
-    
-    -_ready(): void
-    +_open_portal(): void
-    +win(): void
-    +spawn_asteroid(): void
-    +reset_quantum() : void
-    -_physics_process(delta: float): void
-    +add_ore() : void
-    +_update_xp_label_text() : void
-    +get_score() : void
-    +_on_world_body_exited(body : Node2D) : void
-    -_on_timer_timeout() : void
+  -ASTEROID: PackedScene
+  -ASTEROID_BIG: PackedScene
+  -PORTAL: PackedScene
+
+  +level_duration_seconds: float
+  +portal_duration_seconds: float
+  +portal_safe_margin: float
+  +portal_half_size: float
+
+  -game_paused: bool
+  -quantum: bool
+  -portal_active: bool
+  -score: int
+  -quantum_roll: int
+  -portal_timer: float
+  -portal_node: Portal
+
+  -_ready(): void
+  -_world_center(): Vector2
+  -_world_radius(): float
+  -_world_radius_effective(): float
+  -_is_inside_world(calculated_position: Vector2): bool
+  -_clamp_inside_world(calculated_position: Vector2): Vector2
+  -_black_hole_radius(black_hole: Node2D): float
+  -_is_safe_portal_position(calculated_position: Vector2): bool
+  -_nearest_black_hole(calculated_position: Vector2): Node2D
+  -_find_safe_portal_position(): Vector2
+  -_open_portal(): void
+  -_physics_process(delta: float): void
+  -_update_xp_label_text(): void
+  -_on_world_body_exited(body: Node2D): void
+  -_on_time_timeout(): void
+  -_unhandled_input(event: InputEvent): void
+  -_run_portal_sanity_check(attempts: int = 500): void
+
+  +win(): void
+  +spawn_asteroid(): void
+  +reset_quantum(): void
+  +add_ore(): void
+  +get_score(): int
 }
 Level::ASTEROID --> Asteroid : Preloads
+Level::ASTEROID_BIG --> Asteroid : Preloads (big)
 Level::PORTAL --> Portal : Preloads
-Level::_ready --> GlobalSingleton::level : Register Self
+Level::_ready --> GlobalSingleton::level : Register self
 Level::_ready --> GlobalAudioPlayer::_play_level_music : Plays music
-Level::_ready --> GlobalSingleton::gui_manager.hud_timer_bar : Starts
-Level::_open_portal --> Portal : Instantiates
-Level::win --> GlobalSingleton::gui_manager.hud_portal_active : Disables
-Level::win --> GlobalSingleton::gui_manager.game_over_screen : Enables
-Level::win --> GlobalSingleton::settings_icon : Disables
-Level::spawn_asteroid --> Asteroid : Instantiates
-Level::_physics_process --> GlobalSingleton::god_mode : Checks
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_god_mode : Updates
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_portal_active : Enables
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_portal_active : Enables
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_timer_bar : Changes
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_xp : Updates
-Level::_update_xp_label_text --> Player::PLAYER_LEVELS : Updates
-Level::_physics_process --> GlobalSingleton::gui_manager.hud_score_label : Updates
-Level::_on_world_body_exited --> Player::is_player : Checks
+Level::_ready --> GlobalSingleton::hud_timer_bar : Sets max_value
+Level::_open_portal --> Portal : Instantiates/add_child
+Level::_open_portal --> Asteroid::on_portal_opened : call_group("asteroids")
+Level::spawn_asteroid --> Asteroid : Instantiates (ASTEROID/ASTEROID_BIG)
+Level::_physics_process --> GlobalSingleton::god_mode : Toggles/Checks
+Level::_physics_process --> GlobalSingleton::hud_god_mode : Updates
+Level::_physics_process --> GlobalSingleton::hud_portal_active : Shows
+Level::_physics_process --> GlobalSingleton::hud_timer_bar : Updates value/max/theme
+Level::_physics_process --> GlobalSingleton::hud_timer_text : Updates
+Level::_physics_process --> GlobalSingleton::game_over : Triggers on timeout
+Level::add_ore --> GlobalSaveManager::add_score : Adds score
+Level::add_ore --> GlobalSingleton:hud_xp : Updates
+Level::_update_xp_label_text --> Player::PLAYER_LEVELS : Reads thresholds
+Level::_update_xp_label_text --> GlobalSingleton::hud_score_label : Updates text
+Level::_on_world_body_exited --> Player::is_player : Checks via has_method
+Level::_on_world_body_exited --> Player::world_limit : Clamps player
+Level::win --> GlobalSingleton::hud_portal_active : Hides
+Level::win --> GlobalSingleton::game_over_screen : Shows
+Level::win --> GlobalSingleton::settings_icon : Hides if valid
+Level::win --> GlobalSaveManager::on_stage_ended : Notifies
+Level::win --> GlobalSaveManager::save_to_disk : Saves
 
 
 class Ore {
-    -moving_speed : int
-    -player : Player
-    -level : Level
+  -moving_speed: int
+  -player: Player
+  -level: Level
 
-    -_physics_process(delta: float): void
-    +is_coin(): bool
+  -_physics_process(delta: float): void
+  +is_coin(): bool
 }
-Ore::_physics_process --> GlobalSingleton::level.add_ore : Generates
-Ore::_physics_process --> Player::is_player : Checks
-Ore::_physics_process --> GlobalSingleton::player.global_position : Moves towards
+Ore::_physics_process --> GlobalSingleton::global_position : Distance/seek
+Ore::_physics_process --> GlobalSingleton::add_ore : Collects
+Ore::_physics_process --> Player::is_player : Checks via has_method
+Ore::_physics_process --> Player::acceleration : Uses for velocity
 
 
 class Portal {
-    -level : Level
+  -portal_sprite: AnimatedSprite2D
+  -start_animated: bool
 
-    +_on_body_entered(body : Node2D) : void
+  -_ready(): void
+  -_on_body_entered(body): void
 }
-Portal::_on_body_entered --> GlobalSingleton::level.portal_active : Checks
-Portal::_on_body_entered --> Player::is_player : Type check
-Portal::_on_body_entered --> GlobalSingleton::level.win : Triggers
-Portal::_on_body_entered --> Asteroid::on_portal : Disappears
+Portal::_on_body_entered --> GlobalSingleton::portal_active : Checks
+Portal::_on_body_entered --> Player::is_player : Checks via has_method
+Portal::_on_body_entered --> GlobalSingleton::win : Triggers
+Portal::_on_body_entered --> Asteroid::on_portal : Common target
 
 
-class TutorialDialoqueBalloon {
-    +next_action : StringName
-    +skip_action : StringName
-    +mutation_hide_delay : float
-    -resource : DialoqueResource
-    -temporary_game_states : Array
-    -is_waiting_for_input : bool
-    -will_hide_balloon : bool
-    +locals : Dictionary
-    -_locale : String
-    -advance_after_blocking_mutation : bool
-    -dialogue_line : DialogueLine
-    -mutation_cooldown : Timer
-    -character_label : RichTextLabel
-    -dialoque_label : DialogueLabel
-    -responses_menu : DialogueResponsesMenu
+class SelectUpgradesScene {
+  -upgrade_card_container: HBoxContainer
+  -closed(track: int): Signal
 
-    -_ready() : void
-    -_unhandled_input(event : InputEvent) : void
-    -_notification(what: int) : void
-    -start(dialogue_resource: DialogueResource, title: String, extra_game_states: Array) : void
-    -apply_dialogue_line() : void
-    -next(next_id: String) : void
-    -_on_mutation_cooldown_timeout() : void
-    -_on_mutated(_mutation: Dictionary) : void
-    -_on_balloon_gui_input(event: InputEvent) : void
-    -_on_responses_menu_response_selected(response: DialogueResponse) : void
+  -_ready(): void
+  -_on_card_chosen(track: int): void
+  -_populate_random(count: int = 3): void
 }
+SelectUpgradesScene::_on_card_chosen --> GlobalSingleton::player : Checks valid
+SelectUpgradesScene::_on_card_chosen --> GlobalPlayerUpgrades::UpgradeTrack : Matches track
+SelectUpgradesScene::_on_card_chosen --> GlobalPlayerUpgrades::WeaponId : Selects weapon id
+SelectUpgradesScene::_on_card_chosen --> Player::set_selected_weapon : Calls
+SelectUpgradesScene::_populate_random --> GlobalPlayerUpgrades::UpgradeTrack : Builds list
+SelectUpgradesScene::_populate_random --> UpgradesCard::upgrade : Assigns (property)
+
+
+class TutorialDialogueBalloon {
+  +next_action: StringName
+  +skip_action: StringName
+  +mutation_hide_delay: float
+
+  -resource: DialogueResource
+  -temporary_game_states: Array
+  -is_waiting_for_input: bool
+  -will_hide_balloon: bool
+  -locals: Dictionary
+  -locale: String
+  -advance_after_blocking_mutation: bool
+  -dialogue_line: DialogueLine
+  -mutation_cooldown: Timer
+
+  -balloon: Control
+  -character_label: RichTextLabel
+  -dialogue_label: DialogueLabel
+  -responses_menu: DialogueResponsesMenu
+
+  -_ready(): void
+  -_unhandled_input(event: InputEvent): void
+  -_notification(what: int): void
+  -_on_mutation_cooldown_timeout(): void
+  -_on_mutated(_mutation: Dictionary): void
+  -_on_balloon_gui_input(event: InputEvent): void
+  -_on_responses_menu_response_selected(response: DialogueResponse): void
+
+  +start(dialogue_resource: DialogueResource, title: String, extra_game_states: Array = []): void
+  +apply_dialogue_line(): void
+  +next(next_id: String): void
+}
+
+
+class UpgradesCard {
+  +upgrade: PlayerUpgrades.UpgradeTrack
+  +title: String
+  +icon: Texture2D
+
+  -texture_rect: TextureRect
+  -label: Label
+
+  -weapon_1_image: Texture2D
+  -weapon_2_image: Texture2D
+  -weapon_3_image: Texture2D
+  -weapon_4_image: Texture2D
+  -shield_image: Texture2D
+  -speed_image: Texture2D
+
+  -chosen(track: int): Signal
+
+  -_ready(): void
+  -_refresh(): void
+  -_set_name_for(upgrade_label: int): String
+  -_set_image_for(upgrade_image: int): Texture2D
+  -_gui_input(event: InputEvent): void
+}
+UpgradesCard::_set_name_for --> GlobalPlayerUpgrades::UpgradeTrack : Matches track
+UpgradesCard::_set_image_for --> GlobalPlayerUpgrades::UpgradeTrack : Matches track
+UpgradesCard::_gui_input --> GlobalPlayerUpgrades::apply_upgrade : Applies upgrade
 
 
 class GlobalAudioPlayer {
-    +MENU_MUSIC : String
-    +LEVEL_MUSIC : String
-    +BUS_MASTER : String
-    +BUS_MUSIC : String
-    +BUS_SFX : String
-    -_last_level_pos : float
-    -_current_track : String
-    -fade_tween : Tween
+  -MENU_MUSIC: AudioStream
+  -LEVEL_MUSIC: AudioStream
+  -BUS_MASTER: String
+  -BUS_MUSIC: String
+  -BUS_SFX: String
 
-    -_ready() : void
-    +_enable_looping() : void
-    +_force_stream_loop(stream: AudioStream) : void
-    +_on_finished() : void
-    +_play_music(music: AudioStream, volume: float, from_pos: float) : void
-    +_play_menu_music() : void
-    +_play_level_music(resume: bool) : void
-    +remember_level_position_and_stop() : void
-    +on_pause_entered() : void
-    +on_pause_exited() : void
-    +on_level_restart() : void
-    +set_master_volume_db(db: float) : void
-    +set_music_volume_db(db: float) : void
-    +set_sfx_volume_db(db: float) : void
-    +get_master_volume_db() : float
-    +get_music_volume_db() : float
-    +get_sfx_volume_db() : float
-    -save_volumes() : void
-    -load_volumes() : void
-    +fade_out_and_stop(duration: float) : void
-    +_cancel_fade() : void
+  -last_level_pos: float
+  -current_track: String
+  -fade_tween: Tween
+
+  -_ready(): void
+  -_enable_looping(): void
+  -_force_stream_loop(stream: AudioStream): void
+  -_on_finished(): void
+  -_play_music(music: AudioStream, volume: float = 0.0, from_pos: float = 0.0): void
+  -_play_menu_music(): void
+  -_play_level_music(resume: bool = true): void
+  -_cancel_fade(): void
+
+  +stop_music(): void
+  +remember_level_position_and_stop(): void
+  +on_pause_entered(): void
+  +on_pause_exited(): void
+  +on_level_restart(): void
+  +set_master_volume_db(db: float): void
+  +set_music_volume_db(db: float): void
+  +set_sfx_volume_db(db: float): void
+  +get_master_volume_db(): float
+  +get_music_volume_db(): float
+  +get_sfx_volume_db(): float
+  +save_volumes(): void
+  +load_volumes(): void
+  +fade_out_and_stop(duration: float = 0.8): void
 }
 
 
 class GuiManager {
-    -MAIN_MENU_BUTTON_GROUP : String
-    -CREDITS_BUTTON_GROUP : String
-    -SETTINGS_BUTTON_GROUP : String
-    -INPUT_SETTINGS_BUTTON_GROUP : String
-    -GAME_OVER_SCREEN_GROUP : String
-    -PAUSE_MENU_GROUP : String
-    -LEVELS_MENU_GROUP : String
-    +game_hud_layer : CanvasLayer
-    +main_menu_layer : CanvasLayer
-    +credits_layer : CanvasLayer
-    +settings_layer : CanvasLayer
-    +input_settings_layer : CanvasLayer
-    +game_over_screen : CanvasLayer
-    +pause_menu_layer : CanvasLayer
-    +levels_menu_layer : CanvasLayer
-    +hover_sound_player : AudioStreamPlayer
-    +select_sound_player : AudioStreamPlayer
-    +back_sound_player : AudioStreamPlayer
-    +settings_master_volume_slider : HSlider
-    +settings_music_volume_slider : HSlider
-    +settings_sfx_volume_slider : HSlider
-    +settings_controls_btn : BaseButton
-    -on_settings_back : Callable
-    -black_hole_warning_tween : Tween
-    -black_hole_warning_sources : int
-    +hud_xp : ProgressBar
-    +hud_score_label : Label
-    +hud_timer_bar : ProgressBar
-    +hud_timer_text : Label
-    +hud_portal_active : Label
-    +hud_god_mode : Label
-    +level_up_notification_label : Label
-    +black_hole_warning_label : Label
-    +game_over_label : Label
-    +game_over_restart_button : Button
-    +levels_container : VBoxContainer
-    +back_to_main_menu_button : Button
-    -is_paused : bool
+  -MAIN_MENU_BUTTON_GROUP : String
+  -CREDITS_BUTTON_GROUP : String
+  -SETTINGS_BUTTON_GROUP : String
+  -INPUT_SETTINGS_BUTTON_GROUP : String
+  -GAME_OVER_SCREEN_GROUP : String
+  -PAUSE_MENU_GROUP : String
+  -LEVELS_MENU_GROUP : String
+  -STATS_TABLE_GROUP : String
 
-    -_ready() : void
-    -_unhandled_input(event: InputEvent) : void
-    -_connect_signal_safe(emitter: Object, signal_name: String, callable: Callable) : void
-    -_connect_button_signals_recursively(parent_node: Node) : void
-    -_focus_first_button_in(root_node: Node) : void
-    -_collect_buttons_in_tree(root_node: Node) : Array
-    -_tag_buttons_in_tree(root_node: Node, group_name: String) : void
-    -_on_any_button_mouse_entered(hovered_button: BaseButton) : void
-    -_on_any_button_focus_entered(_focused_button: BaseButton) : void
-    -_play_select_sound() : void
-    -_play_back_sound() : void
-    -_on_any_button_pressed(pressed_button: BaseButton) : void
-    -_on_main_menu_button_pressed(pressed_button: BaseButton) : void
-    -_on_credits_button_pressed(pressed_button: BaseButton) : void
-    -_on_settings_button_pressed(pressed_button: BaseButton) : void
-    -_on_settings_master_volume_changed(db: float) : void
-    -_on_settings_music_volume_changed(db: float) : void
-    -_on_settings_sfx_volume_changed(db: float) : void
-    -_on_input_settings_button_pressed(pressed_button: BaseButton) : void
-    -_on_game_over_screen_button_pressed(pressed_button: BaseButton) : void
-    -_on_pause_menu_button_pressed(pressed_button: BaseButton) : void
-    -_on_levels_menu_button_pressed(pressed_button : BaseButton) : void
-    +_show_levels_menu() : void
-    +_generate_level_buttons() : void
-    +show_main_menu() : void
-    +show_settings() : void
-    +show_credits() : void
-    +show_input_settings() : void
-    +show_pause_menu() : void
-    +hide_pause_menu() : void
-    +hide_pause_overlay_only() : void
-    +show_pause_overlay_only() : void
-    +show_level_up_notice(message: String) : void
-    +notify_black_hole_warning(active: bool) : void
-    +_start_black_hole_blink() : void
-    +_stop_black_hole_blink() : void
+  -game_hud_layer : CanvasLayer
+  -main_menu_layer : CanvasLayer
+  -credits_layer : CanvasLayer
+  -settings_layer : CanvasLayer
+  -input_settings_layer : CanvasLayer
+  -game_over_screen : CanvasLayer
+  -pause_menu_layer : CanvasLayer
+  -levels_menu_layer : CanvasLayer
+  -stats_table_layer : CanvasLayer
+
+  -hover_sound_player : AudioStreamPlayer
+  -select_sound_player : AudioStreamPlayer
+  -back_sound_player : AudioStreamPlayer
+
+  -settings_master_volume_slider : HSlider
+  -settings_music_volume_slider : HSlider
+  -settings_sfx_volume_slider : HSlider
+  -settings_controls_btn : BaseButton
+
+  -hud_xp : ProgressBar
+  -hud_score_label : Label
+  -hud_timer_bar : ProgressBar
+  -hud_timer_text : Label
+  -hud_portal_active : Label
+  -hud_god_mode : Label
+  -black_hole_warning_label : Label
+
+  -game_over_label : Label
+  -game_over_restart_button : Button
+
+  -levels_container : VBoxContainer
+  -back_to_main_menu_button : Button
+
+  -tutorial_button : Button
+
+  -upgrades_menu : CanvasLayer
+
+  -on_settings_back : Callable
+  -black_hole_warning_tween : Tween
+  -black_hole_warning_sources : int
+  -is_paused : bool
+
+  -_ready() : void
+  -_unhandled_input(event: InputEvent) : void
+  -_connect_signal_safe(emitter: Object, signal_name: String, callable: Callable) : void
+  -_connect_button_signals_recursively(parent_node: Node) : void
+  -_focus_first_button_in(root_node: Node) : void
+  -_collect_buttons_in_tree(root_node: Node) : Array
+  -_tag_buttons_in_tree(root_node: Node, group_name: String) : void
+  -_on_any_button_mouse_entered(hovered_button: BaseButton) : void
+  -_on_any_button_focus_entered(_focused_button: BaseButton) : void
+  -_play_select_sound() : void
+  -_play_back_sound() : void
+  -_on_any_button_pressed(pressed_button: BaseButton) : void
+  -_on_main_menu_button_pressed(pressed_button: BaseButton) : void
+  -_on_credits_button_pressed(pressed_button: BaseButton) : void
+  -_on_settings_button_pressed(pressed_button: BaseButton) : void
+  -_on_settings_master_volume_changed(db: float) : void
+  -_on_settings_music_volume_changed(db: float) : void
+  -_on_settings_sfx_volume_changed(db: float) : void
+  -_on_input_settings_button_pressed(pressed_button: BaseButton) : void
+  -_on_game_over_screen_button_pressed(pressed_button: BaseButton) : void
+  -_on_pause_menu_button_pressed(pressed_button: BaseButton) : void
+  -_on_levels_menu_button_pressed(pressed_button : BaseButton) : void
+  -_show_levels_menu() : void
+  -_generate_level_buttons() : void
+  -_show_stats() : void
+  -_on_upgrades_picker_closed(track: int) : void
+  -_start_black_hole_blink() : void
+  -_stop_black_hole_blink() : void
+  
+  +show_main_menu() : void
+  +show_settings() : void
+  +show_credits() : void
+  +show_input_settings() : void
+  +show_pause_menu() : void
+  +hide_pause_menu() : void
+  +hide_pause_overlay_only() : void
+  +show_pause_overlay_only() : void
+  +open_upgrades_picker() : void
+  +notify_black_hole_warning(active: bool) : void
 }
 GuiManager::_ready --> GlobalSingleton::gui_manager : Register Self
 GuiManager::_ready --> GlobalAudioPlayer::_play_menu_music : Plays music
@@ -397,7 +592,7 @@ GuiManager::_on_main_menu_button_pressed --> GlobalSingleton::open_settings : Op
 GuiManager::_on_main_menu_button_pressed --> GlobalSingleton::open_credits : Opens
 GuiManager::_on_main_menu_button_pressed --> GlobalSingleton::quit_game_from_menu : Quits
 GuiManager::_on_credits_button_pressed --> GlobalSingleton::open_main_menu : Opens
-GuiManager::_on_settings_button_pressed --> GlobalSingleton::open_contols : Opens
+GuiManager::_on_settings_button_pressed --> GlobalSingleton::open_controls : Opens
 GuiManager::_on_settings_button_pressed --> GlobalAudioPlayer::save_volumes : Saves
 GuiManager::_on_settings_master_volume_changed --> GlobalAudioPlayer::set_master_volume_db : Sets
 GuiManager::_on_settings_music_volume_changed --> GlobalAudioPlayer::set_music_volume_db : Sets
@@ -407,11 +602,9 @@ GuiManager::_on_pause_menu_button_pressed --> GlobalSingleton::continue_game : C
 GuiManager::_on_pause_menu_button_pressed --> GlobalSingleton::restart_game : Restarts
 GuiManager::_on_pause_menu_button_pressed --> GlobalSingleton::open_settings : Opens
 GuiManager::_on_pause_menu_button_pressed --> GlobalSingleton::open_main_menu : Opens
-GuiManager::_on_levels_menu_button_pressed --> GlobalSingleton::quit_to_desktop_from_game : Quits
-GuiManager::_on_levels_menu_button_pressed --> GlobalSingleton::open_main_menu : Opens
+GuiManager::_on_pause_menu_button_pressed --> GlobalSingleton::quit_to_desktop_from_game : Quits
 GuiManager::_generate_level_buttons --> GlobalSingleton::levels.keys : Gets
-GuiManager::_generate_level_buttons --> GlobalSingleton::levels.level_id : Gets
-GuiManager::_generate_level_buttons --> GlobalSingleton::levels.is_level_unlocked : Checks
+GuiManager::_generate_level_buttons --> GlobalSingleton::level_is_unlocked : Checks
 GuiManager::_generate_level_buttons --> GlobalSingleton::change_level : Changes
 GuiManager::_generate_level_buttons --> GlobalSingleton::start_game : Starts
 GuiManager::show_settings --> GlobalAudioPlayer::get_master_volume_db : Gets
@@ -425,8 +618,49 @@ class LevelManager {
 LevelManager::_ready --> GlobalSingleton::level_manager : Register Self
 
 
+class GlobalSaveManager {
+    +SAVE_PATH : String
+    +SCHEMA_VERSION : int
+    +PARTICIPANT_GROUP : String
+    +AUTOSAVE_INTERVAL_SEC : float
+    +BR_TZ_OFFSET_SEC : int
+
+    +autosave_timer : Timer
+    +dirty_data : bool
+    +profile : Dictionary
+
+    -last_session_snapshot : Dictionary
+    -track_time : bool
+
+    -_now_br_string() : String
+    -_seconds_to_hms(seconds: float) : String
+    -_normalize_counters() : void
+
+    -_ready() : void
+    -_process(delta: float) : void
+    -_on_autosave_timeout() : void
+
+    +add_score(value: int) : void
+    +on_enemy_killed(amount: int = 1) : void
+    +on_stage_started() : void
+    +on_stage_ended(won: bool) : void
+    +on_black_hole_opened(amount: int = 1) : void
+    +save_to_disk() : void
+    +load_from_disk() : void
+    +debug_print_profile() : void
+
+    -_apply_participants_state() : void
+    -_rollup_session_into_totals() : bool
+}
+GlobalSaveManager::_process --> GlobalSingleton::level : Checks
+GlobalSaveManager::_on_autosave_timeout --> GlobalSingleton::level : Checks
+GlobalSaveManager::save_to_disk --> InputSettings : Serializes bindings
+GlobalSaveManager::_apply_participants_state --> InputSettings : Deserializes bindings
+
+
 class SettingsIcon {
-    +toggle_settings_icon : TextureButton
+    -toggle_settings_icon : TextureButton
+
     -_on_toggle_settings_button_pressed() : void
 }
 SettingsIcon::_on_toggle_settings_button_pressed --> GlobalSingleton::settings_icon : Register Self
@@ -434,34 +668,32 @@ SettingsIcon::_on_toggle_settings_button_pressed --> GlobalSingleton::open_setti
 
 
 class GlobalSingleton {
-    +closest_enemy : function
     -SETTINGS_ICON : PackedScene
-    -TUTORIAL_DIALOGUE : Dialogue
-    +gui_manager: GuiManager
-    +level_manager: LevelManager
+    -TUTORIAL_DIALOGUE : DialogueResource
+
+    +gui_manager : GuiManager
+    +level_manager : LevelManager
     +level : Level
     +player : Player
     +settings_icon : SettingsIcon
     +quantum : bool
     +closest_distance : int
-    +current_level: String
-    +current_level_path: String
+    +closest_enemy : Object
+    +current_level : String
+    +current_level_path : String
     +score : int
     +god_mode : bool
     +quantum_roll : int
     +portal_timer : float
-    +_tutorial_running : bool
-    +active_balloons: Array
-    +levels: Dictionary
+    +tutorial_running : bool
+    +active_balloons : Array
+    +tutorial_unlocked : bool
+    +skip_tutorial : bool
+    +levels : Dictionary
     +action_pressed(action_name) : Signal
-    
+
     +start_game() : void
     +start_tutorial() : void
-    +_wait_action(action_name) : void
-    +_wait_any_action(action_names: Array) : void
-    -_input(event: InputEvent) : void
-    +_register_balloon(balloon: Node) : void
-    +_close_all_dialogue_balloons() : void
     +continue_game() : void
     +load_game() : void
     +save_game() : void
@@ -475,18 +707,24 @@ class GlobalSingleton {
     +restart_game() : void
     +reset_game_state() : void
     +game_over() : void
-    +_tutorial() : bool
-    +_level01() : bool
+    +find_closest_enemy() : Object
+    +wait_action(action_name) : void
+    +wait_any_action(action_names: Array) : void
     +level_is_unlocked(level_id: String) : bool
     +goto_level(level_or_path: String) : void
     +change_level(load_level: String) : void
-    +_ensure_settings_icon(parent: Node) : void
     +display_number(value: int, text_position: Vector2, text_color: String) : void
-    +find_closest_enemy() : Object
+
+    -_tutorial() : bool
+    -_level01() : bool
+    -_ensure_settings_icon(parent: Node) : void
+    -_close_all_dialogue_balloons() : void
+    -_input(event: InputEvent) : void
+    -_register_balloon(balloon: Node) : void
     -_process(_delta: float) : void
+    -_reset_all_bonuses_and_hide_picker() : void
 }
 GlobalSingleton::SETTINGS_ICON --> SettingsIcon : Preloads
-GlobalSingleton::TUTORIAL_DIALOGUE --> TutorialDialoqueBalloon : Preloads
 GlobalSingleton::gui_manager --> GuiManager : References
 GlobalSingleton::level_manager --> LevelManager : References
 GlobalSingleton::level --> Level : References
@@ -494,49 +732,36 @@ GlobalSingleton::player --> Player : References
 GlobalSingleton::settings_icon --> SettingsIcon : References
 GlobalSingleton::start_game --> GuiManager::main_menu_layer : Hides
 GlobalSingleton::start_game --> GuiManager::game_hud_layer : Shows
-GlobalSingleton::start_tutorial --> TutorialDialoqueBalloon : Instantiates
-GlobalSingleton::continue_game --> GuiManager::is_paused : Sets
 GlobalSingleton::continue_game --> GuiManager::hide_pause_menu : Hides
 GlobalSingleton::continue_game --> GlobalAudioPlayer::on_pause_exited : Unpauses
-GlobalSingleton::open_settings --> GuiManager::on_settings_back : Calls
 GlobalSingleton::open_settings --> GuiManager::hide_pause_overlay_only : Hides
-GlobalSingleton::open_settings --> GuiManager::open_main_menu : Calls
+GlobalSingleton::open_settings --> GuiManager::on_settings_back : Sets callback
 GlobalSingleton::open_settings --> GuiManager::show_settings : Shows
-GlobalSingleton::open_settings_from_icon --> GuiManager::game_hud_layer : Sets
 GlobalSingleton::open_settings_from_icon --> GuiManager::is_paused : Sets
 GlobalSingleton::open_settings_from_icon --> GuiManager::hide_pause_overlay_only : Hides
-GlobalSingleton::open_settings_from_icon --> GuiManager::on_settings_back : Calls
+GlobalSingleton::open_settings_from_icon --> GuiManager::on_settings_back : Sets callback
 GlobalSingleton::open_settings_from_icon --> GlobalAudioPlayer::on_pause_entered : Pauses
-GlobalSingleton::open_settings_from_icon --> GlobalAudioPlayer::_play_menu_music : Plays
-GlobalSingleton::open_credits --> GuiManager::show_settings : Shows
+GlobalSingleton::open_settings_from_icon --> GuiManager::show_settings : Shows
 GlobalSingleton::open_credits --> GuiManager::show_credits : Shows
-GlobalSingleton::open_main_menu --> GuiManager::hide_pause_overlay_only : Hides
-GlobalSingleton::open_main_menu --> GuiManager::pause_menu_layer : Hides
 GlobalSingleton::open_main_menu --> GuiManager::show_main_menu : Shows
-GlobalSingleton::open_main_menu --> GuiManager::is_paused : Sets
 GlobalSingleton::open_main_menu --> GlobalAudioPlayer::_play_menu_music : Plays
 GlobalSingleton::open_controls --> GuiManager::show_input_settings : Shows
-GlobalSingleton::restart_game --> GuiManager::game_over_screen : Hides
-GlobalSingleton::restart_game --> GuiManager::hud_portal_active : Hides
-GlobalSingleton::restart_game --> GuiManager::hud_timer_bar : Changes
+GlobalSingleton::quit_game_from_menu --> GlobalSaveManager::on_stage_ended : Marks lost
+GlobalSingleton::quit_to_desktop_from_game --> GlobalSaveManager::on_stage_ended : Marks lost
 GlobalSingleton::restart_game --> GlobalAudioPlayer::_play_level_music : Plays
-GlobalSingleton::reset_game_state --> GlobalAudioPlayer::on_level_restart : Resets
-GlobalSingleton::game_over --> GuiManager::hide_pause_menu : Hides
-GlobalSingleton::reset_game_state --> GuiManager::hud_score_label : Resets
-GlobalSingleton::reset_game_state --> GuiManager::hud_xp : Resets
+GlobalSingleton::restart_game --> GlobalAudioPlayer::on_level_restart : Resets music state
 GlobalSingleton::game_over --> GuiManager::game_over_screen : Shows
-GlobalSingleton::game_over --> GuiManager::hud_portal_active : Hides
 GlobalSingleton::game_over --> GlobalAudioPlayer::stop_music : Stops
 GlobalSingleton::game_over --> GlobalAudioPlayer::_play_menu_music : Plays
-GlobalSingleton::change_level --> Level : Changes
-GlobalSingleton::_ensure_settings_icon --> SettingsIcon : Instantiates
-GlobalSingleton::find_closest_enemy --> Asteroid : Searches
+GlobalSingleton::game_over --> GlobalSaveManager::on_stage_ended : Marks lost
+GlobalSingleton::find_closest_enemy --> Asteroid : Searches ("asteroid" group)
 
 
 class SoundIcon {
     -MASTER_BUS_NAME : String
     -ICON_OFF : Texture2D
     -ICON_ON : Texture2D
+
     -sound_toggle_button : TextureButton
     -master_bus_index : int
 
@@ -551,14 +776,17 @@ class SoundIcon {
 class InputSettings {
     -SAVE_PATH : String
     -CONFIG_SECTION_INPUT : String
+
     -input_button_scene : PackedScene
     -action_list : VBoxContainer
     -reset_button : Button
-    -back_to_settingd_button : Button
+    -back_to_settings_button : Button
+
     -is_remapping : bool
     -action_to_remap : String
     -remapping_button : Node
     -remap_armed : bool
+
     -input_actions : Dictionary
 
     -_ready() : void
@@ -568,15 +796,71 @@ class InputSettings {
     -_create_action_list() : void
     -_update_action_list(button: Node, event: InputEvent) : void
     -_input(event: InputEvent) : void
-    -_save_input_map(should_clear_file: bool) : void
+
+    -_save_input_map() : void
     -_load_input_map() : void
+
     -_serialize_event(input_event: InputEvent) : Dictionary
     -_deserialize_event(event_data: Dictionary) : InputEvent
     -_delete_user_file() : void
+
     -_enable_remap_capture() : void
     -_event_signature(event: InputEvent) : String
     -_is_event_in_use(new_event: InputEvent, except_action: String) : String
     -_set_error_ui(line_button: Node, is_error: bool) : void
 }
+InputSettings::_on_back_to_settings_button_pressed --> GlobalSaveManager::save_to_disk : Saves (via SaveManager)
+InputSettings::_on_reset_button_pressed --> GlobalSaveManager::save_to_disk : Saves (via SaveManager)
+InputSettings::_load_input_map --> GlobalSaveManager::profile.participants : Reads
+
+
+class StatsTable {
+    -stats_row : PackedScene
+    -stats_table : VBoxContainer
+
+    -_ready() : void
+    -_on_stats_table_back_button_pressed() : void
+    
+    +set_data(stats_data: Dictionary) : void
+}
+StatsTable::_ready --> GlobalSaveManager::load_from_disk : Loads
+StatsTable::_ready --> GlobalSaveManager::profile.user.totals : Reads totals
+StatsTable::_on_stats_table_back_button_pressed --> GlobalSingleton::open_main_menu : Opens
+
+
+class GlobalPlayerUpgrades {
+  +stats_updated(action_name)
+
+  +BULLET_1_SCENE : PackedScene
+  +BULLET_2_SCENE : PackedScene
+  +BULLET_3_SCENE : PackedScene
+  +BULLET_4_SCENE : PackedScene
+  +MAX_LEVEL : int
+  +UpgradeTrack
+  +WeaponId
+
+  +base_health : float
+  +base_damage_rate : float
+  +base_max_acceleration : float
+
+  +active_weapon_1_level : int
+  +active_weapon_2_level : int
+  +active_weapon_3_level : int
+  +active_weapon_4_level : int
+  +passive_shield_level : int
+  +passive_speed_level : int
+
+  +apply_upgrade(track: int) : void
+  +get_damage_multiplier_for_weapon_id(weapon_id: int) : float
+  +get_shield_bonus() : float
+  +get_effective_health() : float
+  +get_speed_bonus() : float
+  +get_effective_max_acceleration() : float
+  +reset() : void
+}
+GlobalPlayerUpgrades::BULLET_1_SCENE --> Bullet : Preloads
+GlobalPlayerUpgrades::BULLET_2_SCENE --> Bullet2 : Preloads
+GlobalPlayerUpgrades::BULLET_3_SCENE --> Bullet3 : Preloads
+GlobalPlayerUpgrades::BULLET_4_SCENE --> Bullet4 : Preloads
 
 @enduml

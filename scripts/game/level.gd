@@ -21,7 +21,7 @@ var portal_timer: float = 0.0
 var portal_node: Portal = null
 
 
-func _ready():
+func _ready() -> void:
 	Singleton.level = self
 	AudioPlayer._play_level_music()
 	
@@ -164,7 +164,7 @@ func _find_safe_portal_position() -> Vector2:
 	return _clamp_inside_world(candidate_position)
 
 
-func _open_portal():
+func _open_portal() -> void:
 	portal_node = PORTAL.instantiate()
 	portal_node.scale = Vector2(2, 2)
 	portal_node.start_animated = true
@@ -178,7 +178,7 @@ func _open_portal():
 # ------------------------------------------------------------
 # Finaliza o nível como vitória do jogador.
 # ------------------------------------------------------------
-func win():
+func win() -> void:
 	get_tree().paused = true
 	Singleton.gui_manager.hud_portal_active.visible = false
 	Singleton.gui_manager.game_over_screen.visible = true
@@ -197,7 +197,7 @@ func win():
 # - Adiciona o novo nó ao primeiro nó encontrado no grupo "asteroids" de forma adiada
 # ------------------------------------------------------------
 #func spawn_asteroid():
-func spawn_asteroid():
+func spawn_asteroid() -> void:
 	var scene_to_spawn = ASTEROID
 	if randf() < 0.15:
 		scene_to_spawn = ASTEROID_BIG
@@ -216,7 +216,7 @@ func spawn_asteroid():
 # - Se quantum_roll >= 5 ou um sorteio de 1/6 ocorrer, desativa o modo e zera o contador
 # - Caso contrário, incrementa o contador para prolongar o efeito por alguns ciclos
 # ------------------------------------------------------------
-func reset_quantum():
+func reset_quantum() -> void:
 	if quantum_roll >= 5 || randi_range(0,5) == 0:
 		quantum = false;
 		quantum_roll = 0
@@ -231,7 +231,7 @@ func reset_quantum():
 # - Atualizar o cronômetro portal_timer e transicionar entre estados normal/portal
 # - Atualizar HUD de tempo, barras e estilos conforme estado do portal
 # ------------------------------------------------------------
-func _physics_process(delta):
+func _physics_process(delta : float):
 	if Input.is_action_just_released("god"):
 		Singleton.god_mode = not Singleton.god_mode
 		Singleton.gui_manager.hud_god_mode.visible = Singleton.god_mode
@@ -282,7 +282,7 @@ func _physics_process(delta):
 # - score é acumulado linearmente
 # - hud_xp.max_value muda por milestones, e o value exibe o progresso relativo dentro da faixa atual
 # ------------------------------------------------------------
-func add_ore():
+func add_ore() -> void:
 	score += 1
 	
 	SaveManager.add_score(1)
@@ -348,7 +348,7 @@ func _update_xp_label_text() -> void:
 
 
 # Fornece leitura da pontuação atual.
-func get_score():
+func get_score() -> int:
 	return score;
 
 
@@ -369,7 +369,7 @@ func _on_world_body_exited(body: Node2D) -> void:
 # - Enfileirar reset do estado quantum quando aplicável
 # - Spawns escalonados de asteroides conforme marcos de score, aumentando dificuldade gradualmente
 # ------------------------------------------------------------
-func _on_time_timeout():
+func _on_time_timeout() -> void:
 	if quantum == true:
 		reset_quantum()
 

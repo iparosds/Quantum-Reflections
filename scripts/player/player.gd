@@ -43,7 +43,7 @@ var dying_to_black_hole := false
 var max_health: float = 100.0
 var selected_weapon_id: int = 1
 var mine_drop_interval: float = 0.2
-var _mine_timer: Timer
+var mine_timer: Timer
 var drone: Bullet4 = null
 var last_position: Vector2
 var is_moving: bool = false
@@ -66,11 +66,11 @@ func _ready() -> void:
 		PlayerUpgrades.stats_updated.connect(_on_upgrades_changed)
 	_apply_health_from_upgrades(true, true)
 	_apply_speed_from_upgrades()
-	_mine_timer = Timer.new()
-	_mine_timer.wait_time = mine_drop_interval
-	_mine_timer.one_shot = false
-	add_child(_mine_timer)
-	_mine_timer.timeout.connect(_on_mine_timer_timeout)
+	mine_timer = Timer.new()
+	mine_timer.wait_time = mine_drop_interval
+	mine_timer.one_shot = false
+	add_child(mine_timer)
+	mine_timer.timeout.connect(_on_mine_timer_timeout)
 	last_position = global_position
 
 
@@ -463,8 +463,8 @@ func set_selected_weapon(weapon_id: int) -> void:
 	selected_weapon_id = clamp(weapon_id, 1, 4)
 	_set_all_active_turrets_bullet(selected_weapon_id)
 	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_3:
-		if _mine_timer.is_stopped():
-			_mine_timer.start()
+		if mine_timer.is_stopped():
+			mine_timer.start()
 	if selected_weapon_id == PlayerUpgrades.WeaponId.BULLET_4:
 		_spawn_drone()
 
