@@ -12,6 +12,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 2
+mouse_filter = 1
 script = ExtResource("1_oqc3f")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -24,6 +26,7 @@ grow_vertical = 2
 color = Color(0.257112, 0.257112, 0.257112, 0.392157)
 
 [node name="UpgradeCardContainer" type="HBoxContainer" parent="."]
+layout_direction = 2
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -36,21 +39,29 @@ offset_right = 20.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 2
 theme_override_constants/separation = 50
 
 [node name="UpgradesCardPanel" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
+focus_neighbor_left = NodePath("../UpgradesCardPanel3")
+focus_neighbor_top = NodePath("../UpgradesCardPanel3")
+focus_neighbor_right = NodePath("../UpgradesCardPanel2")
+focus_neighbor_bottom = NodePath("../UpgradesCardPanel2")
 script = ExtResource("2_ue5f2")
 
 [node name="UpgradesCardPanel2" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
+focus_neighbor_left = NodePath("../UpgradesCardPanel")
+focus_neighbor_top = NodePath("../UpgradesCardPanel")
+focus_neighbor_right = NodePath("../UpgradesCardPanel3")
+focus_neighbor_bottom = NodePath("../UpgradesCardPanel3")
 script = ExtResource("2_ue5f2")
 
 [node name="UpgradesCardPanel3" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
 layout_mode = 2
-script = ExtResource("2_ue5f2")
-
-[node name="UpgradesCardPanel4" parent="UpgradeCardContainer" instance=ExtResource("1_hsbbg")]
-visible = false
-layout_mode = 2
+focus_neighbor_left = NodePath("../UpgradesCardPanel2")
+focus_neighbor_top = NodePath("../UpgradesCardPanel2")
+focus_neighbor_right = NodePath("../UpgradesCardPanel")
+focus_neighbor_bottom = NodePath("../UpgradesCardPanel")
 script = ExtResource("2_ue5f2")

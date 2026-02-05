@@ -225,6 +225,9 @@ func restart_game() -> void:
 		return
 	get_tree().paused = true
 	_reset_all_bonuses_and_hide_picker()
+	for node in get_tree().get_nodes_in_group("ore"):
+		if is_instance_valid(node):
+			node.queue_free()
 	if gui_manager:
 		gui_manager.game_over_screen.visible = false
 	change_level(current_level_path)
