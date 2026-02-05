@@ -1,4 +1,4 @@
-extends Button
+class_name UpgradesCard extends Panel
 
 ## Tipo de upgrade associado a esta carta (arma, escudo, velocidade etc.).
 ## Ao ser alterado, chama automaticamente _refresh() para atualizar a exibição.

@@ -1,5 +1,5 @@
 ## Global
-extends Node
+class_name GlobalPlayerUpgrades extends Node
 
 signal stats_updated
 

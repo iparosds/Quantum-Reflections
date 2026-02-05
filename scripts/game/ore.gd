@@ -1,11 +1,11 @@
 class_name Ore extends CharacterBody2D
 
-var moving_speed = 0
+var moving_speed : int = 0
 var player : Player 
-var level 
+var level : Level
 
 
-func _physics_process(delta):
+func _physics_process(delta : float) -> void:
 	if not is_instance_valid(Singleton.player):
 		return
 	
@@ -27,5 +27,5 @@ func _physics_process(delta):
 		move_and_slide()
 
 
-func is_coin():
+func is_coin() -> bool:
 	return true

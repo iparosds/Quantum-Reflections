@@ -15,7 +15,7 @@ func _ready() -> void:
 		portal_sprite.playing = false
 
 
-func _on_body_entered(body):
+func _on_body_entered(body : Node) -> void:
 	if Singleton.level.portal_active == true:
 		if body.has_method("is_player"):
 			Singleton.level.win()

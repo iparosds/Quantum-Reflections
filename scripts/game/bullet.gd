@@ -10,13 +10,13 @@ var damage_multiplier : float = 1.0
 
 
 ## Define a direção inicial do projétil em direção ao alvo assim que ele é criado.
-func _ready():
+func _ready() -> void:
 	direction = global_position.direction_to(target.global_position)
 
 
 ## Atualiza o movimento e a animação do projétil a cada frame de física.
 ## Remove o projétil se ultrapassar o alcance máximo ou se o alvo deixar de existir.
-func _physics_process(delta):
+func _physics_process(delta : float) -> void:
 	if travelled_distance > RANGE:
 		queue_free()
 	if target == null:
@@ -30,12 +30,12 @@ func _physics_process(delta):
 			else:
 				%Projectile.play("quantum")
 			position += direction * move_speed * delta
-			travelled_distance += move_speed * delta
+			travelled_distance += int(move_speed * delta)
 
 
 ## Executado quando o projétil colide com outro corpo.
 ## Aplica dano se o corpo tiver o método take_damage e inicia a animação de impacto.
-func _on_body_entered(body):
+func _on_body_entered(body : Node) -> void:
 	if body.has_method("take_damage"):
 		body.take_damage(-1.0, damage_multiplier)
 	%Projectile.play("contact")

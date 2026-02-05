@@ -24,7 +24,7 @@ var will_hide_balloon: bool = false
 ## A dictionary to store any ephemeral variables
 var locals: Dictionary = {}
 
-var _locale: String = TranslationServer.get_locale()
+var locale: String = TranslationServer.get_locale()
 
 ## Se true, linhas sem responses/time avançam automaticamente
 ## assim que a próxima linha printável estiver disponível.
@@ -77,8 +77,8 @@ func _unhandled_input(_event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	## Detect a change of locale and update the current dialogue line to show the new language
-	if what == NOTIFICATION_TRANSLATION_CHANGED and _locale != TranslationServer.get_locale() and is_instance_valid(dialogue_label):
-		_locale = TranslationServer.get_locale()
+	if what == NOTIFICATION_TRANSLATION_CHANGED and locale != TranslationServer.get_locale() and is_instance_valid(dialogue_label):
+		locale = TranslationServer.get_locale()
 		var visible_ratio = dialogue_label.visible_ratio
 		self.dialogue_line = await resource.get_next_dialogue_line(dialogue_line.id)
 		if visible_ratio < 1:

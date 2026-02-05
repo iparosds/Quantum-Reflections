@@ -8,8 +8,8 @@ const BUS_MUSIC  := "Music"
 const BUS_SFX    := "SFX"
 
 # Posição onde a música do level foi pausada
-var _last_level_pos: float = 0.0
-var _current_track: String = ""
+var last_level_pos: float = 0.0
+var current_track: String = ""
 var fade_tween: Tween = null
 
 
@@ -91,10 +91,10 @@ func _play_music(music: AudioStream, volume: float = 0.0, from_pos: float = 0.0)
 # Se estava tocando a música do level, salva a posição para retomar depois.
 # -----------------------------------------------------------------------------
 func _play_menu_music() -> void:
-	if _current_track == "level" and playing:
-		_last_level_pos = get_playback_position()
+	if current_track == "level" and playing:
+		last_level_pos = get_playback_position()
 	
-	_current_track = "menu"
+	current_track = "menu"
 	_play_music(MENU_MUSIC)
 
 
@@ -105,8 +105,8 @@ func _play_menu_music() -> void:
 #   resume (bool): retomar de onde parou (padrão: true)
 # -----------------------------------------------------------------------------
 func _play_level_music(resume: bool = true) -> void:
-	_current_track = "level"
-	var start_pos := _last_level_pos if resume else 0.0
+	current_track = "level"
+	var start_pos := last_level_pos if resume else 0.0
 	_play_music(LEVEL_MUSIC, 0.0, start_pos)
 
 
@@ -118,8 +118,8 @@ func stop_music() -> void:
 # Se a trilha atual for a do level, salva a posição de reprodução e para.
 # -----------------------------------------------------------------------------
 func remember_level_position_and_stop() -> void:
-	if _current_track == "level" and playing:
-		_last_level_pos = get_playback_position()
+	if current_track == "level" and playing:
+		last_level_pos = get_playback_position()
 	
 	stop()
 
@@ -144,7 +144,7 @@ func on_pause_exited() -> void:
 # - Zera a posição salva e reinicia a música do level do começo
 # -----------------------------------------------------------------------------
 func on_level_restart() -> void:
-	_last_level_pos = 0.0
+	last_level_pos = 0.0
 	
 	_cancel_fade()
 	
@@ -175,7 +175,7 @@ func get_sfx_volume_db() -> float:
 # -----------------------------------------------------------------------------
 # Salva os volumes atuais (Master/Music/SFX) em user://audio.cfg.
 # -----------------------------------------------------------------------------
-func save_volumes():
+func save_volumes() -> void:
 	var config := ConfigFile.new()
 	config.set_value("audio", "master_db", get_master_volume_db())
 	config.set_value("audio", "music_db",  get_music_volume_db())
@@ -187,7 +187,7 @@ func save_volumes():
 # Carrega e aplica volumes de user://audio.cfg (se existir).
 # Usa 0.0 dB como padrão quando não houver valor salvo.
 # -----------------------------------------------------------------------------
-func load_volumes():
+func load_volumes() -> void:
 	var config := ConfigFile.new()
 	if config.load("user://audio.cfg") == OK:
 		set_master_volume_db(float(config.get_value("audio", "master_db", 0.0)))
